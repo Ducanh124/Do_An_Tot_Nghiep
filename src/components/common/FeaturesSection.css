@@ -1,0 +1,50 @@
+.features-section {
+  padding: 60px 0;
+  background-color: #ffffff;
+}
+
+/* Hiệu ứng cho logo báo chí: Mặc định màu xám mờ, di chuột vào sẽ rõ nét */
+.partner-logos {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 40px;
+  margin-bottom: 60px;
+  padding-bottom: 40px;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.partner-logo-img {
+  max-height: 40px;
+  filter: grayscale(100%); /* Biến ảnh thành đen trắng */
+  opacity: 0.6;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.partner-logo-img:hover {
+  filter: grayscale(0%); /* Hiện màu thật khi di chuột */
+  opacity: 1;
+}
+
+/* Chỉnh kích thước icon của 3 tiêu chí */
+.feature-icon {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 20px;
+  object-fit: contain;
+}
+
+.feature-title {
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+}
+
+.feature-desc {
+  color: #666;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}

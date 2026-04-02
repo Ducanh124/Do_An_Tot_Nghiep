@@ -1,0 +1,112 @@
+/* frontend/src/components/layout/Footer.css */
+
+.site-footer {
+  background-color: #ffffff;
+  padding: 60px 0 30px 0;
+  border-top: 1px solid #eaeaea; /* Đường viền mỏng ngăn cách với phần trên */
+  font-size: 0.95rem; /* Chữ nhỏ hơn một chút cho gọn gàng */
+  color: #555;
+}
+
+/* Phần cột bên trái (Logo & Thông tin công ty) */
+.footer-company-name {
+  color: #0d6efd; /* SỬA THÀNH MÀU XANH NƯỚC BIỂN (Thay cho xanh lá của bản gốc) */
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-top: 15px;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+}
+
+.footer-hotline {
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+/* Icon mạng xã hội */
+.social-icons {
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.social-icon-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px; /* Bo góc hơi vuông giống bản gốc */
+  color: white;
+  text-decoration: none;
+  font-size: 1.2rem;
+  transition: transform 0.2s ease;
+}
+
+.social-icon-link:hover {
+  transform: translateY(-3px); /* Nảy lên nhẹ khi di chuột */
+}
+
+.bg-facebook {
+  background-color: #1877f2;
+}
+.bg-zalo {
+  background-color: #0068ff;
+}
+.bg-instagram {
+  background-color: #e4405f;
+}
+
+/* Tiêu đề các cột địa chỉ/menu */
+.footer-title {
+  color: #333;
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 20px;
+}
+
+/* Danh sách địa chỉ (dấu chấm tròn nhỏ) */
+.footer-list {
+  list-style-type: none; /* Tắt dấu chấm mặc định */
+  padding-left: 0;
+  margin-bottom: 30px;
+}
+
+.footer-list li {
+  position: relative;
+  padding-left: 15px;
+  margin-bottom: 15px;
+  line-height: 1.6;
+}
+
+/* Tạo dấu chấm nhỏ màu xám trước mỗi dòng địa chỉ/menu */
+.footer-list li::before {
+  content: "•";
+  color: #999;
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-size: 1.2rem;
+}
+
+/* Link trong Footer */
+.footer-link {
+  color: #555;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.footer-link:hover {
+  color: #0d6efd; /* Đổi màu xanh khi di chuột */
+}
+
+/* Phần copyright dưới cùng */
+.footer-bottom {
+  border-top: 1px solid #eaeaea;
+  margin-top: 40px;
+  padding-top: 20px;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #888;
+}

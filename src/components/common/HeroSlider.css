@@ -1,0 +1,39 @@
+/* frontend/src/components/common/HeroSlider.css */
+
+.hero-slider-container {
+  width: 100%;
+  /* ĐÃ SỬA: Xóa overflow: hidden và thêm padding để nhường chỗ cho dấu chấm hiện lên */
+  padding-bottom: 40px;
+  position: relative;
+}
+
+.hero-slide-img {
+  width: 100%;
+  height: 450px;
+  object-fit: cover;
+}
+
+/* --- TÙY CHỈNH DẤU CHẤM (DOTS) DƯỚI ĐÁY --- */
+.slick-dots {
+  bottom: -35px; /* Căn chỉnh khoảng cách từ ảnh xuống dấu chấm */
+}
+
+/* Trạng thái bình thường của các chấm (Màu xám) */
+.slick-dots li button:before {
+  font-size: 14px !important;
+  color: #c4c4c4 !important; /* Xám nhạt */
+  opacity: 1 !important;
+  transition: all 0.3s ease; /* Hiệu ứng chuyển màu mượt mà */
+}
+
+/* Trạng thái Active - Chấm đang hiển thị (Đổi sang MÀU XANH NƯỚC BIỂN) */
+.slick-dots li.slick-active button:before {
+  color: #0d6efd !important;
+  font-size: 18px !important; /* Phóng to lên một chút để tạo điểm nhấn */
+}
+
+/* Khi người dùng rê chuột lên dấu chấm */
+.slick-dots li button:hover:before {
+  color: #0d6efd !important;
+  opacity: 0.7 !important;
+}

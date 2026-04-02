@@ -1,0 +1,32 @@
+/* frontend/src/components/service/ServiceList.css */
+
+.service-slider-section {
+  padding: 60px 0;
+  background-color: #f8f9fa; /* Nền xám nhạt để làm nổi bật các thẻ dịch vụ màu trắng */
+}
+
+.service-slider-section h2 {
+  color: #333;
+  margin-bottom: 40px;
+}
+
+/* Tạo khoảng cách (gap) giữa các thẻ (slides) khi trượt */
+.service-slide-wrapper {
+  padding: 10px 15px; /* Giữ khoảng cách 15px ở 2 bên */
+}
+
+/* Tùy chỉnh dấu chấm (dots) cho giống thanh Banner */
+.service-slider-section .slick-dots {
+  bottom: -40px;
+}
+
+.service-slider-section .slick-dots li button:before {
+  font-size: 14px !important;
+  color: #c4c4c4 !important;
+  transition: all 0.3s ease;
+}
+
+.service-slider-section .slick-dots li.slick-active button:before {
+  color: #0d6efd !important; /* Xanh nước biển */
+  font-size: 16px !important;
+}
