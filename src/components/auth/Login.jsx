@@ -1,11 +1,12 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; // Dùng cái này để chuyển trang xịn hơn
+import authService from "../services/authService"; // Import Sứ giả API
 import "./Login.css";
 
 const AuthPage = () => {
-  // Biến điều khiển: true = Form Đăng nhập | false = Form Đăng ký
   const [isLogin, setIsLogin] = useState(true);
+  const navigate = useNavigate(); // Khởi tạo hàm chuyển trang
 
-  // State dùng chung để hứng dữ liệu
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -18,58 +19,74 @@ const AuthPage = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   if (isLogin) {
-  //     console.log("Đang gọi API Đăng nhập với:", {
-  //       email: formData.email,
-  //       password: formData.password,
-  //     });
-  //     alert("Test Đăng nhập thành công!");
-  //   } else {
-  //     if (formData.password !== formData.confirmPassword) {
-  //       alert(" Mật khẩu xác nhận không khớp!");
-  //       return;
-  //     }
-  //     console.log("Đang gọi API Đăng ký với toàn bộ dữ liệu:", formData);
-  //     alert("Test Đăng ký thành công!");
-  //   }
-  // };
-
-  // Tìm đến hàm handleSubmit trong file AuthPage.jsx của bạn và thay bằng đoạn này:
-
-  const handleSubmit = (e) => {
+  // BIẾN HÀM NÀY THÀNH ASYNC ĐỂ GỌI API CHỜ PHẢN HỒI TỪ SERVER
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (isLogin) {
-      const userData = {
-        name: "Đoàn Đức Anh",
-        email: formData.email,
-      };
+      // ==========================================
+      // LUỒNG 1: ĐĂNG NHẬP (GỌI API TỪ DATABASE)
+      // ==========================================
+      try {
+        // Gửi email và pass lên Backend
+        const response = await authService.login(
+          formData.email,
+          formData.password,
+        );
 
-      localStorage.setItem("user", JSON.stringify(userData));
+        // Nếu thành công, lấy thông tin User từ Database để hiện lời chào
+        const userData = response.user;
+        alert("Đăng nhập thành công! Chào bạn " + userData.name);
 
-      console.log("Đăng nhập với:", userData);
-      alert("Đăng nhập thành công! Chào bạn " + userData.name);
-
-      window.location.href = "/";
+        // Chuyển hướng về trang chủ một cách mượt mà (Không làm tải lại toàn bộ trang web như window.location.href)
+        navigate("/");
+      } catch (error) {
+        console.error("Lỗi đăng nhập:", error);
+        // Lấy thông báo lỗi từ Backend (nếu có) hoặc báo lỗi chung
+        const errorMsg =
+          error.response?.data?.message ||
+          "Sai email hoặc mật khẩu. Vui lòng thử lại!";
+        alert(errorMsg);
+      }
     } else {
+      // ==========================================
+      // LUỒNG 2: ĐĂNG KÝ MỚI VÀO DATABASE
+      // ==========================================
       if (formData.password !== formData.confirmPassword) {
         alert("Mật khẩu xác nhận không khớp!");
         return;
       }
 
-      const userData = {
-        name: formData.name,
-        email: formData.email,
-      };
-      localStorage.setItem("user", JSON.stringify(userData));
+      try {
+        // Gom dữ liệu đúng chuẩn bảng 1.1 Users của bạn
+        const newUserData = {
+          name: formData.name,
+          phone: formData.phone,
+          email: formData.email,
+          password: formData.password,
+          // (Backend sẽ tự lo việc mã hóa pass thành password_hash)
+        };
 
-      console.log("Đăng ký tài khoản mới:", userData);
-      alert("Đăng ký thành công!");
-      window.location.href = "/";
+        // Gửi lên Backend để lưu vào Database
+        await authService.register(newUserData);
+
+        alert("Đăng ký thành công! Bạn có thể đăng nhập ngay bây giờ.");
+
+        // Xóa trắng form mật khẩu để an toàn
+        setFormData({ ...formData, password: "", confirmPassword: "" });
+
+        // Tự động gạt thẻ sang tab Đăng Nhập cho người dùng tiện thao tác
+        setIsLogin(true);
+      } catch (error) {
+        console.error("Lỗi đăng ký:", error);
+        const errorMsg =
+          error.response?.data?.message ||
+          "Đăng ký thất bại. Email có thể đã tồn tại!";
+        alert(errorMsg);
+      }
     }
   };
+
   return (
     <div className="auth-container">
       <div className="auth-card">
