@@ -1,6 +1,7 @@
 // frontend/src/pages/BookingHistoryPage.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import bookingService from "../services/bookingService"; // Gọi sứ giả API
 import "./BookingHistory.css";
 
 const BookingHistoryPage = () => {
@@ -8,18 +9,16 @@ const BookingHistoryPage = () => {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // 1. SỬA ĐỔI USE-EFFECT: Đọc dữ liệu từ localStorage thay vì Mock API
+  // 1. SỬA ĐỔI USE-EFFECT: Kéo dữ liệu từ Database thay vì localStorage
   useEffect(() => {
-    const loadHistory = () => {
-      setLoading(true);
+    const loadHistory = async () => {
       try {
-        // Lấy dữ liệu từ bộ nhớ trình duyệt, nếu trống thì trả về mảng rỗng []
-        const savedHistory = JSON.parse(
-          localStorage.getItem("bookingHistory") || "[]",
-        );
-        setHistory(savedHistory);
+        setLoading(true);
+        // Gọi API lấy lịch sử đặt lịch của user đang đăng nhập
+        const data = await bookingService.getMyHistory();
+        setHistory(data);
       } catch (error) {
-        console.error("Lỗi lấy lịch sử", error);
+        console.error("Lỗi lấy lịch sử từ máy chủ", error);
       } finally {
         setLoading(false);
       }
@@ -27,12 +26,18 @@ const BookingHistoryPage = () => {
     loadHistory();
   }, []);
 
-  // Hàm phụ trợ để render màu và chữ của Trạng thái
+  // 2. CẬP NHẬT TRẠNG THÁI (Khớp với DB: pending, accepted, in_progress, completed...)
   const renderStatusBadge = (status) => {
     switch (status) {
       case "pending":
         return (
           <span className="status-badge badge-warning">Đang chờ xử lý</span>
+        );
+      case "accepted":
+        return <span className="status-badge badge-info">Đã nhận đơn</span>;
+      case "in_progress":
+        return (
+          <span className="status-badge badge-primary">Đang thực hiện</span>
         );
       case "completed":
         return (
@@ -41,8 +46,25 @@ const BookingHistoryPage = () => {
       case "cancelled":
         return <span className="status-badge badge-danger">Đã hủy</span>;
       default:
-        return <span className="status-badge badge-secondary">Không rõ</span>;
+        return (
+          <span className="status-badge badge-secondary">
+            {status || "Không rõ"}
+          </span>
+        );
     }
+  };
+
+  // Hàm fomat ngày tháng cho đẹp
+  const formatDate = (dateString) => {
+    if (!dateString) return "Chưa cập nhật";
+    const date = new Date(dateString);
+    return date.toLocaleString("vi-VN", {
+      hour: "2-digit",
+      minute: "2-digit",
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
   };
 
   if (loading) {
@@ -58,7 +80,6 @@ const BookingHistoryPage = () => {
   return (
     <div className="booking-page-wrapper">
       <div className="booking-desktop-container shadow-sm pb-5">
-        {/* HEADER */}
         <div className="booking-header">
           <button className="back-btn" onClick={() => navigate(-1)}>
             <i className="bi bi-arrow-left"></i> Quay lại
@@ -81,33 +102,32 @@ const BookingHistoryPage = () => {
             </div>
           ) : (
             <div className="history-list d-flex flex-column gap-4">
-              {/* THÔNG BÁO TỔNG SỐ ĐƠN HÀNG */}
               <div className="text-muted fw-bold mb-2">
                 Bạn đã thực hiện tổng cộng {history.length} đơn hàng:
               </div>
 
               {history.map((item) => (
-                <div key={item.id} className="history-card">
-                  {/* Phần đầu Card: Mã đơn & Trạng thái */}
+                <div key={item.booking_id} className="history-card">
+                  {/* Mã đơn: Dùng booking_id */}
                   <div className="history-card-header">
                     <span className="fw-bold text-muted">
-                      Mã đơn: #{item.id}
+                      Mã đơn: #{item.booking_id}
                     </span>
                     {renderStatusBadge(item.status)}
                   </div>
 
-                  {/* Phần thân Card: Thông tin dịch vụ */}
                   <div className="history-card-body">
-                    {/* 2. ĐÃ SỬA THÀNH item.serviceTitle */}
+                    {/* Tên dịch vụ: Backend cần join bảng Services để trả về trường service_name */}
                     <h5 className="service-title theme-text-blue fw-bold mb-3">
-                      {item.serviceTitle}
+                      {item.service_name || `Dịch vụ #${item.service_id}`}
                     </h5>
 
                     <div className="service-detail-row">
-                      <i className="bi bi-clock text-muted me-2"></i>
+                      <i className="bi bi-calendar-check text-muted me-2"></i>
                       <span>
-                        {/* 3. ĐÃ SỬA THÀNH item.createdAt */}
-                        <strong>Ngày đặt:</strong> {item.createdAt}
+                        {/* Thời gian làm việc dự kiến (scheduled_time) */}
+                        <strong>Ngày làm:</strong>{" "}
+                        {formatDate(item.scheduled_time)}
                       </span>
                     </div>
 
@@ -118,27 +138,25 @@ const BookingHistoryPage = () => {
                       </span>
                     </div>
 
-                    {/* Hiện thêm số nhân viên cho chi tiết */}
-                    <div className="service-detail-row mt-2">
-                      <i className="bi bi-people text-muted me-2"></i>
-                      <span>
-                        <strong>Nhân sự:</strong> {item.staffCount} nhân viên
-                      </span>
-                    </div>
+                    {item.note && (
+                      <div className="service-detail-row mt-2">
+                        <i className="bi bi-pencil-square text-muted me-2"></i>
+                        <span>
+                          <strong>Ghi chú:</strong> {item.note}
+                        </span>
+                      </div>
+                    )}
                   </div>
 
-                  {/* Phần chân Card: Tổng tiền & Nút thao tác */}
+                  {/* Tổng tiền: Dùng total_amount */}
                   <div className="history-card-footer">
                     <div className="history-price">
                       Tổng tiền:{" "}
-                      <span>{item.totalPrice.toLocaleString("vi-VN")} ₫</span>
+                      <span className="fw-bold text-danger">
+                        {Number(item.total_amount).toLocaleString("vi-VN")} ₫
+                      </span>
                     </div>
                     <div className="history-actions">
-                      {item.status === "completed" && (
-                        <button className="btn btn-outline-primary btn-sm rounded-pill px-3">
-                          Đặt lại
-                        </button>
-                      )}
                       <button className="btn btn-light btn-sm rounded-pill px-3 text-muted border">
                         Chi tiết
                       </button>
