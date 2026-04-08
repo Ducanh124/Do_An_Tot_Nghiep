@@ -4,15 +4,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 // ĐÃ SỬA: Thêm 'id' vào danh sách nhận dữ liệu (props)
-const ServiceCard = ({ id, imageUrl, categoryName, serviceName, price }) => {
-  // Hàm format tiền tệ VNĐ
-  const formatPrice = (amount) => {
-    return new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
-    }).format(amount);
-  };
-
+const ServiceCard = ({ id, imageUrl, categoryName, serviceName }) => {
   return (
     <div className="card shadow-sm h-100">
       {/* Hình ảnh dịch vụ */}
@@ -31,9 +23,7 @@ const ServiceCard = ({ id, imageUrl, categoryName, serviceName, price }) => {
 
         {/* Tên và Giá dịch vụ */}
         <h5 className="card-title fw-bold">{serviceName}</h5>
-        <p className="card-text text-danger fw-bold fs-5 mb-4">
-          {formatPrice(price)}
-        </p>
+        <p className="card-text text-danger fw-bold fs-5 mb-4"></p>
 
         {/* ĐÃ SỬA: Thay thế <button> bằng <Link> và nối thêm 'id' vào URL */}
         <Link

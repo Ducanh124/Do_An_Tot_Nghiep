@@ -1,0 +1,96 @@
+:root {
+  --theme-blue: #52a8ff;
+  --theme-blue-hover: #3d94eb;
+}
+
+/* THẺ HIỂN THỊ ĐƠN HÀNG (CARD) */
+.history-card {
+  border: 1px solid #eaeaea;
+  border-radius: 12px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  overflow: hidden; /* Bo góc mượt cho cả header và footer */
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.history-card:hover {
+  box-shadow: 0 5px 15px rgba(82, 168, 255, 0.15);
+  transform: translateY(-2px);
+  border-color: #d0e7ff;
+}
+
+/* Header của từng card */
+.history-card-header {
+  background-color: #f8fbff; /* Xanh cực kỳ nhạt */
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eaeaea;
+  font-size: 0.9rem;
+}
+/* HUY HIỆU TRẠNG THÁI (BADGES) */
+.status-badge {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.badge-warning {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.badge-success {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.badge-danger {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+/* Thân của card */
+.history-card-body {
+  padding: 20px;
+}
+
+.service-title {
+  font-size: 1.25rem;
+}
+
+.service-detail-row {
+  color: #555;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: flex-start;
+}
+/* Chân của card (Footer) */
+.history-card-footer {
+  padding: 15px 20px;
+  border-top: 1px dashed #eaeaea;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.history-price {
+  font-size: 1rem;
+  color: #666;
+}
+
+.history-price span {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--theme-blue);
+  margin-left: 5px;
+}
+
+.history-actions {
+  display: flex;
+  gap: 10px;
+}

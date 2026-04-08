@@ -1,0 +1,217 @@
+/* frontend/src/pages/BookingPage.css */
+
+:root {
+  --theme-blue: #52a8ff;
+  --theme-blue-hover: #3d94eb;
+  --theme-blue-light: #eaf4ff;
+}
+
+.booking-page-wrapper {
+  background-color: #f4f7f6;
+  min-height: 100vh;
+  padding: 40px 15px; /* Cách xa header/footer */
+}
+
+.booking-desktop-container {
+  max-width: 800px; /* Làm khung to ra so với 600px cũ */
+  margin: 0 auto;
+  background-color: #ffffff;
+  border-radius: 12px;
+  overflow: hidden; /* Cắt góc tròn cho mượt */
+}
+
+/* Header của form */
+.booking-header {
+  background: #ffffff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 30px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.theme-text-blue {
+  color: var(--theme-blue);
+}
+
+.back-btn,
+.info-btn {
+  background: none;
+  border: none;
+  font-size: 0.8 rem;
+  color: #666;
+  transition: 0.2s;
+}
+
+.back-btn:hover {
+  color: var(--theme-blue);
+}
+
+/* Các khối nội dung */
+.booking-body {
+  padding: 25px;
+}
+
+.section-block {
+  margin-bottom: 25px;
+}
+
+.section-title {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #444;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+}
+
+/* ICON MÀU XANH DƯƠNG */
+.theme-icon {
+  color: var(--theme-blue);
+  font-size: 1.2rem;
+}
+
+/* Box địa điểm */
+.location-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #fafafa;
+}
+
+.btn-create-new {
+  background: white;
+  border: 1px solid var(--theme-blue);
+  color: var(--theme-blue);
+  padding: 8px 20px;
+  border-radius: 2px;
+  font-weight: bold;
+  transition: 0.2s;
+}
+
+.btn-create-new:hover {
+  background: var(--theme-blue);
+  color: white;
+}
+
+.options-grid {
+  display: grid;
+  gap: 20px;
+}
+
+/* Tự động chia cột: nếu màn to thì 3 cột, màn nhỏ thì 2 cột */
+.staff-grid,
+.duration-grid {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+/* THẺ LỰA CHỌN (CHƯA CHỌN) */
+.option-card {
+  background-color: #ffffff;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 15px 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #444;
+  text-align: center;
+}
+
+.option-card:hover {
+  border-color: var(--theme-blue);
+  background-color: var(--theme-blue-light);
+}
+
+.small-text {
+  font-size: 0.95rem;
+  color: #777;
+  margin-top: 8px;
+}
+
+.option-price {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--theme-blue);
+}
+
+/* THẺ LỰA CHỌN (ĐÃ CHỌN) */
+.option-card.active {
+  background-color: var(--theme-blue);
+  color: white;
+  border-color: var(--theme-blue);
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(82, 168, 255, 0.3);
+}
+
+.option-card.active .small-text,
+.option-card.active .option-price,
+.option-card.active i {
+  color: #ffffff;
+}
+
+/* THANH DƯỚI CÙNG (Dính liền vào khung form) */
+.booking-bottom-bar {
+  background: #fafbfc;
+  padding: 25px 30px;
+  border-top: 2px solid #eaeaea;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.summary-text {
+  font-size: 0.95rem;
+  color: #666;
+}
+
+.total-price {
+  font-size: 1rem;
+  color: #333;
+}
+
+.total-price span {
+  font-size: 1rem;
+  font-weight: bold;
+  color: var(--theme-blue);
+  margin-left: 10px;
+}
+
+.btn-continue {
+  background-color: var(--theme-blue);
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  transition: 0.2s;
+}
+
+.btn-continue:hover {
+  background-color: var(--theme-blue-hover);
+}
+/* --- PHẦN GHI CHÚ --- */
+.custom-textarea {
+  resize: none; /* Ngăn khách hàng kéo giãn khung lung tung */
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 15px;
+  background-color: #fafafa;
+  font-size: 1rem;
+  color: #444;
+  transition: all 0.3s;
+}
+
+.custom-textarea:focus {
+  border-color: var(--theme-blue);
+  background-color: #ffffff;
+  box-shadow: 0 0 0 4px var(--theme-blue-light);
+  outline: none;
+}
+
+.custom-textarea::placeholder {
+  color: #aaa;
+  font-size: 0.95rem;
+}

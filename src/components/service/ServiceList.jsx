@@ -1,9 +1,7 @@
 // frontend/src/components/service/ServiceList.jsx
 import React, { useState } from "react";
-import SliderComponent from "react-slick"; // Import thư viện Slider
+import SliderComponent from "react-slick";
 import ServiceCard from "./ServiceCard";
-
-// Import CSS
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "./ServiceList.css";
@@ -18,33 +16,43 @@ const ServiceList = () => {
       id: 1,
       categoryName: "Giúp việc lẻ",
       serviceName: "Giúp việc theo giờ",
-      price: 120000,
-      imageUrl:
-        "https://images.unsplash.com/photo-1581578731548-c64695cc6952?q=80&w=600&auto=format&fit=crop",
+
+      imageUrl: "/images/theoh .jpg",
     },
     {
       id: 2,
       categoryName: "Tổng vệ sinh",
       serviceName: "Giúp việc định kỳ",
-      price: 500000,
-      imageUrl:
-        "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?q=80&w=600&auto=format&fit=crop",
+
+      imageUrl: "/images/toanbo.jpg",
     },
     {
       id: 3,
-      categoryName: "Nấu ăn",
-      serviceName: "Tổng vệ sinh nhà cửa",
-      price: 150000,
-      imageUrl:
-        "https://images.unsplash.com/photo-1527515637-ed06478d103b?q=80&w=600&auto=format&fit=crop",
-    },
-    {
-      id: 4,
       categoryName: "Giặt ủi",
       serviceName: "Vệ sinh sofa, đệm",
-      price: 300000,
-      imageUrl:
-        "https://images.unsplash.com/photo-1556910103-1c02745aae4d?q=80&w=600&auto=format&fit=crop",
+
+      imageUrl: "/images/sofa.jpg",
+    },
+    {
+      id: 5,
+      categoryName: "Bảo dưỡng sửa chữa đồ công nghệ",
+      serviceName: "Bảo dưỡng điều hoà",
+
+      imageUrl: "/images/suamaylanh.jpg",
+    },
+    {
+      id: 5,
+      categoryName: "Vệ sinh",
+      serviceName: "Phun diệt côn trùng ",
+
+      imageUrl: "/images/dietcontrung.jpg",
+    },
+    {
+      id: 6,
+      categoryName: "Vận chuyển ",
+      serviceName: "Dịch vụ chuyển đồ ",
+
+      imageUrl: "/images/chuyennha.jpg",
     },
   ]);
 
@@ -53,7 +61,7 @@ const ServiceList = () => {
     dots: true,
     infinite: true,
     speed: 500,
-    slidesToShow: 3, // Máy tính hiện 3 dịch vụ cùng lúc
+    slidesToShow: 3,
     slidesToScroll: 1,
     autoplay: true,
     autoplaySpeed: 4000,
@@ -88,7 +96,6 @@ const ServiceList = () => {
                   imageUrl={service.imageUrl}
                   categoryName={service.categoryName}
                   serviceName={service.serviceName}
-                  price={service.price}
                 />
               </div>
             ))}

@@ -2,7 +2,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { FaFacebookF, FaInstagram } from "react-icons/fa";
-// Tạm dùng icon comment cho Zalo vì react-icons không có sẵn logo Zalo
+
 import { SiZalo } from "react-icons/si";
 import "./Footer.css";
 

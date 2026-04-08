@@ -60,7 +60,7 @@ const FeaturesSection = () => {
         {/* NÚT ĐẶT DỊCH VỤ - Chuyển sang màu Primary Blue */}
         <div className="mt-5">
           <Link
-            to="/booking/1"
+            to="/danh-muc"
             className="btn btn-primary fw-bold px-5 py-3 rounded-pill fs-5 shadow-sm"
           >
             Đặt dịch vụ ngay

@@ -1,0 +1,32 @@
+.directory-container {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.service-circle-card {
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.service-circle-card:hover {
+  transform: scale(1.05);
+}
+
+.circle-icon {
+  width: 100px;
+  height: 100px;
+  background: white;
+  border-radius: 50%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  border: 1px solid #eee;
+}
+
+.circle-text {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #333;
+}

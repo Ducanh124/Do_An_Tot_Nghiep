@@ -1,0 +1,56 @@
+/* frontend/src/components/layout/Header.css */
+
+.my-custom-link {
+  font-size: 0.85rem !important;
+  font-weight: 500 !important;
+  padding-left: 15px !important;
+  padding-right: 15px !important;
+  transition: color 0.3s ease;
+}
+.btn-booking {
+  font-size: 0.85rem !important; /* Chữ trong nút bé lại */
+  padding: 8px 25px !important; /* Căn chỉnh độ rộng của nút */
+  border-radius: 50px !important; /* Bo tròn nút y hệt ảnh bạn gửi */
+  background-color: #0d6efd !important;
+  border: none !important;
+  box-shadow: 0 4px 10px rgba(13, 110, 253, 0.2);
+  transition: all 0.3s ease !important;
+}
+
+.btn-booking:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(13, 110, 253, 0.3);
+  background-color: #0b5ed7 !important;
+}
+.navbar {
+  padding-top: 0.5rem !important;
+  padding-bottom: 0.5rem !important;
+  font-size: 0.9rem;
+}
+/*Dùng để bọ phần logo và slogan*/
+.logo-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.2;
+}
+
+.custom-logo {
+  /* Xóa bỏ định dạng mặc định của Bootstrap*/
+  padding: 0 !important;
+  margin: 0 !important;
+  font-size: 1.5rem !important;
+  font-weight: 800;
+  color: #0d6efd !important;
+}
+.custom-logo span {
+  color: #212529 !important;
+}
+.custom-slogan {
+  font-size: 0.8rem !important;
+  color: #6c757d !important;
+  font-weight: 400;
+  font-style: italic;
+  margin-top: -2px;
+  margin-left: 2px;
+}
