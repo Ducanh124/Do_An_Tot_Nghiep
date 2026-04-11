@@ -1,0 +1,74 @@
+/* CurrentTaskInfo.css */
+.current-task-info {
+  margin-bottom: 8px;
+}
+
+.task-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.task-title .label {
+  font-size: 13px;
+  font-weight: 500;
+  text-transform: uppercase;
+  color: #888;
+  letter-spacing: 0.5px;
+}
+
+/* Khối bao bọc thông tin - Màu xám nhạt để tạo chiều sâu */
+.task-details-box {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background-color: #fafafa; /* Nền xám cực nhạt */
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #f0f0f0;
+}
+
+.detail-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 14px;
+  color: #555;
+  line-height: 1.5;
+}
+
+.detail-icon {
+  margin-top: 3px;
+  font-size: 16px;
+  color: #888;
+  flex-shrink: 0; /* Ngăn icon bị bóp méo khi text địa chỉ quá dài */
+}
+
+/* Nhấn mạnh thời gian bằng màu xanh chủ đạo */
+.time-highlight {
+  color: #4CAF50;
+}
+
+.time-highlight strong {
+  color: #4CAF50;
+  font-size: 15px;
+}
+
+.time-highlight .detail-icon {
+  color: #4CAF50;
+}
+
+/* Responsive cơ bản cho màn hình điện thoại nhỏ */
+@media (max-width: 480px) {
+  .task-details-box {
+    padding: 12px;
+  }
+  
+  .task-title {
+    font-size: 18px;
+  }
+}

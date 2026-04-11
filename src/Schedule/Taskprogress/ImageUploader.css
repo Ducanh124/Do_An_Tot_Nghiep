@@ -1,0 +1,119 @@
+/* ImageUploader.css */
+.image-uploader-container {
+  margin-top: 8px;
+}
+
+.uploader-header {
+  margin-bottom: 16px;
+}
+
+.uploader-header h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 4px 0;
+}
+
+.uploader-header p {
+  font-size: 13px;
+  color: #888;
+  margin: 0;
+}
+
+/* Lưới hiển thị ảnh: Dạng ô vuông bám theo flex */
+.image-gallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* Kích thước chung cho cả Nút Thêm và Ảnh đã chụp */
+.btn-add-image,
+.image-preview-box {
+  width: calc(33.333% - 8px); /* Chia 3 cột trên mobile */
+  aspect-ratio: 1 / 1; /* Ép thành hình vuông hoàn hảo */
+  border-radius: 12px;
+  overflow: hidden; /* Cắt phần ảnh thừa ra khỏi bo góc */
+}
+
+/* --- Khối Nút Thêm Ảnh --- */
+.btn-add-image {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  background-color: #fafafa;
+  border: 2px dashed #d9d9d9;
+  color: #888;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-add-image:hover {
+  background-color: #f0f0f0;
+  border-color: #b3b3b3;
+  color: #555;
+}
+
+.camera-icon {
+  font-size: 24px;
+}
+
+.btn-add-image span {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* --- Khối Hiển thị Ảnh --- */
+.image-preview-box {
+  position: relative; /* Để định vị nút Xấp lên trên ảnh */
+  border: 1px solid #e0e0e0;
+}
+
+.image-preview-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Đảm bảo ảnh không bị méo, tự động lấp đầy khung */
+}
+
+/* Nút Xóa (Dấu X đỏ góc trên cùng bên phải) */
+.btn-remove-image {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #ff4d4f; /* Màu đỏ báo lỗi/xóa */
+  border: 1px solid #ffccc7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 0;
+  transition: transform 0.1s;
+}
+
+.btn-remove-image:hover {
+  transform: scale(1.1);
+  background-color: #fff;
+}
+
+.uploader-hint {
+  margin-top: 12px;
+  font-size: 12px;
+  color: #bfbfbf;
+  font-style: italic;
+}
+
+/* Responsive cho màn hình PC/Tablet lớn hơn */
+@media (min-width: 600px) {
+  .btn-add-image,
+  .image-preview-box {
+    width: 100px; /* Cố định 100px thay vì dùng % */
+    height: 100px;
+  }
+}

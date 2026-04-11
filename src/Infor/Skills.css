@@ -1,0 +1,171 @@
+/* Skills.css */
+.skills-container {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: 32px;
+  font-family: "Inter", sans-serif;
+  margin-top: 24px; /* Khoảng cách nếu đặt dưới component PersonalInfo */
+}
+
+/* Kế thừa style header từ PersonalInfo để đồng nhất */
+.section-header {
+  margin-bottom: 24px;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 16px;
+}
+
+.section-header h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 8px 0;
+}
+
+.section-header p {
+  color: #666;
+  font-size: 14px;
+  margin: 0;
+}
+
+/* Lưới hiển thị các thẻ kỹ năng */
+.skills-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+/* Định dạng thẻ kỹ năng (Skill Pill) - Trạng thái chưa chọn */
+.skill-pill {
+  padding: 12px 24px;
+  border: 1.5px solid #d9d9d9;
+  border-radius: 30px; /* Bo góc tròn giống thiết kế trên Figma */
+  background-color: #ffffff;
+  color: #555;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  outline: none;
+}
+
+/* Hiệu ứng Hover khi chưa chọn */
+.skill-pill:hover {
+  border-color: #b3b3b3;
+  background-color: #f9f9f9;
+}
+
+/* Định dạng thẻ kỹ năng - Trạng thái đã chọn (Active) */
+.skill-pill.selected {
+  border-color: #4caf50; /* Viền xanh */
+  background-color: #e8f5e9; /* Nền xanh nhạt */
+  color: #4caf50; /* Chữ xanh */
+}
+
+/* Khu vực nút bấm (Giống hệt PersonalInfo) */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  padding-top: 24px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.btn-cancel {
+  padding: 10px 24px;
+  background-color: transparent;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  color: #666;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-cancel:hover {
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+.btn-save {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  background-color: #4caf50;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-save:hover {
+  background-color: #43a047;
+}
+/* ... (Giữ nguyên các CSS cũ của phần skills-grid và skill-pill) ... */
+
+/* --- CSS CHo PHẦN KINH NGHIỆM VÀ GIỚI THIỆU --- */
+.additional-info-grid {
+  margin-top: 32px;
+  display: grid;
+  grid-template-columns: 1fr; /* Mặc định 1 cột */
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+
+.required {
+  color: #ff4d4f;
+  margin-left: 2px;
+}
+
+/* Định dạng chung cho Select và Textarea */
+.form-group select,
+.form-group textarea {
+  padding: 12px 16px;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+  background-color: #fff;
+  font-family: "Inter", sans-serif;
+}
+
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: #4caf50;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.1);
+}
+
+.form-group select {
+  cursor: pointer;
+  appearance: none; /* Xóa mũi tên mặc định trên một số trình duyệt để làm mũi tên custom (tùy chọn) */
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23333333%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px top 50%;
+  background-size: 10px auto;
+}
+
+/* Ngăn không cho kéo giãn textarea ngang, chỉ cho kéo dọc */
+.form-group textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.form-group textarea::placeholder {
+  color: #bfbfbf;
+}

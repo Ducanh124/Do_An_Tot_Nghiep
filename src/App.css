@@ -1,0 +1,24 @@
+/* App.css */
+body,
+html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.app-container {
+  display: flex; /* Sử dụng Flexbox để chia cột */
+  height: 100vh; /* Chiều cao bằng 100% màn hình */
+  width: 100vw;
+}
+
+/* App.css */
+.main-content {
+  margin-left: 250px; /* Đẩy nội dung sang phải 250px để chừa chỗ cho Sidebar */
+  padding: 30px;
+  width: calc(100% - 250px); /* Tính toán lại chiều rộng */
+  min-height: 100vh;
+  background-color: #f4f6f8;
+  box-sizing: border-box;
+}

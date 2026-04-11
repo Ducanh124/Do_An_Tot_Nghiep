@@ -1,0 +1,143 @@
+/* ShiftCard.css */
+.shift-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #f0f0f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  padding: 20px;
+  margin-bottom: 16px;
+  font-family: 'Inter', sans-serif;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.shift-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* --- Header --- */
+.shift-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px dashed #e8e8e8;
+}
+
+.shift-time {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: #1a1a1a;
+  font-size: 16px;
+}
+
+.icon {
+  font-size: 16px;
+}
+
+/* Badge trạng thái */
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.status-badge.pending {
+  background-color: #fff7e6;
+  color: #fa8c16;
+}
+
+.status-badge.in_progress {
+  background-color: #e6f7ff;
+  color: #1890ff;
+}
+
+/* --- Body --- */
+.shift-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.service-type {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #333;
+}
+
+.info-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 14px;
+  color: #444;
+  line-height: 1.5;
+}
+
+.text-gray {
+  color: #8c8c8c;
+  margin-top: 2px;
+}
+
+.task-preview {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: #666;
+  background-color: #fafafa;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-top: 4px;
+}
+
+/* --- Footer (Khu vực Nút) --- */
+.shift-card-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-action {
+  padding: 10px 24px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%; /* Trên mobile có thể cho nút full viền */
+}
+
+/* Trạng thái 1: Nút Bắt đầu */
+.btn-start {
+  background-color: #4CAF50; /* Màu xanh lá chủ đạo */
+  color: white;
+}
+
+.btn-start:hover {
+  background-color: #43a047;
+}
+
+/* Trạng thái 2: Nút Báo cáo tiến độ */
+.btn-report {
+  background-color: #ffffff;
+  color: #1890ff; /* Chữ xanh dương nổi bật */
+  border: 1px solid #1890ff;
+}
+
+.btn-report:hover {
+  background-color: #e6f7ff;
+}
+
+/* Reponsive */
+@media (min-width: 768px) {
+  .btn-action {
+    width: auto; /* Trên PC nút chỉ dài vừa đủ nội dung */
+  }
+}

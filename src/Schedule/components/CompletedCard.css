@@ -1,0 +1,116 @@
+/* CompletedCard.css */
+.completed-card {
+  background-color: #fafafa; /* Nền xám rất nhạt thay vì trắng tinh */
+  border-radius: 12px;
+  border: 1px solid #e8e8e8;
+  padding: 20px;
+  margin-bottom: 16px;
+  font-family: 'Inter', sans-serif;
+  opacity: 0.9; /* Làm mờ thẻ một chút để phân biệt với ca chưa làm */
+}
+
+/* --- Header --- */
+.completed-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px dashed #e8e8e8;
+}
+
+.shift-time {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  font-size: 16px;
+}
+
+.icon {
+  font-size: 16px;
+}
+
+.icon-small {
+  font-size: 14px;
+}
+
+/* Badge trạng thái hoàn thành */
+.status-badge.completed {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  background-color: #f6ffed; /* Nền xanh lá cực nhạt */
+  color: #52c41a; /* Chữ xanh lá báo thành công */
+  border: 1px solid #b7eb8f;
+}
+
+/* --- Body --- */
+.completed-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.service-type {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #555; /* Chữ xám đậm thay vì đen đen nhánh */
+}
+
+.info-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.text-gray {
+  color: #bfbfbf;
+  margin-top: 2px;
+}
+
+.muted-text {
+  color: #8c8c8c; /* Chữ thông tin xám đi để giảm bớt sự chú ý */
+}
+
+/* --- Footer --- */
+.completed-card-footer {
+  background-color: #ffffff;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #f0f0f0;
+}
+
+.completion-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.finish-time {
+  font-size: 13px;
+  color: #888;
+  font-style: italic;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.star-icon.filled {
+  color: #faad14; /* Màu vàng của ngôi sao */
+  fill: #faad14; /* Tô đặc ngôi sao */
+}
