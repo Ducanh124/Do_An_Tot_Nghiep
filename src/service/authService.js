@@ -9,3 +9,4 @@ export const regis = async (data)=>{
     const res = await api.post('/auth/sign-up', data);
     return res.data
 }
+

@@ -1,59 +1,75 @@
-import React, { useState, useRef } from "react"; // Thêm useRef
+// src/pages/Profile/PersonalInfo.jsx
+import React, { useState, useEffect } from "react";
 import Skills from "./Skills";
 import "./PersonalInfo.css";
-import { FiUploadCloud, FiSave } from "react-icons/fi";
+import { FiSave } from "react-icons/fi";
+import { profileService } from "../service/profileService.js";
 
 const PersonalInfo = () => {
-  // --- STATE QUẢN LÝ THÔNG TIN CÁ NHÂN ---
+  // State lưu ID của user đang đăng nhập
+  const [userId, setUserId] = useState(null);
+
   const [formData, setFormData] = useState({
-    fullName: "Nguyễn Thị Hoa",
-    dob: "1990-05-15",
-    gender: "Nữ",
-    cccd: "",
-    phone: "0987654321",
-    email: "hoanguyen.maid@gmail.com",
-    address: "123 Đường Láng, Đống Đa, Hà Nội",
-    experience: "",
+    fullName: "",
+    phone: "",
+    email: "",
+    cardNumber: "",
     bio: "",
-    avatarFile: null, // Thêm state để lưu file ảnh thật nếu cần gửi lên server
   });
 
-  // Chuyển state này thành rỗng hoặc ảnh mặc định
-  const [avatarPreview, setAvatarPreview] = useState(
-    "https://i.pravatar.cc/150?img=47" 
-  );
+  const [selectedSkills, setSelectedSkills] = useState([]);
+  const [availableSkills, setAvailableSkills] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false); // State quản lý lúc đang bấm Lưu
 
-  // --- STATE QUẢN LÝ KỸ NĂNG CHUYÊN MÔN ---
-  const [selectedSkills, setSelectedSkills] = useState(["cleaning", "cooking"]);
+  // --- GỌI API LẤY DỮ LIỆU KHI VÀO TRANG ---
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      try {
+        const userRes = await profileService.getProfile();
+        const userData = userRes.data || userRes;
+        console.log("Dữ liệu API /auth/me trả về là:", userData);
+        
+        // Lưu lại ID người dùng để lát nữa dùng cho API add-profile
+        setUserId(userData._id || userData.id);
 
-  // --- REF CHO INPUT FILE ẨN ---
-  const fileInputRef = useRef(null);
+        setFormData({
+          fullName: userData.name || userData.fullName || "",
+          phone: userData.phone || "",
+          email: userData.email || "",
+          cardNumber: userData.cardNumber || "",
+          bio: userData.bio || "", // Bổ sung ánh xạ bio từ API nếu có
+        });
 
-  // --- CÁC HÀM XỬ LÝ ---
+        const categoriesRes = await profileService.getCategories();
+        console.log("Dữ liệu Danh sách Dịch vụ từ Backend:", categoriesRes);
+
+        // ĐÃ SỬA CHỖ NÀY: Trỏ chính xác vào mảng nằm trong 2 lớp data (categoriesRes.data.data)
+        const rawCategories = categoriesRes?.data?.data || [];
+
+        if (rawCategories.length > 0) {
+          const formattedSkills = rawCategories.map((cat) => ({
+            id: cat.id,
+            label: cat.name,
+          }));
+          setAvailableSkills(formattedSkills);
+        } else {
+          console.warn("Không có dịch vụ nào được trả về hoặc sai cấu trúc.");
+        }
+
+      } catch (error) {
+        console.error("Lỗi khi tải dữ liệu hồ sơ:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProfileData();
+  }, []);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-  };
-
-  // Hàm kích hoạt input file ẩn khi click vào nút "Chọn ảnh mới"
-  const handleUploadClick = () => {
-    fileInputRef.current.click();
-  };
-
-  // Hàm xử lý khi người dùng chọn ảnh avatar
-  const handleAvatarChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      // Lưu file thật vào formData để sau này gửi API (multipart/form-data)
-      setFormData({ ...formData, avatarFile: file });
-
-      // Dùng FileReader để tạo chuỗi Base64 hiển thị Preview ngay lập tức
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setAvatarPreview(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
   };
 
   const handleSkillToggle = (skillId) => {
@@ -64,122 +80,116 @@ const PersonalInfo = () => {
     }
   };
 
-  const handleCancel = () => {
-    console.log("Đã hủy thay đổi");
+  // --- HÀM SUBMIT ĐÓNG GÓI DỮ LIỆU VÀ GỌI API ---
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Validate nhỏ: Bắt buộc chọn ít nhất 1 dịch vụ
+    if (selectedSkills.length === 0) {
+      alert("Vui lòng chọn ít nhất 1 dịch vụ mà bạn có thể đảm nhận!");
+      return;
+    }
+
+    if (!userId) {
+      alert("Không tìm thấy ID người dùng. Vui lòng tải lại trang!");
+      return;
+    }
+
+    // Đóng gói dữ liệu theo đúng yêu cầu Backend
+    const payload = {
+      cardNumber: formData.cardNumber,
+      // Dùng .join(',') để nối các ID trong mảng thành 1 chuỗi. 
+      // Ví dụ: Mảng [24, 25] sẽ biến thành chuỗi "24,25" đúng ý Backend!
+      skills: selectedSkills.join(","),
+    };
+
+    console.log(
+      "Đang gửi dữ liệu lên:",
+      `/staff/${userId}/add-profile`,
+      payload,
+    );
+    setIsSaving(true);
+
+    try {
+      // Gọi API sang profileService
+      await profileService.addProfile(userId, payload);
+      alert("Đã cập nhật số tài khoản và kỹ năng thành công!");
+    } catch (error) {
+      console.error("Lỗi khi lưu profile:", error);
+    const backendError = error.response?.data?.message || "Lỗi không xác định từ server";
+      alert(`Backend báo lỗi: ${backendError}`); 
+    } finally {
+      setIsSaving(false);
+    }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const finalData = {
-      ...formData,
-      skills: selectedSkills,
-    };
-    console.log("Dữ liệu toàn bộ hồ sơ gửi lên Server:", finalData);
-    alert("Đã lưu toàn bộ thông tin hồ sơ thành công!");
-  };
+  if (isLoading) {
+    return (
+      <div style={{ padding: "24px", color: "#666" }}>
+        Đang tải thông tin...
+      </div>
+    );
+  }
 
   return (
     <div className="profile-page-container">
       <form onSubmit={handleSubmit}>
-        {/* ================= PHẦN 1: THÔNG TIN CÁ NHÂN ================= */}
         <div className="profile-section">
           <div className="section-header">
             <h2>Thông tin cá nhân</h2>
           </div>
 
           <div className="personal-info-content">
-            {/* Phần bên trái: Ảnh đại diện */}
-            <div className="avatar-section">
-              <div className="avatar-preview">
-                <img src={avatarPreview} alt="Avatar" />
-              </div>
-              
-              {/* Nút bấm để gọi input ẩn */}
-              <button 
-                type="button" 
-                className="btn-upload" 
-                onClick={handleUploadClick}
-              >
-                <FiUploadCloud /> Chọn ảnh mới
-              </button>
-
-              {/* Thẻ input type="file" bị ẩn đi */}
-              <input
-                type="file"
-                accept="image/jpeg, image/png"
-                ref={fileInputRef}
-                onChange={handleAvatarChange}
-                style={{ display: "none" }}
-              />
-
-              <p className="upload-hint">Định dạng JPEG, PNG. Tối đa 2MB.</p>
-            </div>
-
-            {/* Phần bên phải: Form nhập liệu */}
             <div className="form-section">
               <div className="info-form">
                 <div className="form-grid">
+                  {/* Các trường Read-only (Chỉ đọc) lấy từ API */}
                   <div className="form-group">
-                    <label>
-                      Họ và tên <span className="required">*</span>
-                    </label>
+                    <label>Họ và tên</label>
                     <input
                       type="text"
                       name="fullName"
                       value={formData.fullName}
-                      onChange={handleInputChange}
-                      required
-                      placeholder="Nhập họ và tên"
+                      readOnly
+                      className="read-only-input"
                     />
                   </div>
 
                   <div className="form-group">
-                    <label>
-                      Ngày sinh <span className="required">*</span>
-                    </label>
-                    <input
-                      type="date"
-                      name="dob"
-                      value={formData.dob}
-                      onChange={handleInputChange}
-                      required
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>
-                      Số điện thoại <span className="required">*</span>
-                    </label>
+                    <label>Số điện thoại</label>
                     <input
                       type="tel"
                       name="phone"
                       value={formData.phone}
-                      onChange={handleInputChange}
-                      required
-                      placeholder="Nhập số điện thoại"
+                      readOnly
+                      className="read-only-input"
                     />
                   </div>
+
                   <div className="form-group">
                     <label>Email</label>
                     <input
                       type="email"
                       name="email"
                       value={formData.email}
-                      onChange={handleInputChange}
-                      placeholder="nguyenvana@email.com"
+                      readOnly
+                      className="read-only-input"
                     />
                   </div>
 
-                  <div className="form-group full-width">
+                  {/* Trường nhập Card Number */}
+                  <div className="form-group">
                     <label>
-                      Địa chỉ hiện tại <span className="required">*</span>
+                      Số tài khoản / Thẻ ngân hàng{" "}
+                      <span className="required">*</span>
                     </label>
                     <input
                       type="text"
-                      name="address"
-                      value={formData.address}
+                      name="cardNumber"
+                      value={formData.cardNumber}
                       onChange={handleInputChange}
+                      placeholder="Nhập số tài khoản ngân hàng của bạn"
                       required
-                      placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành phố"
                     />
                   </div>
                 </div>
@@ -188,22 +198,17 @@ const PersonalInfo = () => {
           </div>
         </div>
 
-        {/* ================= PHẦN 2: KỸ NĂNG ================= */}
         <Skills
+          availableSkills={availableSkills}
           selectedSkills={selectedSkills}
           onSkillChange={handleSkillToggle}
-          experience={formData.experience}
-          bio={formData.bio}
+          bio={formData.bio}                 
           onInputChange={handleInputChange}
         />
 
-        {/* ================= CỤM NÚT LƯU ================= */}
         <div className="form-actions-global">
-          <button type="button" className="btn-cancel" onClick={handleCancel}>
-            Hủy bỏ
-          </button>
-          <button type="submit" className="btn-save">
-            <FiSave /> Lưu thay đổi
+          <button type="submit" className="btn-save" disabled={isSaving}>
+            <FiSave /> {isSaving ? "Đang lưu..." : "Lưu thay đổi"}
           </button>
         </div>
       </form>
