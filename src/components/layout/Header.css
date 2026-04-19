@@ -1,0 +1,32 @@
+.my-custom-link {
+  font-size: 1.2rem !important;
+  font-weight: 500 !important;
+  padding-left: 15px !important;
+  padding-right: 15px !important;
+  transition: color 0.3s ease;
+}
+.btn-booking {
+  box-shadow: 0 4px 10px rgba(13, 110, 253, 0.2);
+  transition: all 0.3s ease !important;
+}
+
+.btn-booking:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(13, 110, 253, 0.3);
+}
+.navbar {
+  padding-top: 0.5rem !important;
+  padding-bottom: 0.5rem !important;
+  font-size: 1.2rem;
+}
+.user-display {
+  font-weight: 600;
+  color: #212529;
+  font-size: 1rem;
+}
+
+.brand-slogan {
+  font-size: 0.65rem;
+  margin-top: -5px;
+  color: #6c757d; /* text-secondary của bootstrap */
+}

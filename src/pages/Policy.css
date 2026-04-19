@@ -1,0 +1,72 @@
+/* src/pages/CommitmentPolicy.css */
+.commitment-wrapper {
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+.commitment-container {
+  max-width: 900px;
+  margin: 0 auto;
+  background-color: #ffffff;
+  padding: 50px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  line-height: 1.7;
+  color: #333;
+}
+
+.main-title {
+  text-align: center;
+  color: #2c3e50;
+  font-weight: 700;
+  margin-bottom: 40px;
+  text-transform: uppercase;
+}
+
+.section-title {
+  color: #2c3e50;
+  font-weight: 700;
+  margin-top: 40px;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  font-size: 1.25rem;
+  border-bottom: 2px solid #e9ecef;
+  padding-bottom: 10px;
+}
+
+.sub-section-title {
+  color: #007bff;
+  font-weight: 600;
+  margin-top: 25px;
+  margin-bottom: 15px;
+  font-size: 1.1rem;
+}
+
+.policy-paragraph {
+  margin-bottom: 15px;
+  text-align: justify;
+}
+
+.condition-text {
+  font-weight: 600;
+  font-style: italic;
+  color: #495057;
+}
+
+.custom-list {
+  padding-left: 25px;
+  margin-bottom: 20px;
+}
+
+.custom-list li {
+  margin-bottom: 10px;
+}
+
+.custom-list li::marker {
+  color: #007bff;
+}
+
+.brand-name {
+  color: #007bff;
+  font-weight: 500;
+}

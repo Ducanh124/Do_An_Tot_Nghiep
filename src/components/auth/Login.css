@@ -1,0 +1,120 @@
+/* frontend/src/pages/AuthPage.css */
+.auth-container {
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f4f7f6;
+  padding: 40px 20px;
+}
+
+.auth-card {
+  background: #ffffff;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  max-width: 450px;
+  transition: all 0.3s ease;
+}
+
+/* Thanh trượt chọn Đăng nhập / Đăng ký */
+.auth-toggle-box {
+  display: flex;
+  background-color: #f1f5f9;
+  border-radius: 30px;
+  margin-bottom: 30px;
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-toggle-btn {
+  flex: 1;
+  padding: 10px 0;
+  text-align: center;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  z-index: 1;
+  transition: color 0.3s ease;
+}
+
+.auth-toggle-btn.active {
+  color: #ffffff;
+}
+
+/* Cục màu xanh trượt qua lại */
+.auth-toggle-slider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 50%;
+  background-color: #0d6efd;
+  border-radius: 30px;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.auth-toggle-slider.right {
+  transform: translateX(100%);
+}
+
+/* Form input */
+.form-label {
+  font-weight: 600;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+.form-control {
+  padding: 12px 15px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  background-color: #fcfcfc;
+}
+
+.form-control:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+  background-color: #fff;
+}
+
+.btn-auth {
+  background-color: #0d6efd;
+  color: white;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  width: 100%;
+  transition: all 0.3s;
+  margin-top: 15px;
+}
+
+.btn-auth:hover {
+  background-color: #0b5ed7;
+  transform: translateY(-2px);
+}
+
+/* Hiệu ứng hiển thị mượt mà */
+.fade-in {
+  animation: fadeIn 0.4s ease-in-out;
+}
+.note {
+  display: block; /*Để cho có thể xuống dòng trg bất cứ th nào  */
+  margin-top: 6px;
+  font-size: 0.85rem;
+  color: #f20606d0;
+  font-style: italic;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

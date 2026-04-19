@@ -1,0 +1,104 @@
+/* src/pages/ServiceListByCategory.css */
+
+.service-list-container {
+  min-height: 100vh;
+  background-color: #f8f9fa; /* Màu nền xám nhạt giúp nổi bật các thẻ trắng */
+  padding-bottom: 50px;
+}
+
+/* Nút quay lại */
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: #2333ab;
+  background: #d9effe;
+  border-radius: 10px;
+  border: #02172c;
+  padding: 10px 20px;
+
+  transition: color 0.2s ease;
+}
+
+.btn-back:hover {
+  color: #fafafa;
+  background-color: #0477f2;
+}
+
+/* Thẻ Dịch vụ (Card) */
+.service-item-card {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #a6b4c8;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+  transition: all 0.3s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+/* Hiệu ứng nảy lên khi lướt chuột */
+.service-item-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 25px rgba(0, 123, 255, 0.1);
+  border-color: #067af5;
+}
+
+.service-card-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.service-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #2b3445;
+  margin-bottom: 12px;
+}
+
+.service-desc {
+  font-size: 0.9rem;
+  color: #7d879c;
+  line-height: 1.5;
+  flex-grow: 1; /* Đẩy phần giá tiền xuống đáy thẻ */
+  margin-bottom: 20px;
+}
+
+.service-price-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  border-top: 1px dashed #e3e9ef;
+  padding-top: 16px;
+}
+
+.price-label {
+  font-size: 0.8rem;
+  color: #7d879c;
+  margin-bottom: 4px;
+}
+
+.price-value {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #d23f57; /* Màu đỏ đô cho giá tiền */
+}
+
+.btn-select-service {
+  background-color: #e3f2fd;
+  color: #0d6efd;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 8px 20px;
+  transition: all 0.2s ease;
+}
+
+.service-item-card:hover .btn-select-service {
+  background-color: #0d6efd;
+  color: #ffffff;
+}

@@ -1,0 +1,52 @@
+.directory-container {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+.service-circle-card {
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.service-circle-card:hover {
+  transform: scale(1.05);
+}
+.circle-icon {
+  width: 100px;
+  height: 100px;
+  background: rgb(255, 255, 255);
+  border-radius: 50%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  border: 1px solid #eee;
+}
+.circle-text {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #333;
+}
+.service-hover-card {
+  background-color: hsl(0, 0%, 100%);
+  border: 1px solid #f6f6f7;
+  border-radius: 16px; /* Bo góc cho mềm mại, hiện đại */
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  /* Khi bỏ chuột ra thì hết bóng  */
+  transition: all 0.3s ease-in-out;
+  cursor: pointer; /* Biến con trỏ chuột thành hình bàn tay */
+}
+
+/*  (Hover) khi di chyuển */
+.service-hover-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.12);
+
+  border-color: #007bff;
+}
+
+/* Icon hover */
+.service-hover-card:hover img {
+  transform: scale(1.05);
+  transition: transform 0.3s ease;
+}
