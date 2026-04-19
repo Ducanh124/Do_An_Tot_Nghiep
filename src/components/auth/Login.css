@@ -7,7 +7,6 @@
   background-color: #f4f7f6;
   padding: 40px 20px;
 }
-
 .auth-card {
   background: #ffffff;
   padding: 40px;
@@ -38,11 +37,9 @@
   z-index: 1;
   transition: color 0.3s ease;
 }
-
 .auth-toggle-btn.active {
   color: #ffffff;
 }
-
 /* Cục màu xanh trượt qua lại */
 .auth-toggle-slider {
   position: absolute;
@@ -54,7 +51,6 @@
   border-radius: 30px;
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
 .auth-toggle-slider.right {
   transform: translateX(100%);
 }
@@ -78,7 +74,6 @@
   box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
   background-color: #fff;
 }
-
 .btn-auth {
   background-color: #0d6efd;
   color: white;
@@ -90,13 +85,12 @@
   transition: all 0.3s;
   margin-top: 15px;
 }
-
 .btn-auth:hover {
   background-color: #0b5ed7;
   transform: translateY(-2px);
 }
 
-/* Hiệu ứng hiển thị mượt mà */
+/* Hiệu ứng hiển thị đnăg nhập hay đăng kí */
 .fade-in {
   animation: fadeIn 0.4s ease-in-out;
 }

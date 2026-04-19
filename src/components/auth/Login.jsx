@@ -2,20 +2,16 @@ import React, { useState, useEffect } from "react";
 import authService from "../../services/authService.js";
 import areaService from "../../services/areaService.js";
 import "./Login.css";
-
 const AuthPage = () => {
-  const [isLogin, setIsLogin] = useState(true);
-
-  // --- STATE CHO KHU VỰC (Giống trang Booking) ---
+  const [isLogin, setIsLogin] = useState(true); //tạo biến mới đầu vào sẽ luôn là hàm đăng nhập khi click sẽ lưu vào setislogin đêr sang đăng kí
+  // --- state cho khu vực
   const [areas, setAreas] = useState([]);
   const [selectedCityId, setSelectedCityId] = useState("");
   const [districts, setDistricts] = useState([]);
   const [selectedDistrictId, setSelectedDistrictId] = useState("");
-
   // --- STATE CHO NÚT GHI NHỚ MẬT KHẨU ---
   const [rememberMe, setRememberMe] = useState(false);
   const savedEmail = localStorage.getItem("rememberedEmail") || "";
-
   const [formData, setFormData] = useState({
     name: "",
     email: savedEmail,
@@ -38,7 +34,11 @@ const AuthPage = () => {
     };
     fetchAreas();
   }, []);
-
+  //  Sự kiện quan trọng để có thể ghi nhớ thông tin của người nhập rồi đưa cho setFormData
+  //  e:event,e.target đại diện cho mục tiêu mà các dòng input hiển thị nếu input ta đặt tên là name thì khi người dùng viết cái gì
+  //  vào input nó sẽ được trỏ vào là e.target.name rồi lấy ra giá trị của nó
+  //  ...formData là đg lấy ra toàn bộ dữ liệu cũ vì nếu để không thì các dữ liệu nhập
+  //  từ trước sẽ bị xoá do dùng fromData và setFormData
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
