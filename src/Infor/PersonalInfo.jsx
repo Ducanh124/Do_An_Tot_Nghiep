@@ -6,21 +6,21 @@ import { FiSave } from "react-icons/fi";
 import { profileService } from "../service/profileService.js";
 
 const PersonalInfo = () => {
-  // State lưu ID của user đang đăng nhập
   const [userId, setUserId] = useState(null);
 
+  // 👉 BƯỚC 1: Gom tất cả dữ liệu vào 1 cục formData duy nhất
   const [formData, setFormData] = useState({
     fullName: "",
     phone: "",
     email: "",
     cardNumber: "",
-    bio: "",
+    skills: "",       // Nhập chữ bình thường
+    experience: "",   // Select box
+    review: "",       // Textarea
   });
 
-  const [selectedSkills, setSelectedSkills] = useState([]);
-  const [availableSkills, setAvailableSkills] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false); // State quản lý lúc đang bấm Lưu
+  const [isSaving, setIsSaving] = useState(false);
 
   // --- GỌI API LẤY DỮ LIỆU KHI VÀO TRANG ---
   useEffect(() => {
@@ -28,9 +28,7 @@ const PersonalInfo = () => {
       try {
         const userRes = await profileService.getProfile();
         const userData = userRes.data || userRes;
-        console.log("Dữ liệu API /auth/me trả về là:", userData);
         
-        // Lưu lại ID người dùng để lát nữa dùng cho API add-profile
         setUserId(userData._id || userData.id);
 
         setFormData({
@@ -38,24 +36,10 @@ const PersonalInfo = () => {
           phone: userData.phone || "",
           email: userData.email || "",
           cardNumber: userData.cardNumber || "",
-          bio: userData.bio || "", // Bổ sung ánh xạ bio từ API nếu có
+          skills: userData.skills || "", 
+          experience: userData.experience || "",
+          review: userData.review || "",
         });
-
-        const categoriesRes = await profileService.getCategories();
-        console.log("Dữ liệu Danh sách Dịch vụ từ Backend:", categoriesRes);
-
-        // ĐÃ SỬA CHỖ NÀY: Trỏ chính xác vào mảng nằm trong 2 lớp data (categoriesRes.data.data)
-        const rawCategories = categoriesRes?.data?.data || [];
-
-        if (rawCategories.length > 0) {
-          const formattedSkills = rawCategories.map((cat) => ({
-            id: cat.id,
-            label: cat.name,
-          }));
-          setAvailableSkills(formattedSkills);
-        } else {
-          console.warn("Không có dịch vụ nào được trả về hoặc sai cấu trúc.");
-        }
 
       } catch (error) {
         console.error("Lỗi khi tải dữ liệu hồ sơ:", error);
@@ -67,56 +51,38 @@ const PersonalInfo = () => {
     fetchProfileData();
   }, []);
 
+  // Hàm dùng chung để bắt sự kiện thay đổi cho TẤT CẢ các ô nhập
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-  };
-
-  const handleSkillToggle = (skillId) => {
-    if (selectedSkills.includes(skillId)) {
-      setSelectedSkills(selectedSkills.filter((id) => id !== skillId));
-    } else {
-      setSelectedSkills([...selectedSkills, skillId]);
-    }
   };
 
   // --- HÀM SUBMIT ĐÓNG GÓI DỮ LIỆU VÀ GỌI API ---
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate nhỏ: Bắt buộc chọn ít nhất 1 dịch vụ
-    if (selectedSkills.length === 0) {
-      alert("Vui lòng chọn ít nhất 1 dịch vụ mà bạn có thể đảm nhận!");
-      return;
-    }
-
     if (!userId) {
       alert("Không tìm thấy ID người dùng. Vui lòng tải lại trang!");
       return;
     }
 
-    // Đóng gói dữ liệu theo đúng yêu cầu Backend
+    // 👉 BƯỚC 2: Đóng gói đúng 4 trường Backend cần
     const payload = {
       cardNumber: formData.cardNumber,
-      // Dùng .join(',') để nối các ID trong mảng thành 1 chuỗi. 
-      // Ví dụ: Mảng [24, 25] sẽ biến thành chuỗi "24,25" đúng ý Backend!
-      skills: selectedSkills.join(","),
+      skills: formData.skills,
+      experience: formData.experience,
+      review: formData.review,
     };
 
-    console.log(
-      "Đang gửi dữ liệu lên:",
-      `/staff/${userId}/add-profile`,
-      payload,
-    );
+    console.log("Đang gửi dữ liệu lên:", `/staff/${userId}/add-profile`, payload);
     setIsSaving(true);
 
     try {
-      // Gọi API sang profileService
       await profileService.addProfile(userId, payload);
-      alert("Đã cập nhật số tài khoản và kỹ năng thành công!");
+      alert("Đã cập nhật hồ sơ thành công!");
     } catch (error) {
       console.error("Lỗi khi lưu profile:", error);
-    const backendError = error.response?.data?.message || "Lỗi không xác định từ server";
+      const backendError = error.response?.data?.message || "Lỗi không xác định từ server";
       alert(`Backend báo lỗi: ${backendError}`); 
     } finally {
       setIsSaving(false);
@@ -143,7 +109,6 @@ const PersonalInfo = () => {
             <div className="form-section">
               <div className="info-form">
                 <div className="form-grid">
-                  {/* Các trường Read-only (Chỉ đọc) lấy từ API */}
                   <div className="form-group">
                     <label>Họ và tên</label>
                     <input
@@ -177,7 +142,6 @@ const PersonalInfo = () => {
                     />
                   </div>
 
-                  {/* Trường nhập Card Number */}
                   <div className="form-group">
                     <label>
                       Số tài khoản / Thẻ ngân hàng{" "}
@@ -198,11 +162,11 @@ const PersonalInfo = () => {
           </div>
         </div>
 
+        {/* 👉 BƯỚC 3: Truyền 3 giá trị xuống Component Skills */}
         <Skills
-          availableSkills={availableSkills}
-          selectedSkills={selectedSkills}
-          onSkillChange={handleSkillToggle}
-          bio={formData.bio}                 
+          skills={formData.skills}
+          experience={formData.experience}
+          review={formData.review}                
           onInputChange={handleInputChange}
         />
 

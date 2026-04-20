@@ -1,61 +1,69 @@
+// src/pages/Profile/Skills.jsx
 import React from 'react';
-import { FiCheck } from 'react-icons/fi';
 import './Skills.css';
 
 const Skills = ({ 
-  availableSkills = [], // 👉 BƯỚC 1: Nhận danh sách dịch vụ từ API do Cha truyền xuống
-  selectedSkills = [], 
-  onSkillChange, 
-  bio,            
+  skills, 
+  experience,
+  review,            
   onInputChange   
 }) => {
   
-  // 👉 BƯỚC 2: Đã xóa mảng availableSkills fix cứng ở đây!
-
   return (
     <div className="profile-section">
       <div className="section-header">
-        <h2>Kỹ năng chuyên môn</h2>
-        <p>Lựa chọn các dịch vụ mà bạn có thể đảm nhận để nhận được các ca làm việc phù hợp.</p>
+        <h2>Kỹ năng chuyên môn & Kinh nghiệm</h2>
+        <p>Vui lòng điền các dịch vụ bạn có thể làm và kinh nghiệm của bạn.</p>
       </div>
 
-      <div className="skills-grid">
-        {/* Kiểm tra xem API đã trả về dữ liệu chưa */}
-        {availableSkills.length > 0 ? (
-          availableSkills.map((skill) => {
-            const isSelected = selectedSkills.includes(skill.id);
-            return (
-              <button
-                key={skill.id}
-                type="button"
-                className={`skill-pill ${isSelected ? 'selected' : ''}`}
-                onClick={() => onSkillChange(skill.id)}
-              >
-                {/* Thêm dấu tick nhỏ bên cạnh chữ khi chọn */}
-                {isSelected && <FiCheck className="check-icon" style={{ marginRight: '6px' }} />}
-                <span>{skill.label}</span>
-              </button>
-            );
-          })
-        ) : (
-          <p style={{ color: '#888', fontSize: '14px', fontStyle: 'italic' }}>
-            Đang tải danh sách dịch vụ từ hệ thống...
-          </p>
-        )}
-      </div>
-
-      {/* --- PHẦN GIỚI THIỆU BẢN THÂN --- */}
-      <div className="additional-info-grid" style={{ marginTop: '24px' }}>
+      <div className="additional-info-grid" style={{ marginTop: '16px' }}>
+        
+        {/* Ô NHẬP KỸ NĂNG */}
         <div className="form-group full-width">
-          <label>Giới thiệu bản thân</label>
-          <textarea 
-            name="bio" 
-            value={bio || ''} 
+          <label>Kỹ năng (Dịch vụ) <span className="required">*</span></label>
+          <input 
+            type="text"
+            name="skills" 
+            value={skills || ''} 
             onChange={onInputChange}
-            placeholder="Viết một vài dòng giới thiệu về bản thân, điểm mạnh, hoặc mong muốn của bạn để khách hàng hiểu rõ hơn về bạn..."
+            placeholder="Ví dụ: Dọn dẹp nhà cửa, Nấu ăn, Sửa điện nước..."
+            required
+            style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ddd' }}
+          />
+        </div>
+
+        {/* SELECT BOX KINH NGHIỆM ĐƯỢC CHUYỂN XUỐNG ĐÂY */}
+        <div className="form-group full-width" style={{ marginTop: '16px' }}>
+          <label>Kinh nghiệm <span className="required">*</span></label>
+          <select 
+            name="experience" 
+            value={experience || ''} 
+            onChange={onInputChange}
+            required
+            style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ddd' }}
+          >
+            <option value="" disabled>-- Chọn số năm kinh nghiệm --</option>
+            <option value="< 1 năm">&lt; 1 năm</option>
+            <option value="1 năm > 2 năm">1 năm - 2 năm</option>
+            <option value="< 2 năm > 5 năm">2 năm - 5 năm</option>
+            <option value="> 5 năm">Trên 5 năm</option>
+          </select>
+        </div>
+
+        {/* Ô NHẬP REVIEW */}
+        <div className="form-group full-width" style={{ marginTop: '16px' }}>
+          <label>Giới thiệu bản thân <span className="required">*</span></label>
+          <textarea 
+            name="review" 
+            value={review || ''} 
+            onChange={onInputChange}
+            placeholder="Viết một vài dòng giới thiệu về bản thân, điểm mạnh..."
             rows="4"
+            required
+            style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ddd' }}
           ></textarea>
         </div>
+
       </div>
     </div>
   );

@@ -1,54 +1,125 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { 
-  FiUser, FiMail, FiLock, FiPhone, 
-  FiMapPin, FiMap, FiUsers, 
-  FiEye, FiEyeOff 
-} from 'react-icons/fi';
-import './Register.css';
-
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  FiUser,
+  FiMail,
+  FiLock,
+  FiPhone,
+  FiMapPin,
+  FiMap,
+  FiUsers,
+  FiEye,
+  FiEyeOff,
+} from "react-icons/fi";
+import "./Register.css";
+import { regis, getCities, getDistricts } from "../service/authService.js";
 const Register = () => {
   const navigate = useNavigate();
 
-  // Khởi tạo state
+  // --- STATE QUẢN LÝ FORM ---
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    phone: '',
-    address: '',
-    areaId: '',     
-    gender: 'Nam',  
-    role: 'customer' // Mặc định là khách hàng
+    name: "",
+    email: "",
+    password: "",
+    phone: "",
+    address: "",
+    areaId: "",
+    gender: "",
+    role: "customer",
   });
+
+  // --- STATE QUẢN LÝ THÀNH PHỐ VÀ QUẬN ---
+  const [cities, setCities] = useState([]);
+  const [districts, setDistricts] = useState([]);
+  const [selectedCity, setSelectedCity] = useState(""); // Lưu ID thành phố đang chọn
 
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Xử lý thay đổi các ô text/select
+  // 1. GỌI API LẤY DANH SÁCH THÀNH PHỐ KHI VÀO TRANG
+  useEffect(() => {
+    const fetchCities = async () => {
+      try {
+        const responseData = await getCities(); // Dùng hàm từ Service
+        const cityData = responseData.data.data || [];
+        setCities(cityData);
+      } catch (error) {
+        console.error("Lỗi khi tải danh sách thành phố:", error);
+      }
+    };
+    fetchCities();
+  }, []);
+
+  // 2. XỬ LÝ KHI NGƯỜI DÙNG CHỌN 1 THÀNH PHỐ
+  const handleCityChange = async (e) => {
+    const cityId = e.target.value;
+    setSelectedCity(cityId);
+    setDistricts([]);
+    setFormData({ ...formData, areaId: "" });
+
+    if (cityId) {
+      try {
+        const responseData = await getDistricts(cityId); // Dùng hàm từ Service
+        const districtData =
+          responseData.children || responseData.data?.children || [];
+        setDistricts(districtData);
+      } catch (error) {
+        console.error("Lỗi khi tải danh sách quận/huyện:", error);
+      }
+    }
+  };
+  // 3. XỬ LÝ THAY ĐỔI CÁC Ô INPUT KHÁC
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  // Xử lý gửi Form
-  const handleRegister = (e) => {
+  // 4. XỬ LÝ GỬI FORM LÊN BACKEND
+  const handleRegister = async (e) => {
     e.preventDefault();
+
+    if (!formData.areaId) {
+      alert("Vui lòng chọn Quận/Huyện!");
+      return;
+    }
+
     setIsLoading(true);
 
-    // Giả lập độ trễ API
-    setTimeout(() => {
+    // Đóng gói dữ liệu theo đúng yêu cầu Backend: name, email, password, phone, address, areaid, role, gender
+    const payload = {
+      name: formData.name,
+      email: formData.email,
+      password: formData.password,
+      phone: formData.phone,
+      address: formData.address,
+      areaId: Number(formData.areaId), // Chuyển sang số nếu Backend yêu cầu số nguyên
+      role: formData.role,
+      gender: formData.gender,
+    };
+
+    console.log("Dữ liệu đăng ký đóng gói gửi đi:", payload);
+
+    try {
+      // GỌI API ĐĂNG KÝ THẬT TỪ authService
+      await regis(payload);
+
+      alert("Đăng ký tài khoản thành công!");
+      navigate("/login");
+    } catch (error) {
+      const backendError = error.response?.data;
+      console.error("🚨 Chi tiết lỗi từ Backend:", backendError);
+      console.error("Lỗi đăng ký:", error);
+      const errorMsg =
+        error.response?.data?.message || "Đăng ký thất bại. Vui lòng thử lại!";
+      alert(errorMsg);
+    } finally {
       setIsLoading(false);
-      console.log("Dữ liệu đăng ký gửi đi:", formData);
-      alert('Đăng ký tài khoản thành công!');
-      navigate('/login'); // Chuyển về trang đăng nhập sau khi thành công
-    }, 1200);
+    }
   };
 
   return (
     <div className="register-page-container">
       <div className="register-card">
-        
         <div className="register-header">
           <h2>Tạo tài khoản mới</h2>
           <p>Điền thông tin bên dưới để trải nghiệm dịch vụ.</p>
@@ -59,106 +130,205 @@ const Register = () => {
             {/* --- CỘT TRÁI --- */}
             <div className="form-column">
               <div className="form-group">
-                <label>Họ và tên <span className="required">*</span></label>
+                <label>
+                  Họ và tên <span className="required">*</span>
+                </label>
                 <div className="input-wrapper">
                   <FiUser className="input-icon" />
-                  <input type="text" name="name" placeholder="Ví dụ: Nguyễn Văn A" value={formData.name} onChange={handleInputChange} required />
+                  <input
+                    type="text"
+                    name="name"
+                    placeholder="Ví dụ: Nguyễn Văn A"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    required
+                  />
                 </div>
               </div>
 
               <div className="form-group">
-                <label>Email <span className="required">*</span></label>
+                <label>
+                  Email <span className="required">*</span>
+                </label>
                 <div className="input-wrapper">
                   <FiMail className="input-icon" />
-                  <input type="email" name="email" placeholder="email@example.com" value={formData.email} onChange={handleInputChange} required />
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="email@example.com"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    required
+                  />
                 </div>
               </div>
 
               <div className="form-group">
-                <label>Mật khẩu <span className="required">*</span></label>
+                <label>
+                  Mật khẩu <span className="required">*</span>
+                </label>
                 <div className="input-wrapper">
                   <FiLock className="input-icon" />
-                  <input type={showPassword ? "text" : "password"} name="password" placeholder="Tối thiểu 6 ký tự" value={formData.password} onChange={handleInputChange} required />
-                  <button type="button" className="btn-toggle-password" onClick={() => setShowPassword(!showPassword)}>
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    placeholder="Tối thiểu 6 ký tự"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="btn-toggle-password"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
                     {showPassword ? <FiEyeOff /> : <FiEye />}
                   </button>
                 </div>
               </div>
 
               <div className="form-group">
-                <label>Số điện thoại <span className="required">*</span></label>
+                <label>
+                  Số điện thoại <span className="required">*</span>
+                </label>
                 <div className="input-wrapper">
                   <FiPhone className="input-icon" />
-                  <input type="tel" name="phone" placeholder="0912xxx888" value={formData.phone} onChange={handleInputChange} required />
+                  <input
+                    type="tel"
+                    name="phone"
+                    placeholder="0912xxx888"
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                    required
+                  />
                 </div>
               </div>
             </div>
 
             {/* --- CỘT PHẢI --- */}
             <div className="form-column">
+              {/* CHỌN THÀNH PHỐ */}
               <div className="form-group">
-                <label>Địa chỉ <span className="required">*</span></label>
-                <div className="input-wrapper">
-                  <FiMapPin className="input-icon" />
-                  <input type="text" name="address" placeholder="Số nhà, tên đường..." value={formData.address} onChange={handleInputChange} required />
-                </div>
-              </div>
-
-              <div className="form-group">
-                <label>Khu vực (Area ID) <span className="required">*</span></label>
+                <label>
+                  Thành phố <span className="required">*</span>
+                </label>
                 <div className="input-wrapper">
                   <FiMap className="input-icon" />
-                  <select name="areaId" value={formData.areaId} onChange={handleInputChange} required>
-                    <option value="" disabled>-- Chọn khu vực --</option>
-                    <option value="area_01">Quận Hoàn Kiếm (area_01)</option>
-                    <option value="area_02">Quận Cầu Giấy (area_02)</option>
-                    <option value="area_03">Quận Đống Đa (area_03)</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="form-group">
-                <label>Giới tính <span className="required">*</span></label>
-                <div className="input-wrapper">
-                  <FiUser className="input-icon" />
-                  <select name="gender" value={formData.gender} onChange={handleInputChange} required>
-                    <option value="Nam">Nam</option>
-                    <option value="Nữ">Nữ</option>
-                    <option value="Khác">Khác</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="form-group">
-                <label>Vai trò hệ thống <span className="required">*</span></label>
-                <div className="input-wrapper">
-                  <FiUsers className="input-icon" />
-                  <select 
-                    name="role" 
-                    value={formData.role} 
-                    onChange={handleInputChange}
+                  <select
+                    value={selectedCity}
+                    onChange={handleCityChange}
                     required
                   >
-                    <option value="customer">Khách hàng (Customer)</option>
-                    <option value="staff">Nhân viên (Staff)</option>
-                    <option value="admin">Admin</option>
+                    <option value="" disabled>
+                      -- Chọn Thành phố --
+                    </option>
+                    {cities.map((city) => (
+                      <option key={city.id} value={city.id}>
+                        {city.name}
+                      </option>
+                    ))}
                   </select>
+                </div>
+              </div>
+
+              {/* CHỌN QUẬN / HUYỆN */}
+              <div className="form-group">
+                <label>
+                  Quận/Huyện <span className="required">*</span>
+                </label>
+                <div className="input-wrapper">
+                  <FiMap className="input-icon" />
+                  <select
+                    name="areaId"
+                    value={formData.areaId}
+                    onChange={handleInputChange}
+                    required
+                    disabled={!selectedCity} // Khóa lại nếu chưa chọn thành phố
+                  >
+                    <option value="" disabled>
+                      -- Chọn Quận/Huyện --
+                    </option>
+                    {districts.map((district) => (
+                      <option key={district.id} value={district.id}>
+                        {district.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* NHẬP ĐỊA CHỈ NHÀ */}
+              <div className="form-group">
+                <label>
+                  Địa chỉ nhà <span className="required">*</span>
+                </label>
+                <div className="input-wrapper">
+                  <FiMapPin className="input-icon" />
+                  <input
+                    type="text"
+                    name="address"
+                    placeholder="Số nhà, tên đường..."
+                    value={formData.address}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div
+                className="form-group"
+                style={{ display: "flex", gap: "16px" }}
+              >
+                <div style={{ flex: 1 }}>
+                  <label>
+                    Giới tính <span className="required">*</span>
+                  </label>
+                  <div className="input-wrapper">
+                    <FiUser className="input-icon" />
+                    <select
+                      name="gender"
+                      value={formData.gender}
+                      onChange={handleInputChange}
+                      required
+                    >
+                      <option value="" disabled>-- Chọn Giới tính --</option>
+                      <option value="male">Nam</option>
+                      <option value="female">Nữ</option>
+                      <option value="other">Khác</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div style={{ flex: 1 }}>
+                  <label>
+                    Vai trò <span className="required">*</span>
+                  </label>
+                  <div className="input-wrapper">
+                    <FiUsers className="input-icon" />
+                    <select
+                      name="role"
+                      value={formData.role}
+                      onChange={handleInputChange}
+                      required
+                    >
+                      <option value="customer">Khách hàng</option>
+                      <option value="staff">Nhân viên</option>
+                      <option value="admin">Admin</option>
+                    </select>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
           <button type="submit" className="btn-register" disabled={isLoading}>
-            {isLoading ? 'Đang xử lý...' : 'Hoàn tất Đăng ký'}
+            {isLoading ? "Đang xử lý..." : "Hoàn tất Đăng ký"}
           </button>
-
         </form>
 
-        <div className="register-footer" style={{ textAlign: 'center', marginTop: '1.5rem' }}>
-          {/* Đã loại bỏ textDecoration: 'underline' thành 'none' */}
+        {/* <div className="register-footer" style={{ textAlign: 'center', marginTop: '1.5rem' }}>
           <p>Đã có tài khoản? <span style={{ color: 'blue', cursor: 'pointer', textDecoration: 'none' }} onClick={() => navigate('/login')}>Đăng nhập ngay</span></p>
-        </div>
-
+        </div> */}
       </div>
     </div>
   );
