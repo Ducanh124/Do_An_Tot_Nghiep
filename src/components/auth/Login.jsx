@@ -43,16 +43,25 @@ const AuthPage = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Hàm xử lý khi chọn Tỉnh/Thành
-  const handleCityChange = (e) => {
+  const handleCityChange = async (e) => {
     const cityId = Number(e.target.value);
     setSelectedCityId(cityId);
-    setSelectedDistrictId(""); // Reset quận khi đổi tỉnh
+    setSelectedDistrictId("");
+    //nếu chọn lại thành phố thì xoá quận
+    if (!cityId) {
+      setDistricts([]);
+      return;
+    }
 
-    const selectedCity = areas.find((area) => area.id === cityId);
-    if (selectedCity && selectedCity.children) {
-      setDistricts(selectedCity.children);
-    } else {
+    try {
+      const cityData = await areaService.getById(cityId);
+      if (cityData && cityData.children) {
+        setDistricts(cityData.children);
+      } else {
+        setDistricts([]);
+      }
+    } catch (error) {
+      console.error("Lỗi khi tải danh sách Quận/Huyện:", error);
       setDistricts([]);
     }
   };

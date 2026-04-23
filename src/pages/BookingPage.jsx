@@ -14,7 +14,6 @@ const BookingPage = () => {
   const [service, setService] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // --- STATE TỈNH/THÀNH VÀ QUẬN/HUYỆN ---
   const [areas, setAreas] = useState([]);
   const [selectedCityId, setSelectedCityId] = useState("");
   const [districts, setDistricts] = useState([]);
@@ -51,15 +50,25 @@ const BookingPage = () => {
   }, [serviceId]);
 
   // Xử lý khi chọn Tỉnh/Thành
-  const handleCityChange = (e) => {
+  const handleCityChange = async (e) => {
     const cityId = Number(e.target.value);
     setSelectedCityId(cityId);
     setSelectedDistrictId("");
+    //nếu chọn lại thành phố thì xoá quận
+    if (!cityId) {
+      setDistricts([]);
+      return;
+    }
 
-    const selectedCity = areas.find((area) => area.id === cityId);
-    if (selectedCity && selectedCity.children) {
-      setDistricts(selectedCity.children);
-    } else {
+    try {
+      const cityData = await areaService.getById(cityId);
+      if (cityData && cityData.children) {
+        setDistricts(cityData.children);
+      } else {
+        setDistricts([]);
+      }
+    } catch (error) {
+      console.error("Lỗi khi tải danh sách Quận/Huyện:", error);
       setDistricts([]);
     }
   };

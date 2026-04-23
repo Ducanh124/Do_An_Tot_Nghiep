@@ -17,6 +17,16 @@ const areaService = {
       return [];
     }
   },
+  getById: async (id) => {
+    try {
+      const response = await axiosClient.get(`/areas/${id}/get`);
+      const result = response?.data?.data || response?.data || response;
+      return result;
+    } catch (error) {
+      console.error(`Lỗi lấy chi tiết khu vực ${id}:`, error);
+      return null;
+    }
+  },
 };
 
 export default areaService;
