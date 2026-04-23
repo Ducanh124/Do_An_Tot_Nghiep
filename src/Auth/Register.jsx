@@ -1,18 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  FiUser,
-  FiMail,
-  FiLock,
-  FiPhone,
-  FiMapPin,
-  FiMap,
-  FiUsers,
-  FiEye,
-  FiEyeOff,
-} from "react-icons/fi";
 import "./Register.css";
 import { regis, getCities, getDistricts } from "../service/authService.js";
+
 const Register = () => {
   const navigate = useNavigate();
 
@@ -33,7 +23,6 @@ const Register = () => {
   const [districts, setDistricts] = useState([]);
   const [selectedCity, setSelectedCity] = useState(""); // Lưu ID thành phố đang chọn
 
-  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   // 1. GỌI API LẤY DANH SÁCH THÀNH PHỐ KHI VÀO TRANG
@@ -68,6 +57,7 @@ const Register = () => {
       }
     }
   };
+
   // 3. XỬ LÝ THAY ĐỔI CÁC Ô INPUT KHÁC
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -134,7 +124,6 @@ const Register = () => {
                   Họ và tên <span className="required">*</span>
                 </label>
                 <div className="input-wrapper">
-                  <FiUser className="input-icon" />
                   <input
                     type="text"
                     name="name"
@@ -151,7 +140,6 @@ const Register = () => {
                   Email <span className="required">*</span>
                 </label>
                 <div className="input-wrapper">
-                  <FiMail className="input-icon" />
                   <input
                     type="email"
                     name="email"
@@ -168,22 +156,14 @@ const Register = () => {
                   Mật khẩu <span className="required">*</span>
                 </label>
                 <div className="input-wrapper">
-                  <FiLock className="input-icon" />
                   <input
-                    type={showPassword ? "text" : "password"}
+                    type="password"
                     name="password"
                     placeholder="Tối thiểu 6 ký tự"
                     value={formData.password}
                     onChange={handleInputChange}
                     required
                   />
-                  <button
-                    type="button"
-                    className="btn-toggle-password"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? <FiEyeOff /> : <FiEye />}
-                  </button>
                 </div>
               </div>
 
@@ -192,7 +172,6 @@ const Register = () => {
                   Số điện thoại <span className="required">*</span>
                 </label>
                 <div className="input-wrapper">
-                  <FiPhone className="input-icon" />
                   <input
                     type="tel"
                     name="phone"
@@ -213,7 +192,6 @@ const Register = () => {
                   Thành phố <span className="required">*</span>
                 </label>
                 <div className="input-wrapper">
-                  <FiMap className="input-icon" />
                   <select
                     value={selectedCity}
                     onChange={handleCityChange}
@@ -237,7 +215,6 @@ const Register = () => {
                   Quận/Huyện <span className="required">*</span>
                 </label>
                 <div className="input-wrapper">
-                  <FiMap className="input-icon" />
                   <select
                     name="areaId"
                     value={formData.areaId}
@@ -263,7 +240,6 @@ const Register = () => {
                   Địa chỉ nhà <span className="required">*</span>
                 </label>
                 <div className="input-wrapper">
-                  <FiMapPin className="input-icon" />
                   <input
                     type="text"
                     name="address"
@@ -284,7 +260,6 @@ const Register = () => {
                     Giới tính <span className="required">*</span>
                   </label>
                   <div className="input-wrapper">
-                    <FiUser className="input-icon" />
                     <select
                       name="gender"
                       value={formData.gender}
@@ -304,7 +279,6 @@ const Register = () => {
                     Vai trò <span className="required">*</span>
                   </label>
                   <div className="input-wrapper">
-                    <FiUsers className="input-icon" />
                     <select
                       name="role"
                       value={formData.role}
@@ -326,9 +300,7 @@ const Register = () => {
           </button>
         </form>
 
-        {/* <div className="register-footer" style={{ textAlign: 'center', marginTop: '1.5rem' }}>
-          <p>Đã có tài khoản? <span style={{ color: 'blue', cursor: 'pointer', textDecoration: 'none' }} onClick={() => navigate('/login')}>Đăng nhập ngay</span></p>
-        </div> */}
+
       </div>
     </div>
   );

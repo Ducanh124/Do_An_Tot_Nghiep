@@ -1,177 +1,121 @@
 /* Register.css */
+
+/* =========================================
+   1. VÙNG CHỨA TỔNG THỂ (CONTAINER)
+========================================= */
 .register-page-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background-color: #f4f7f6;
-  font-family: 'Inter', sans-serif;
-  padding: 40px 16px;
+  display: flex; /* Kích hoạt Flexbox để dễ dàng căn chỉnh các phần tử bên trong */
+  justify-content: center; /* Căn giữa thẻ Form theo chiều ngang của màn hình */
+  align-items: center; /* Căn giữa thẻ Form theo chiều dọc của màn hình */
+  background-color: #f4f7f6; /* Màu nền của toàn bộ trang web (màu xám/xanh nhạt) */
+  font-family: "Inter", sans-serif; /* Đặt font chữ mặc định là "Inter" */
+  padding: 100px 16px; /* Đẩy nội dung cách mép trên/dưới 100px và cách mép trái/phải 16px để không bị dính vào viền màn hình */
 }
 
+/* =========================================
+   2. THẺ BAO BỌC FORM ĐĂNG KÝ (CARD)
+========================================= */
 .register-card {
-  background-color: #ffffff;
-  width: 100%;
-  max-width: 750px; /* Tăng độ rộng để chứa Form 2 cột */
-  padding: 40px;
-  border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+  background-color: #ffffff; /* Nền của thẻ Form là màu trắng */
+  width: 75%; /* Chiều rộng chiếm tối đa không gian cho phép */
+  padding: 40px; /* Khoảng cách từ viền thẻ vào đến nội dung bên trong là 40px */
+  border-radius: 30px; /* Bo tròn các góc của thẻ với độ cong là 30px (khá tròn) */
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05); /* Đổ bóng mờ xung quanh thẻ để tạo hiệu ứng nổi 3D (đậm ở dưới, mờ dần) */
 }
 
+/* =========================================
+   3. PHẦN TIÊU ĐỀ (HEADER)
+========================================= */
 .register-header {
-  text-align: center;
-  margin-bottom: 32px;
+  text-align: center; /* Căn giữa toàn bộ chữ trong khu vực tiêu đề */
+  margin-bottom: 32px; /* Tạo khoảng cách 32px đẩy các phần tử phía dưới (Form) ra xa */
 }
 
 .register-header h2 {
-  font-size: 26px;
-  font-weight: 700;
-  color: #1a1a1a;
-  margin: 0 0 8px 0;
+  font-size: 26px; /* Kích thước chữ của tiêu đề chính là 26px */
+  font-weight: 700; /* In đậm chữ (700 tương đương với bold) */
+  color: #1a1a1a; /* Màu chữ xám gần đen, nhìn dịu mắt hơn màu đen tuyền (#000) */
+  margin: 0 0 8px 0; /* Chỉ tạo khoảng cách 8px ở bên dưới tiêu đề h2 */
 }
 
 .register-header p {
-  color: #666;
-  margin: 0;
+  color: #666; /* Màu chữ xám nhạt cho đoạn văn bản mô tả phụ */
+  margin: 0; /* Xóa khoảng cách mặc định của thẻ p */
 }
 
-/* --- Khu vực Upload Ảnh Đại Diện --- */
-.avatar-upload-section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 24px;
-  padding-bottom: 24px;
-  border-bottom: 1px dashed #e0e0e0;
-}
-
-.avatar-preview {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background-color: #f0f0f0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-  border: 2px solid #e8e8e8;
-}
-
-.avatar-preview img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.placeholder-icon {
-  font-size: 32px;
-  color: #bfbfbf;
-}
-
-.btn-upload-avatar {
-  background-color: #f4f7f6;
-  border: 1px solid #d9d9d9;
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 500;
-  color: #555;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.btn-upload-avatar:hover {
-  background-color: #e8f5e9;
-  color: #4CAF50;
-  border-color: #4CAF50;
-}
-
-/* --- Form Grid 2 Cột --- */
+/* =========================================
+   5. BỐ CỤC FORM 2 CỘT
+========================================= */
 .form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr; /* Chia 2 cột bằng nhau */
-  gap: 24px;
-  margin-bottom: 32px;
+  display: grid; /* Kích hoạt CSS Grid Layout để chia cột dễ dàng */
+  grid-template-columns: 1fr 1fr; /* Phân chia khu vực thành 2 cột, mỗi cột chiếm 1 phần (1 Fraction) bằng nhau */
+  gap: 24px; /* Tạo khoảng trống 24px giữa các hàng và các cột */
+  margin-bottom: 32px; /* Đẩy phần nút đăng ký phía dưới cách ra 32px */
 }
 
+/* ô nhập liệu */
 .form-column {
   display: flex;
-  flex-direction: column;
-  gap: 16px;
+  flex-direction: column; /* Xếp các nhóm nhập liệu (form-group) theo chiều dọc bên trong mỗi cột */
+  gap: 16px; /* Khoảng cách giữa các ô nhập liệu trong cùng một cột là 16px */
 }
 
+/* vị trí nhãn label của ô input */
 .form-group {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  flex-direction: column; /* Xếp Nhãn (Label) nằm trên Ô nhập (Input) */
+  gap: 8px; /* Khoảng cách giữa Nhãn và Ô nhập là 8px */
 }
 
+/* Chữ hiển thị của nhãn (ví dụ: Họ tên, Email) */
 .form-group label {
   font-size: 14px;
   font-weight: 500;
-  color: #333;
+  color: #333; /* Định dạng kiểu chữ và màu sắc cho các tiêu đề phụ (như "Họ tên", "Email") */
 }
 
 .required {
-  color: #ff4d4f;
-  margin-left: 2px;
+  color: #ff4d4f; /* Màu đỏ cảnh báo cho dấu sao (*) */
+  margin-left: 2px; /* Cách đoạn text phía trước 2px */
 }
 
+/* =========================================
+   6. CÁC Ô NHẬP LIỆU (INPUTS & SELECT)
+========================================= */
 .input-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
+  /* Đã xóa position, display flex và align-items vì không còn chứa icon absolute nữa */
+  width: 100%;
 }
 
-.input-icon {
-  position: absolute;
-  left: 14px;
-  color: #888;
-  font-size: 18px;
-}
-
+/* định dạng cho input và select */
 .input-wrapper input,
 .input-wrapper select {
-  width: 100%;
-  padding: 12px 14px 12px 40px; 
-  border: 1px solid #d9d9d9;
-  border-radius: 8px;
+  width: 100%; /* Input chiếm toàn bộ chiều ngang của cột chứa nó */
+  padding: 12px 14px; /* ĐÃ SỬA: Bỏ khoảng lề trái 40px dư thừa do không còn icon, trả về mặc định lề trong đều nhau */
+  border: 1px solid #d9d9d9; /* Viền xám mỏng */
+  border-radius: 8px; /* Bo góc ô nhập 8px */
   font-size: 14px;
-  outline: none;
+  outline: none; /* Tắt đường viền highlight mặc định của trình duyệt khi click vào */
   background-color: #fff;
-  transition: border-color 0.2s;
-  box-sizing: border-box;
+  transition: border-color 0.2s; /* Viền sẽ chuyển màu mượt mà trong 0.2s khi click vào */
+  box-sizing: border-box; /* Đảm bảo padding và viền không làm tăng tổng chiều rộng thực tế của thẻ */
 }
 
-/* Xóa mũi tên select mặc định để đẹp hơn (tuỳ chọn) */
 .input-wrapper select {
-  cursor: pointer;
+  cursor: pointer; /* Biến con trỏ thành hình bàn tay khi chỉ vào thẻ select dropdown */
 }
 
-.input-wrapper input:focus,
-.input-wrapper select:focus {
-  border-color: #4CAF50;
-  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.1);
-}
 
-.btn-toggle-password {
-  position: absolute;
-  right: 12px;
-  background: none;
-  border: none;
-  color: #888;
-  font-size: 18px;
-  cursor: pointer;
-}
 
-/* --- Nút Đăng ký --- */
+/* =========================================
+   7. NÚT ĐĂNG KÝ VÀ CHÂN TRANG
+========================================= */
 .btn-register {
-  width: 100%;
-  background-color: #4CAF50;
-  color: white;
+  width: 100%; /* Nút bấm kéo dài hết chiều ngang thẻ Form */
+  background-color: #4caf50; /* Màu nền xanh lá chủ đạo */
+  color: white; /* Chữ màu trắng */
   border: none;
-  padding: 14px;
+  padding: 14px; /* Nút khá to, dễ bấm */
   border-radius: 8px;
   font-size: 16px;
   font-weight: 600;
@@ -180,34 +124,21 @@
 }
 
 .btn-register:hover {
-  background-color: #43a047;
+  background-color: #43a047; /* Đổi sang xanh lá đậm hơn một chút khi di chuột vào nút */
 }
 
-.register-footer {
-  margin-top: 24px;
-  text-align: center;
-  font-size: 14px;
-  color: #666;
-}
-
-.register-footer a {
-  color: #4CAF50;
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.register-footer a:hover {
-  text-decoration: underline;
-}
-
-/* --- Responsive Điện thoại --- */
+/* =========================================
+   8. TƯƠNG THÍCH MÀN HÌNH ĐIỆN THOẠI (RESPONSIVE)
+========================================= */
 @media (max-width: 768px) {
+  /* Các lệnh trong khối @media này chỉ áp dụng khi độ rộng màn hình < 768px (Điện thoại/Tablet) */
+
   .register-card {
-    padding: 24px;
+    padding: 24px; /* Giảm khoảng cách từ lề vào (từ 40px xuống 24px) để tiết kiệm không gian màn hình nhỏ */
   }
-  
+
   .form-grid {
-    grid-template-columns: 1fr; /* Ép về 1 cột trên Mobile */
-    gap: 16px;
+    grid-template-columns: 1fr; /* QUAN TRỌNG: Đổi từ 2 cột (1fr 1fr) về 1 cột (1fr) duy nhất. Các ô nhập liệu sẽ xếp chồng lên nhau thành 1 hàng dọc. */
+    gap: 16px; /* Giảm khoảng trống giữa các hàng xuống 16px */
   }
 }

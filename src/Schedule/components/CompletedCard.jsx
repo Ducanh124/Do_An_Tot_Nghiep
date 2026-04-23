@@ -38,13 +38,8 @@ const CompletedCard = ({ shift }) => {
           <span className="finish-time">
             Hoàn thành lúc: {shift.actualFinishTime || shift.endTime}
           </span>
-          {/* Nếu khách hàng đã đánh giá thì hiển thị số sao */}
-          {shift.rating && (
-            <div className="rating">
-              <FiStar className="star-icon filled" />
-              <span>{shift.rating}.0</span>
-            </div>
-          )}
+        
+
         </div>
       </div>
     </div>

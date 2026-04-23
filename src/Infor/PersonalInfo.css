@@ -130,11 +130,7 @@
   background-color: #fff;
 }
 
-.form-group input:focus,
-.form-group select:focus {
-  border-color: #4caf50;
-  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.1);
-}
+
 
 .form-group input::placeholder {
   color: #bfbfbf;

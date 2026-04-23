@@ -1,5 +1,6 @@
 // src/services/profileService.js
 import { api } from "../libs/axios";
+import ShiftCard from "../Schedule/components/ShiftCard";
 
 export const profileService = {
   // Lấy thông tin cá nhân của user đang đăng nhập
@@ -8,11 +9,7 @@ export const profileService = {
     return response.data;
   },
 
-  // Lấy danh sách các dịch vụ/kỹ năng (Categories)
-  getCategories: async () => {
-    const response = await api.get("/categories");
-    return response.data;
-  },
+
 
   // GỌI API ĐỂ ĐÓNG GÓI CARD NUMBER VÀ SKILLS GỬI LÊN BACKEND
   addProfile: async (userId, data) => {
@@ -21,3 +18,5 @@ export const profileService = {
     return response.data;
   },
 };
+
+

@@ -1,126 +1,98 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { FiArrowLeft, FiSend } from "react-icons/fi";
 import "./TaskProgress.css";
-
-// Import 3 component con mà chúng ta vừa tạo
-import CurrentTaskInfo from "./CurrentTaskInfo";
-import TaskChecklist from "./TaskChecklist.jsx";
 import ImageUploader from "./ImageUploader.jsx";
+import { scheduleService } from "../../service/scheduleService.js";
+import { useAuth } from "../../AuthContext.jsx"; // Để lấy staffId
 
 const TaskProgress = () => {
   const navigate = useNavigate();
-  // Lấy ID ca làm việc từ URL (Ví dụ URL là: /schedule/progress/102 thì shiftId sẽ là '102')
   const { shiftId } = useParams();
+  const location = useLocation();
+  const { user } = useAuth();
+  
+  // 👉 Nhận bookingId được truyền ngầm từ trang ShiftCard sang
+  const bookingId = location.state?.bookingId;
 
-  // --- 1. STATE QUẢN LÝ DỮ LIỆU ---
-  const [shiftData, setShiftData] = useState(null); // Thông tin ca làm
-  const [completedTasks, setCompletedTasks] = useState([]); // Danh sách ID công việc đã tick
-  const [uploadedImages, setUploadedImages] = useState([]); // Danh sách ảnh đã chụp
+  const [shiftData, setShiftData] = useState(null); 
+  const [uploadedImages, setUploadedImages] = useState([]); 
+  const [note, setNote] = useState(""); // State mới lưu Ghi chú
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Giả lập việc gọi API để lấy thông tin ca làm việc dựa vào shiftId
   useEffect(() => {
-    // Trong thực tế, bạn sẽ dùng fetch() hoặc axios() để gọi API ở đây.
-    // Tạm thời tạo mock data để giao diện có dữ liệu hiển thị.
+    // ... Giữ nguyên phần mock data của bạn
     const mockData = {
       id: shiftId,
-      serviceName: "Dọn dẹp nhà cửa định kỳ",
-      customerName: "Trần Thị Bích",
-      address: "Căn 12A05, Tòa S2.02, Vinhomes Ocean Park, Hà Nội",
-      startTime: "08:00",
-      endTime: "11:00",
+      serviceName: "Ca làm việc ID: " + shiftId,
     };
-
-    // Giả lập độ trễ mạng 0.5s
     setTimeout(() => {
       setShiftData(mockData);
     }, 500);
   }, [shiftId]);
 
-  // --- 2. CÁC HÀM XỬ LÝ (Truyền xuống component con) ---
-
-  // Hàm xử lý tick/bỏ tick công việc
-  const handleTaskToggle = (taskId) => {
-    if (completedTasks.includes(taskId)) {
-      // Nếu đã tick rồi thì bỏ tick
-      setCompletedTasks(completedTasks.filter((id) => id !== taskId));
-    } else {
-      // Nếu chưa tick thì thêm vào mảng
-      setCompletedTasks([...completedTasks, taskId]);
-    }
-  };
-
-  // Hàm xử lý thêm ảnh mới
-  const handleAddImage = (imageUrl) => {
-    setUploadedImages([...uploadedImages, imageUrl]);
-  };
-
-  // Hàm xử lý xóa ảnh (Dựa vào vị trí index của ảnh trong mảng)
+  const handleAddImage = (imageUrl) => setUploadedImages([...uploadedImages, imageUrl]);
   const handleRemoveImage = (indexToRemove) => {
-    setUploadedImages(
-      uploadedImages.filter((_, index) => index !== indexToRemove),
-    );
+    setUploadedImages(uploadedImages.filter((_, index) => index !== indexToRemove));
   };
 
-  // --- 3. XỬ LÝ NÚT BẤM CỦA COMPONENT CHA ---
+  const handleBack = () => navigate(-1); 
 
-  // Xử lý nút quay lại
-  const handleBack = () => {
-    navigate(-1); // Quay lại trang trước đó trong lịch sử trình duyệt
-  };
-
-  // Xử lý nút Gửi Báo Cáo
-  const handleSubmitReport = () => {
-    if (completedTasks.length === 0) {
-      alert(
-        "Vui lòng đánh dấu ít nhất 1 công việc đã hoàn thành trước khi gửi báo cáo!",
-      );
+  const handleSubmitReport = async () => {
+    if (!bookingId || !user?.id) {
+      alert("Lỗi: Thiếu ID Booking hoặc ID Nhân viên!");
       return;
     }
 
-    // Gom toàn bộ dữ liệu để chuẩn bị gửi lên Server
-    const finalReport = {
-      shiftId: shiftId,
-      tasksDone: completedTasks,
-      images: uploadedImages,
-      reportedAt: new Date().toISOString(),
+    // 👉 ĐÓNG GÓI PAYLOAD GỬI API 
+    const payload = {
+      bookingId: bookingId,
+      staffId: user.id,
+      note: note,
+      recordAt: new Date().toISOString(),
+      image: uploadedImages // Gửi mảng hình ảnh
     };
 
-    console.log("Dữ liệu đã sẵn sàng để gửi lên Server:", finalReport);
-    alert("Đã gửi báo cáo tiến độ thành công!");
-
-    // Sau khi gửi báo cáo xong, đẩy người dùng quay lại trang Lịch làm việc
-    navigate("/schedule");
+    try {
+      setIsSubmitting(true);
+      // Gọi API Progress
+      await scheduleService.postProgress(payload);
+      
+      alert("Đã gửi báo cáo tiến độ thành công!");
+      navigate("/schedule"); // Quay lại cập nhật trạng thái mới nhất
+    } catch (error) {
+      console.error("Lỗi gửi báo cáo:", error);
+      alert("Lỗi gửi báo cáo, vui lòng thử lại!");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  // Hiển thị màn hình chờ nếu dữ liệu ca làm việc chưa tải xong
-  if (!shiftData) {
-    return <div className="loading">Đang tải dữ liệu ca làm việc...</div>;
-  }
+  if (!shiftData) return <div className="loading">Đang tải dữ liệu ca làm việc...</div>;
 
   return (
     <div className="task-progress-page">
-      {/* Góc trên cùng bên trái: Nút Quay Lại */}
       <div className="progress-header">
         <button className="btn-back" onClick={handleBack}>
-          <FiArrowLeft className="icon" />
-          Quay lại Lịch làm việc
+          <FiArrowLeft className="icon" /> Quay lại
         </button>
       </div>
 
       <div className="progress-content">
-        {/* COMPONENT 1: Thông tin ca làm việc hiện tại */}
-        <CurrentTaskInfo shift={shiftData} />
+        <h2 style={{ marginBottom: '15px' }}>Báo cáo tiến độ công việc</h2>
 
-        <div className="divider"></div>
+        {/* 👉 COMPONENT MỚI: Nhập ghi chú */}
+        <div className="form-group full-width" style={{ marginBottom: "20px" }}>
+          <label>Ghi chú tiến độ <span className="required">*</span></label>
+          <textarea 
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+            placeholder="Nhập tình trạng công việc hiện tại (Ví dụ: Đã đến nơi, đang lau tầng 1...)"
+            rows="3"
+            style={{ width: "100%", padding: "10px", borderRadius: "8px", border: "1px solid #ccc" }}
+          />
+        </div>
 
-        {/* COMPONENT 2: Danh sách các nút bấm công việc */}
-        <TaskChecklist
-          completedTasks={completedTasks}
-          onToggleTask={handleTaskToggle}
-        />
-
-        {/* COMPONENT 3: Khu vực chụp và tải ảnh */}
         <ImageUploader
           images={uploadedImages}
           onAddImage={handleAddImage}
@@ -128,11 +100,10 @@ const TaskProgress = () => {
         />
       </div>
 
-      {/* Góc dưới cùng bên trái: Nút Gửi Báo Cáo */}
       <div className="progress-footer">
-        <button className="btn-submit-report" onClick={handleSubmitReport}>
+        <button className="btn-submit-report" onClick={handleSubmitReport} disabled={isSubmitting}>
           <FiSend className="icon" />
-          Gửi báo cáo tiến độ
+          {isSubmitting ? "Đang gửi..." : "Gửi báo cáo tiến độ"}
         </button>
       </div>
     </div>

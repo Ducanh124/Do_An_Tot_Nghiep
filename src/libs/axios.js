@@ -16,26 +16,27 @@
 //   }
 //   return config;
 // });
-import axios from "axios";
 
-const baseURL = "https://bookingfamily.onrender.com/api/v1";
+// src/libs/axios.js
+import axios from 'axios';
+
 export const api = axios.create({
-  baseURL,
-  withCredentials: true,
-  validateStatus: (status) => status >= 200 && status < 300,
-  headers: {
-    "Content-Type": "application/json",
-  },
+  baseURL: "https://bookingfamily.onrender.com/api/v1", // Thay bằng URL Backend thực tế của bạn
 });
 
-api.interceptors.request.use(async (config) => {
-  // Lấy token trực tiếp từ localStorage mỗi khi gọi API
-  const accessToken = localStorage.getItem("access_token"); 
-  
-  if (accessToken) {
-    config.headers.Authorization = `Bearer ${accessToken}`;
+// THÊM ĐOẠN NÀY: Tự động nhét Token vào mỗi Request gửi đi
+api.interceptors.request.use(
+  (config) => {
+    // Lấy token từ LocalStorage
+    const token = localStorage.getItem('access_token');
+    
+    // Nếu có token thì nhét vào Header Authorization
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
   }
-  return config;
-}, (error) => {
-  return Promise.reject(error);
-});
+);
