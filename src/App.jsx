@@ -15,14 +15,12 @@ import BookingHistory from "./pages/BookingHistory.jsx";
 import ProtectedRoute from "./components/auth/ProtectedRoute.jsx";
 import ServiceListByCategory from "./pages/ServiceListByCategory.jsx";
 import Policy from "./pages/Policy.jsx";
-// import { ToastContainer } from "react-toastify";
-
 function App() {
   return (
     <BrowserRouter>
       <ScrollToTop />
       <Header />
-      {/* <ToastContainer position="top-right" autoClose={3000} /> */}
+
       <Routes>
         <Route
           path="/"

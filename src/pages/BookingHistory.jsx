@@ -8,7 +8,6 @@ const BookingHistory = () => {
   const navigate = useNavigate();
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
-
   // Lấy User từ authService (chỉ lấy ID để gọi API)
   const currentUser = authService.getCurrentUser();
 

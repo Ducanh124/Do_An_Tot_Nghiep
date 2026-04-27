@@ -25,7 +25,7 @@ const bookingService = {
           limit: 10,
         },
       });
-      const items = response?.data || response;
+      const items = response?.data?.data || response?.data || response;
       return Array.isArray(items) ? items : [];
     } catch (error) {
       console.error("Lỗi khi tải lịch sử đơn hàng:", error);

@@ -18,7 +18,7 @@ const HeroSlider = () => {
     autoplay: true,
     autoplaySpeed: 3000,
     arrows: false,
-    pauseOnHover: true, // Tạm dừng khi rê chuột vào ảnh hoặc dấu chấm
+    pauseOnHover: true, 
   };
 
   const banners = [

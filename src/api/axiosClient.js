@@ -13,7 +13,6 @@ axiosClient.interceptors.request.use(
     // Tìm chìa khóa (token) trong bộ nhớ trình duyệt
     const token = localStorage.getItem("accessToken");
     if (token) {
-      // Nếu có, tự động đeo thẻ VIP vào cho request
       config.headers.Authorization = `${token}`;
     }
     return config;
@@ -43,7 +42,7 @@ axiosClient.interceptors.response.use(
       localStorage.removeItem("user");
 
       // Đá văng người dùng về trang đăng nhập
-      // window.location.href = "/login";
+      window.location.href = "/login";
     }
 
     return Promise.reject(error);
