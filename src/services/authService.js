@@ -27,23 +27,45 @@ const authService = {
       return null;
     }
   },
-
   // Hàm lấy riêng ID người dùng
   getCurrentUserId: () => {
     const user = authService.getCurrentUser();
     return user ? user.id : null;
   },
-
-  // Hàm kiểm tra xem đã đăng nhập chưa
   isLoggedIn: () => {
     return !!localStorage.getItem("accessToken");
   },
-
-  // Hàm Đăng xuất
   logout: () => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("user");
     window.location.href = "/login";
+  },
+  getUserById: async (id) => {
+    try {
+      const response = await axiosClient.get(`/auth/${id}`);
+      return response?.data?.data || response?.data || response;
+    } catch (error) {
+      console.error("Lỗi khi tải thông tin cá nhân:", error);
+      throw error;
+    }
+  },
+  updateProfile: async (id, userData) => {
+    try {
+      const formData = new FormData();
+      Object.keys(userData).forEach((key) => {
+        if (userData[key] !== null && userData[key] !== "") {
+          formData.append(key, userData[key]);
+        }
+      });
+
+      const response = await axiosClient.put(`/auth/${id}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      return response;
+    } catch (error) {
+      console.error("Lỗi cập nhật hồ sơ:", error);
+      throw error;
+    }
   },
 };
 

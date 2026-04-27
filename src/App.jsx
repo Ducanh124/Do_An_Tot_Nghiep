@@ -14,6 +14,7 @@ import ScrollToTop from "./components/common/ScrollToTop.jsx";
 import BookingHistory from "./pages/BookingHistory.jsx";
 import ProtectedRoute from "./components/auth/ProtectedRoute.jsx";
 import ServiceListByCategory from "./pages/ServiceListByCategory.jsx";
+import ProfilePage from "./components/auth/ProfilePage.jsx";
 import Policy from "./pages/Policy.jsx";
 function App() {
   return (
@@ -64,6 +65,14 @@ function App() {
           element={
             <ProtectedRoute>
               <BookingPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
             </ProtectedRoute>
           }
         />
