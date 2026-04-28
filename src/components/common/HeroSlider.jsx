@@ -1,4 +1,3 @@
-// frontend/src/components/common/HeroSlider.jsx
 import React from "react";
 import SliderComponent from "react-slick";
 import { Link } from "react-router-dom"; // Công cụ giúp chuyển trang không cần reload
@@ -18,7 +17,7 @@ const HeroSlider = () => {
     autoplay: true,
     autoplaySpeed: 3000,
     arrows: false,
-    pauseOnHover: true, 
+    pauseOnHover: true,
   };
 
   const banners = [
@@ -47,7 +46,7 @@ const HeroSlider = () => {
       <Slider {...settings}>
         {banners.map((banner) => (
           <div key={banner.id}>
-            {/* THẺ LINK: Biến bức ảnh thành một nút bấm khổng lồ */}
+            {/* bức ảnh cx chính là đg dẫn */}
             <Link to={banner.linkTo} className="d-block">
               <img
                 src={banner.imageUrl}
