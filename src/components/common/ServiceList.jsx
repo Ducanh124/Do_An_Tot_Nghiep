@@ -1,4 +1,3 @@
-// frontend/src/components/service/ServiceList.jsx
 import React, { useState, useEffect } from "react";
 import SliderComponent from "react-slick";
 import ServiceCard from "./ServiceCard";
@@ -8,8 +7,6 @@ import "slick-carousel/slick/slick-theme.css";
 import "./ServiceList.css";
 
 const Slider = SliderComponent.default || SliderComponent;
-
-// --- TỪ ĐIỂN HÌNH ẢNH ---
 const imageMapping = {
   1: "/images/theoh1 .jpg",
   2: "/images/toanbo.jpg",
@@ -18,7 +15,6 @@ const imageMapping = {
   5: "/images/dietcontrung.jpg",
   6: "/images/chuyennha.jpg",
 };
-
 const ServiceList = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -28,7 +24,6 @@ const ServiceList = () => {
     const fetchCategories = async () => {
       try {
         setLoading(true);
-        // Gọi ĐÚNG tên hàm getCategories() trong file cũ của bạn
         const data = await categoryService.getCategories();
         const sortedData = data.sort((a, b) => a.id - b.id); // sắp xếp lại data theo id từ bé đến lớn chứ không thro danh sách của backend
         setCategories(sortedData);

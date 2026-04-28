@@ -1,8 +1,6 @@
-// frontend/src/components/service/ServiceCard.jsx
+
 import React from "react";
 import { Link } from "react-router-dom";
-
-// ĐÃ SỬA: Chỉ nhận id, imageUrl và name (từ file ServiceList truyền xuống)
 const ServiceCard = ({ id, imageUrl, name }) => {
   return (
     <div className="card shadow-sm h-100 service-card-hover">
@@ -18,7 +16,6 @@ const ServiceCard = ({ id, imageUrl, name }) => {
       />
 
       <div className="card-body d-flex flex-column text-center p-4">
-        {/* Tên Danh mục (Thay cho tên dịch vụ) */}
         <h5 className="card-title fw-bold mb-4 text-dark">{name}</h5>
         <Link
           to={`/dich-vu/${id}`}

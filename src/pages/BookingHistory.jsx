@@ -31,6 +31,24 @@ const BookingHistory = () => {
     fetchHistory();
   }, [currentUser.id]);
 
+  const getStatusBadge = (status) => {
+    const s = status ? status.toLowerCase() : "";
+    switch (s) {
+      case "pending":
+        return { text: "Đang chờ xác nhận", className: "bg-warning text-dark" };
+      case "is_working":
+        return {
+          text: "Đang tiến hành làm việc",
+          className: "bg-info text-dark",
+        };
+      case "completed":
+        return { text: "Đã hoàn thành", className: "bg-success" };
+      case "cancelled":
+        return { text: "Đã hủy", className: "bg-danger" };
+      default:
+        return { text: status || "Không rõ", className: "bg-secondary" }; // Trạng thái lạ
+    }
+  };
   if (loading)
     return <div className="text-center mt-5">Đang tải lịch sử...</div>;
 
@@ -61,6 +79,7 @@ const BookingHistory = () => {
               <tbody>
                 {bookings.map((booking) => {
                   const date = new Date(booking.scheduledTime);
+                  const badgeInfo = getStatusBadge(booking.status);
                   return (
                     <tr key={booking.id}>
                       <td className="text-center booking-id">
@@ -80,21 +99,12 @@ const BookingHistory = () => {
                       <td>{booking.address}</td>
                       <td className="text-center">
                         <span
-                          className={`badge status-badge ${
-                            booking.status === "pending"
-                              ? "bg-warning text-dark"
-                              : booking.status === "completed"
-                                ? "bg-success"
-                                : booking.status === "cancelled"
-                                  ? "bg-danger"
-                                  : "bg-primary"
-                          }`}
+                          className={`badge status-badge ${badgeInfo.className}`}
                         >
-                          {booking.status === "pending"
-                            ? "Đang chờ"
-                            : booking.status}
+                          {badgeInfo.text}
                         </span>
                       </td>
+
                       <td className="text-center fw-bold text-danger">
                         {Number(booking.totalAmount).toLocaleString("vi-VN")} đ
                       </td>
