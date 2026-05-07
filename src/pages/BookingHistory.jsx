@@ -2,20 +2,19 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import authService from "../services/authService";
 import bookingService from "../services/bookingService";
-import "./BookingHistory.css"; // Nhập file CSS vừa tạo
+import "./BookingHistory.css";
 
 const BookingHistory = () => {
   const navigate = useNavigate();
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
-  // Lấy User từ authService (chỉ lấy ID để gọi API)
+
   const currentUser = authService.getCurrentUser();
 
   useEffect(() => {
     const fetchHistory = async () => {
       try {
         setLoading(true);
-        // Gọi API lấy đơn hàng dựa trên ID khách hàng
         const data = await bookingService.getMyBookings(currentUser.id);
         const sortedData = data.sort(
           (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
@@ -45,15 +44,21 @@ const BookingHistory = () => {
         return { text: "Đã hoàn thành", className: "bg-success" };
       case "cancelled":
         return { text: "Đã hủy", className: "bg-danger" };
+      case "accepted":
+        return {
+          text: "Đã được chấp nhận",
+          className: "bg-primary text-white",
+        };
       default:
-        return { text: status || "Không rõ", className: "bg-secondary" }; // Trạng thái lạ
+        return { text: status || "Không rõ", className: "bg-secondary" };
     }
   };
+
   if (loading)
     return <div className="text-center mt-5">Đang tải lịch sử...</div>;
 
   return (
-    <div className="container history-container">
+    <div className="container history-container mb-5">
       <h2 className="history-title text-center">Lịch sử đặt lịch của bạn</h2>
 
       {bookings.length === 0 ? (
@@ -65,25 +70,32 @@ const BookingHistory = () => {
         </div>
       ) : (
         <>
-          <div className="table-responsive table-history">
-            <table className="table table-hover align-middle mb-0">
-              <thead>
+          <div className="table-responsive table-history shadow-sm">
+            <table className="table table-hover align-middle mb-0 bg-white">
+              <thead className="table-light">
                 <tr className="text-center">
                   <th>Mã đơn</th>
                   <th>Thời gian làm</th>
                   <th>Địa chỉ</th>
                   <th>Trạng thái</th>
                   <th>Thành tiền</th>
+                  <th>Hành động</th>
                 </tr>
               </thead>
               <tbody>
                 {bookings.map((booking) => {
                   const date = new Date(booking.scheduledTime);
                   const badgeInfo = getStatusBadge(booking.status);
+                  const canViewDetails = [
+                    "accepted",
+                    "is_working",
+                    "completed",
+                  ].includes(booking.status?.toLowerCase());
+
                   return (
                     <tr key={booking.id}>
                       <td className="text-center booking-id">
-                        #{booking.id.substring(0, 8).toUpperCase()}
+                        #{String(booking.id).substring(0, 8).toUpperCase()}
                       </td>
                       <td className="text-center">
                         <div className="fw-bold text-primary">
@@ -104,9 +116,20 @@ const BookingHistory = () => {
                           {badgeInfo.text}
                         </span>
                       </td>
-
                       <td className="text-center fw-bold text-danger">
                         {Number(booking.totalAmount).toLocaleString("vi-VN")} đ
+                      </td>
+                      <td className="text-center">
+                        {canViewDetails ? (
+                          <button
+                            className="btn btn-sm btn-outline-info rounded-pill px-3"
+                            onClick={() => navigate(`/history/${booking.id}`)}
+                          >
+                            <i className="bi bi-eye me-1"></i> Chi tiết
+                          </button>
+                        ) : (
+                          <span className="text-muted small">Chờ xử lý</span>
+                        )}
                       </td>
                     </tr>
                   );
@@ -114,12 +137,18 @@ const BookingHistory = () => {
               </tbody>
             </table>
           </div>
-          <div className="history-actions">
-            <button className="btn-nav" onClick={() => navigate("/")}>
-              Quay lại trang chủ
+          <div className="history-actions mt-4 text-center">
+            <button
+              className="btn btn-secondary me-2 px-4"
+              onClick={() => navigate("/")}
+            >
+              Quay lại
             </button>
-            <button className="btn-nav" onClick={() => navigate("/danh-muc")}>
-              Đặt thêm dịch vụ mới
+            <button
+              className="btn btn-primary px-4"
+              onClick={() => navigate("/danh-muc")}
+            >
+              Đặt thêm dịch vụ
             </button>
           </div>
         </>

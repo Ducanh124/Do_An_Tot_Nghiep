@@ -54,7 +54,7 @@ const HeroSlider = () => {
                 className="hero-slide-img"
                 style={{
                   cursor: "pointer",
-                }} /* Hiện hình bàn tay khi đưa chuột vào */
+                }}
               />
             </Link>
           </div>

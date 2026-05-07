@@ -2,7 +2,7 @@
 
 .booking-page-container {
   min-height: 100vh;
-  background-color: #f8f9fa; /* Màu nền xám nhạt */
+  background-color: #f8f9fa;
   padding-bottom: 50px;
 }
 
@@ -48,7 +48,7 @@
   background: #ffffff;
   border-radius: 16px;
   border: 1px solid #edf2f9;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); /* Đổ bóng nhẹ cho nổi bật */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); /* Đổ bóng nhẹ  */
   padding: 2rem;
 }
 

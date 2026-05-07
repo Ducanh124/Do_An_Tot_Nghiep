@@ -40,6 +40,7 @@ const authService = {
     localStorage.removeItem("user");
     window.location.href = "/login";
   },
+  //Lấy thông tin cá nhân
   getUserById: async (id) => {
     try {
       const response = await axiosClient.get(`/auth/${id}`);
@@ -49,6 +50,7 @@ const authService = {
       throw error;
     }
   },
+  // cập nhật hồ sơ
   updateProfile: async (id, userData) => {
     try {
       const formData = new FormData();
