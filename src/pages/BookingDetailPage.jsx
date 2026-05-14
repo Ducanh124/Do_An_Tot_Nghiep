@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import authService from "../services/authService";
 import bookingService from "../services/bookingService";
+import staffService from "../services/staffService";
 
 const BookingDetailPage = () => {
   const { id } = useParams(); // Lấy ID đơn hàng từ đường dẫn URL
@@ -19,11 +19,27 @@ const BookingDetailPage = () => {
         const detailData = await bookingService.getBookingById(id);
         setDetails(detailData);
 
-        // 2. Lấy thông tin nhân viên (Tùy Backend là staffId hay maidId)
-        const staffId = detailData?.staffId || detailData?.maidId;
+        // 2. LẤY ID NHÂN VIÊN DỰA THEO ẢNH BẠN CHỤP:
+        // Cú pháp 'detailData?.staff?.id' nghĩa là: Nếu có đơn hàng -> xem có object staff không -> nếu có thì lấy cái id.
+        const staffId = detailData?.staff?.id;
+
         if (staffId) {
-          const staffData = await authService.getUserById(staffId);
-          setStaffInfo(staffData);
+          // HIỂN THỊ TRƯỚC THÔNG TIN CƠ BẢN (Cho người dùng đỡ phải chờ loading lâu)
+          setStaffInfo(detailData.staff);
+
+          // 3. GỌI API LẤY HỒ SƠ CHI TIẾT
+          try {
+            const staffProfile = await staffService.getStaffProfile(staffId);
+            // Gộp thông tin cơ bản (Tên, SĐT) với thông tin Hồ sơ (Kinh nghiệm, Đánh giá...)
+            if (staffProfile) {
+              setStaffInfo((prev) => ({ ...prev, ...staffProfile }));
+            }
+          } catch (profileError) {
+            console.warn(
+              "Không lấy được hồ sơ chi tiết, dùng tạm thông tin cơ bản.",
+              profileError,
+            );
+          }
         }
       } catch (error) {
         console.error("Lỗi lấy chi tiết:", error);

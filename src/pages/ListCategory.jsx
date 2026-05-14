@@ -5,11 +5,11 @@ import "./ListCategory.css";
 
 const categoryIcons = {
   1: "/icons/choi.png",
-  2: "/icons/lich.png",
-  3: "/icons/sofa.png",
-  4: "/icons/vuon.png",
-  5: "/icons/muoi.jpg",
-  6: "/icons/oto.png",
+  2: "/icons/thucung.png",
+  6: "/icons/chamsoc.png",
+  3: "/icons/vuon.png",
+  4: "/icons/muoi.jpg",
+  5: "/icons/oto.png",
 };
 const defaultIcon = "/icons/default.png";
 const ListCategory = () => {

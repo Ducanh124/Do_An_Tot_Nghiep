@@ -9,11 +9,11 @@ import "./ServiceList.css";
 const Slider = SliderComponent.default || SliderComponent;
 const imageMapping = {
   1: "/images/theoh1 .jpg",
-  2: "/images/toanbo.jpg",
-  3: "/images/sofa.jpg",
-  4: "/images/donvuon.jpg",
-  5: "/images/dietcontrung.jpg",
-  6: "/images/chuyennha.jpg",
+  2: "/images/thucung.jpg",
+  6: "/images/caotuoi.jpg",
+  3: "/images/donvuon.jpg",
+  4: "/images/dietcontrung.jpg",
+  5: "/images/chuyennha.jpg",
 };
 const ServiceList = () => {
   const [categories, setCategories] = useState([]);

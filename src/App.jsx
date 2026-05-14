@@ -16,6 +16,7 @@ import ProtectedRoute from "./components/auth/ProtectedRoute.jsx";
 import ServiceListByCategory from "./pages/ServiceListByCategory.jsx";
 import ProfilePage from "./components/auth/ProfilePage.jsx";
 import Policy from "./pages/Policy.jsx";
+import BookingDetailPage from "./pages/BookingDetailPage.jsx";
 function App() {
   return (
     <BrowserRouter>
@@ -76,12 +77,21 @@ function App() {
             </ProtectedRoute>
           }
         />
+
         <Route path="/policy" element={<Policy />} />
         <Route
           path="/history"
           element={
             <ProtectedRoute>
               <BookingHistory />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/history/:id"
+          element={
+            <ProtectedRoute>
+              <BookingDetailPage />
             </ProtectedRoute>
           }
         />

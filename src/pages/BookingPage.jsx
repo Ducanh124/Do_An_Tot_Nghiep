@@ -123,12 +123,40 @@ const BookingPage = () => {
         <div className="row g-4">
           {/* CỘT TRÁI: THÔNG TIN DỊCH VỤ */}
           <div className="col-md-5">
-            <div className="service-info-card d-flex flex-column">
+            <div className="service-info-card d-flex flex-column h-100 p-4 bg-white rounded shadow-sm">
               <h5 className="text-muted mb-3 border-bottom pb-2">
                 Thông tin gói dịch vụ
               </h5>
-              <h4 className="service-info-title fw-bold">{service.name}</h4>
-              <p className="service-info-desc">{service.description}</p>
+              <h4 className="service-info-title fw-bold text-primary">
+                {service.name}
+              </h4>
+              <p className="service-info-desc text-secondary">
+                {service.description}
+              </p>
+
+              {/* KHU VỰC THÊM HÌNH ẢNH DỊCH VỤ */}
+              {service.imageUrl ? (
+                <div className="service-image-container my-3 text-center flex-grow-1">
+                  <img
+                    src={service.imageUrl}
+                    alt={service.name}
+                    className="img-fluid rounded shadow-sm"
+                    style={{
+                      maxHeight: "500px",
+                      width: "100%",
+                      objectFit: "cover",
+                    }}
+                  />
+                </div>
+              ) : (
+                // Nếu dịch vụ không có ảnh, hiện 1 cái khung trống xám xám cho đỡ bị hụt giao diện
+                <div
+                  className="my-3 flex-grow-1 d-flex align-items-center justify-content-center bg-light rounded"
+                  style={{ minHeight: "200px" }}
+                >
+                  <i className="bi bi-image text-muted fs-1"></i>
+                </div>
+              )}
 
               <div className="mt-auto pt-4 border-top d-flex justify-content-between align-items-center">
                 <span className="fw-bold fs-5 text-secondary">
