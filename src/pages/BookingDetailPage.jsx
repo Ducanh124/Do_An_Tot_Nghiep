@@ -18,11 +18,8 @@ const BookingDetailPage = () => {
         // 1. Lấy chi tiết đơn
         const detailData = await bookingService.getBookingById(id);
         setDetails(detailData);
-
-        // 2. LẤY ID NHÂN VIÊN DỰA THEO ẢNH BẠN CHỤP:
-        // Cú pháp 'detailData?.staff?.id' nghĩa là: Nếu có đơn hàng -> xem có object staff không -> nếu có thì lấy cái id.
-        const staffId = detailData?.staff?.id;
-
+        const staffId = detailData?.staffAssignments?.[0]?.staffId;
+        console.log(staffId);
         if (staffId) {
           // HIỂN THỊ TRƯỚC THÔNG TIN CƠ BẢN (Cho người dùng đỡ phải chờ loading lâu)
           setStaffInfo(detailData.staff);
@@ -34,6 +31,7 @@ const BookingDetailPage = () => {
             if (staffProfile) {
               setStaffInfo((prev) => ({ ...prev, ...staffProfile }));
             }
+            console.log(staffProfile);
           } catch (profileError) {
             console.warn(
               "Không lấy được hồ sơ chi tiết, dùng tạm thông tin cơ bản.",
@@ -100,10 +98,10 @@ const BookingDetailPage = () => {
                       objectFit: "cover",
                     }}
                   />
-                  <h4 className="fw-bold mb-1">{staffInfo.name}</h4>
+                  <h4 className="fw-bold mb-1">{staffInfo?.staff?.name}</h4>
                   <p className="text-muted fs-5 mb-3">
                     <i className="bi bi-telephone-fill me-2"></i>
-                    {staffInfo.phone}
+                    {staffInfo?.staff?.phone}
                   </p>
                   <span className="badge bg-success px-4 py-2 fs-6 rounded-pill">
                     Nhân viên đã xác minh
@@ -126,15 +124,6 @@ const BookingDetailPage = () => {
               <i className="bi bi-card-checklist me-2"></i>Tiến độ công việc
             </div>
             <div className="card-body p-4">
-              <div className="mb-4 bg-light p-3 rounded border border-info">
-                <h6 className="fw-bold text-info">
-                  <i className="bi bi-chat-left-text me-2"></i>Ghi chú của bạn:
-                </h6>
-                <p className="mb-0 text-dark">
-                  {details.note || "Không có ghi chú nào."}
-                </p>
-              </div>
-
               <h6 className="fw-bold mb-3 text-secondary border-bottom pb-2">
                 Nhật ký cập nhật:
               </h6>

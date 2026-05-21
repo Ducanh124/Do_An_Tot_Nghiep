@@ -79,7 +79,7 @@ const BookingHistory = () => {
                   <th>Địa chỉ</th>
                   <th>Trạng thái</th>
                   <th>Thành tiền</th>
-                  <th>Hành động</th>
+                  <th>Tiến độ công việc</th>
                 </tr>
               </thead>
               <tbody>
