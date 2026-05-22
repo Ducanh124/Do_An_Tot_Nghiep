@@ -77,7 +77,7 @@ const AuthPage = () => {
           formData.password,
         );
         const userData = response.user || response;
-
+        console.log(userData);
         // Xử lý nút Ghi nhớ mật khẩu khi đăng nhập
         if (rememberMe) {
           localStorage.setItem("rememberedEmail", formData.email);

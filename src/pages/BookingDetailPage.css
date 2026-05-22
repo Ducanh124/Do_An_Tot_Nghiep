@@ -1,0 +1,253 @@
+/* Container chính */
+.bd-container {
+  max-width: 1140px;
+  margin: 2rem auto 4rem auto;
+  padding: 0 1rem;
+  font-family: Arial, sans-serif;
+}
+
+/* Nút quay lại */
+.bd-btn-back {
+  background: transparent;
+  border: 1px solid #160202;
+  color: #000000;
+  padding: 0.4rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s;
+}
+
+.bd-btn-back:hover {
+  background: #0087fe;
+  color: #fff;
+}
+
+/* Tiêu đề trang */
+.bd-page-title {
+  color: #0d6efd;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  font-size: 1.75rem;
+}
+
+/* CHIA LƯỚI 2 CỘT (Tỉ lệ 5 : 7) */
+.bd-layout-grid {
+  display: grid;
+  grid-template-columns: 5fr 7fr;
+  gap: 1.5rem;
+}
+
+/* Khung Card */
+.bd-card {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: 100%;
+}
+
+.bd-card-header {
+  background-color: #0d6efd;
+  color: white;
+  font-weight: bold;
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.bd-card-body {
+  padding: 1.5rem;
+  flex: 1;
+}
+
+/* Cột trái: Căn giữa nhân viên */
+.bd-staff-content {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.bd-avatar {
+  width: 130px;
+  height: 130px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid #e9ecef;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1rem;
+}
+
+.bd-staff-name {
+  font-weight: 700;
+  font-size: 1.25rem;
+  margin: 0 0 0.5rem 0;
+  color: #333;
+}
+
+.bd-staff-phone {
+  color: #6c757d;
+  font-size: 1.1rem;
+  margin: 0 0 1rem 0;
+}
+
+.bd-badge {
+  padding: 0.4rem 1rem;
+  border-radius: 50px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.bd-badge-success {
+  background-color: #198754;
+  color: white;
+}
+
+/* Cột phải: Hộp ghi chú */
+.bd-note-box {
+  background-color: #f8f9fa;
+  border: 1px solid #0dcaf0;
+  border-radius: 6px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.bd-note-box h6 {
+  color: #0dcaf0;
+  font-weight: bold;
+  margin: 0 0 0.5rem 0;
+}
+
+.bd-note-box p {
+  margin: 0;
+  color: #333;
+}
+
+/* Timeline Tiến độ */
+.bd-timeline-title {
+  font-weight: 700;
+  color: #6c757d;
+  border-bottom: 1px solid #dee2e6;
+  padding-bottom: 0.75rem;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+.bd-timeline-item {
+  display: flex;
+  align-items: flex-start;
+  background-color: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.bd-timeline-icon {
+  color: #198754;
+  font-size: 1.5rem;
+  margin-right: 1rem;
+  line-height: 1;
+}
+
+.bd-timeline-content {
+  flex: 1;
+}
+
+.bd-step-name {
+  font-weight: 700;
+  color: #333;
+  margin: 0 0 0.25rem 0;
+  font-size: 1rem;
+}
+
+.bd-step-note {
+  background-color: #f8f9fa;
+  color: #6c757d;
+  font-size: 0.85rem;
+  padding: 0.3rem 0.5rem;
+  border-radius: 4px;
+  margin: 0.25rem 0 0.5rem 0;
+}
+
+.bd-step-time {
+  color: #6c757d;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.bd-step-evidence {
+  margin-top: 0.75rem;
+}
+
+.bd-step-evidence img {
+  max-height: 100px;
+  border-radius: 6px;
+  border: 1px solid #dee2e6;
+  object-fit: contain;
+}
+
+/* Các trạng thái rỗng và Loading */
+.bd-empty-state {
+  color: #6c757d;
+  padding: 3rem 0;
+}
+.bd-empty-state i {
+  font-size: 3rem;
+  color: #ffc107;
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.bd-empty-state-small {
+  background-color: #f8f9fa;
+  color: #6c757d;
+  text-align: center;
+  padding: 1rem;
+  border-radius: 6px;
+  border: 1px solid #dee2e6;
+}
+
+.bd-loading {
+  text-align: center;
+  padding: 5rem 0;
+  color: #0d6efd;
+}
+
+.bd-spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border-left-color: #0d6efd;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1rem auto;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive: Thu nhỏ màn hình thì xếp chồng 2 cột lên nhau */
+@media (max-width: 768px) {
+  .bd-layout-grid {
+    grid-template-columns: 1fr;
+  }
+}

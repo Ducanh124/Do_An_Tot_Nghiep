@@ -4,7 +4,6 @@ const categoryService = {
   getCategories: async () => {
     try {
       const response = await axiosClient.get("/Categories");
-
       // tuỳ chỉnh : Dùng Optional Chaining (?.) để đào sâu vào object mà không sợ lỗi undefined
       // Nếu Backend có đổi cấu trúc thành response.data thì nó tự động lấy cái thứ 2
       const items = response?.data?.data || response?.data || [];
