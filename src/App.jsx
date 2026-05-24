@@ -17,6 +17,7 @@ import ServiceListByCategory from "./pages/ServiceListByCategory.jsx";
 import ProfilePage from "./components/auth/ProfilePage.jsx";
 import Policy from "./pages/Policy.jsx";
 import BookingDetailPage from "./pages/BookingDetailPage.jsx";
+import PromotionsPage from "./pages/PromotionPage.jsx";
 function App() {
   return (
     <BrowserRouter>
@@ -77,7 +78,7 @@ function App() {
             </ProtectedRoute>
           }
         />
-
+        <Route path="/promotion" element={<PromotionsPage />} />
         <Route path="/policy" element={<Policy />} />
         <Route
           path="/history"

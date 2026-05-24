@@ -8,7 +8,7 @@ import "./ServiceList.css";
 
 const Slider = SliderComponent.default || SliderComponent;
 const imageMapping = {
-  1: "/images/theoh1 .jpg",
+  1: "/images/toanbo.jpg",
   2: "/images/thucung.jpg",
   6: "/images/caotuoi.jpg",
   3: "/images/donvuon.jpg",

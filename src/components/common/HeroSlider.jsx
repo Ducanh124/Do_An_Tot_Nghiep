@@ -25,7 +25,7 @@ const HeroSlider = () => {
       id: 1,
       imageUrl: "/images/banner khuyenmai.png",
       alt: "Khuyến mãi dọn nhà",
-      linkTo: "/danh-muc",
+      linkTo: "/promotion",
     },
     {
       id: 2,
