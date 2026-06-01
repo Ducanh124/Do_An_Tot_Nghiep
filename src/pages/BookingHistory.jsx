@@ -8,6 +8,8 @@ const BookingHistory = () => {
   const navigate = useNavigate();
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1); // Mặc định vào là trang 1
+  const [totalPages, setTotalPages] = useState(1); // Tổng số trang (Backend sẽ trả về)
 
   const currentUser = authService.getCurrentUser();
 
@@ -15,11 +17,20 @@ const BookingHistory = () => {
     const fetchHistory = async () => {
       try {
         setLoading(true);
-        const data = await bookingService.getMyBookings(currentUser.id);
-        const sortedData = data.sort(
+
+        // Gọi API với đủ 3 tham số
+        const result = await bookingService.getMyBookings(
+          currentUser.id,
+          currentPage,
+          8,
+        );
+        console.log("Dữ liệu API trả về:", result);
+        const sortedData = result.data.sort(
           (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
         );
-        setBookings(sortedData);
+
+        setBookings(sortedData); // Lưu danh sách để vẽ bảng
+        setTotalPages(result.totalPages); // Lưu tổng số trang để vẽ nút bấm
       } catch (error) {
         console.error("Lỗi tải lịch sử:", error);
       } finally {
@@ -28,7 +39,7 @@ const BookingHistory = () => {
     };
 
     fetchHistory();
-  }, [currentUser.id]);
+  }, [currentUser.id, currentPage]);
 
   const getStatusBadge = (status) => {
     const s = status ? status.toLowerCase() : "";
@@ -137,6 +148,29 @@ const BookingHistory = () => {
               </tbody>
             </table>
           </div>
+          {totalPages > 1 && (
+            <div className="d-flex justify-content-center align-items-center mt-4">
+              <button
+                className="btn btn-outline-primary me-3 px-3"
+                disabled={currentPage === 1} // Nếu đang ở trang 1 thì làm mờ nút đi
+                onClick={() => setCurrentPage((prev) => prev - 1)}
+              >
+                <i className="bi bi-chevron-left"></i> Trang trước
+              </button>
+
+              <span className="fw-bold text-secondary">
+                Trang {currentPage} / {totalPages}
+              </span>
+
+              <button
+                className="btn btn-outline-primary ms-3 px-3"
+                disabled={currentPage >= totalPages} // Nếu đến trang cuối thì làm mờ nút đi
+                onClick={() => setCurrentPage((prev) => prev + 1)}
+              >
+                Trang sau <i className="bi bi-chevron-right"></i>
+              </button>
+            </div>
+          )}
           <div className="history-actions mt-4 text-center">
             <button
               className="btn btn-secondary me-2 px-4"

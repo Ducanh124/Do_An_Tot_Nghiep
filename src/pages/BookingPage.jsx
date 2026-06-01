@@ -5,19 +5,21 @@ import bookingService from "../services/bookingService";
 import authService from "../services/authService";
 import areaService from "../services/areaService";
 import discountService from "../services/discountService";
+import paymentService from "../services/paymentService";
 import "./BookingPage.css";
 
 const BookingPage = () => {
   const { serviceId } = useParams();
   const navigate = useNavigate();
-
+  // dịch vụ
   const [service, setService] = useState(null);
   const [loading, setLoading] = useState(true);
-
+  // địa điểm
   const [areas, setAreas] = useState([]);
   const [selectedCityId, setSelectedCityId] = useState("");
   const [districts, setDistricts] = useState([]);
   const [selectedDistrictId, setSelectedDistrictId] = useState("");
+  // mã khuyến mãi
   const [availableDiscounts, setAvailableDiscounts] = useState([]); // Lưu toàn bộ mã từ API
   const [appliedDiscount, setAppliedDiscount] = useState(null); // Lưu mã đã áp dụng thành công
   // --- STATE CÁC Ô NHẬP LIỆU CÒN LẠI ---
@@ -26,7 +28,9 @@ const BookingPage = () => {
   const [time, setTime] = useState("");
   const [note, setNote] = useState("");
   const [discountCode, setDiscountCode] = useState("");
-
+  //thanh toán
+  const [paymentMethod, setPaymentMethod] = useState("CASH");
+  const [showPaymentModal, setShowPaymentModal] = useState(false); // trạng thái để mở hộp thoại
   const currentUser = authService.getCurrentUser();
 
   useEffect(() => {
@@ -119,30 +123,70 @@ const BookingPage = () => {
     alert(`Áp dụng mã ${matchedDiscount.code} thành công!`);
   };
   // Xử lý chốt đơn
-  const handleBookingSubmit = async (e) => {
-    e.preventDefault();
+  // 1. HÀM KIỂM TRA FORM VÀ MỞ MODAL
+  const handleBookingSubmit = (e) => {
+    e.preventDefault(); // Ngăn load lại trang
 
+    // Kiểm tra dữ liệu đầu vào (Validation)
     if (!selectedDistrictId) return alert("Vui lòng chọn Quận/Huyện!");
     if (!address || !date || !time)
       return alert("Vui lòng điền đủ Địa chỉ, Ngày và Giờ!");
 
+    // Nếu qua bài test, mở Modal thanh toán lên
+    setShowPaymentModal(true);
+  };
+
+  // 2. HÀM GỌI API TẠO ĐƠN VÀ THANH TOÁN (Chạy khi ấn nút trong Modal)
+  const processBooking = async () => {
     const dateTimeString = new Date(`${date}T${time}`).toISOString();
 
     const bookingPayload = {
       customerId: String(currentUser.id),
-      areaId: Number(selectedDistrictId), // Lấy ID của Quận để gửi đi
+      areaId: Number(selectedDistrictId),
       address: address,
       scheduledTime: dateTimeString,
-      discountCode: appliedDiscount ? appliedDiscount.code : null,
+      discountCode: appliedDiscount ? appliedDiscount.code : "",
       status: "pending",
       note: note,
       serviceId: [Number(serviceId)],
     };
 
     try {
-      await bookingService.createBooking(bookingPayload);
-      alert(" Đặt lịch thành công! Cảm ơn bạn đã sử dụng dịch vụ.");
-      navigate("/history");
+      // Gọi API tạo đơn đặt lịch
+      const bookingRes = await bookingService.createBooking(bookingPayload);
+      const newBookingId = bookingRes?.id || bookingRes?.data?.id;
+
+      if (!newBookingId) {
+        alert(
+          "Đã tạo đơn nhưng không lấy được mã đơn hàng. Vui lòng kiểm tra lịch sử!",
+        );
+        setShowPaymentModal(false); // Đóng modal
+        navigate("/history");
+        return;
+      }
+
+      // Rẽ nhánh thanh toán
+      if (paymentMethod === "CASH") {
+        alert(" Đặt lịch thành công! Bạn đã chọn thanh toán bằng Tiền mặt.");
+        navigate("/history");
+      } else if (paymentMethod === "VNPAY") {
+        const paymentPayload = {
+          bookingId: newBookingId,
+          method: "VNPAY",
+          status: "PENDING",
+        };
+
+        const paymentRes =
+          await paymentService.createPaymentUrl(paymentPayload);
+        const vnpayUrl = paymentRes?.paymentUrl || paymentRes?.data?.paymentUrl;
+
+        if (vnpayUrl) {
+          window.location.href = vnpayUrl; // chuyển sang VNPay
+        } else {
+          alert("Lỗi khi tạo link VNPay!");
+          navigate("/history");
+        }
+      }
     } catch (error) {
       console.error("Lỗi khi đặt lịch:", error);
       alert("Có lỗi xảy ra, vui lòng thử lại sau!");
@@ -406,6 +450,102 @@ const BookingPage = () => {
           </div>
         </div>
       </div>
+      {showPaymentModal && (
+        <div
+          className="modal show d-block"
+          tabIndex="-1"
+          style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+        >
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-header border-bottom-0">
+                <h5 className="modal-title fw-bold text-primary">
+                  <i className="bi bi-wallet2 me-2"></i>Chọn phương thức thanh
+                  toán
+                </h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={() => setShowPaymentModal(false)} // Nút X để đóng Modal
+                ></button>
+              </div>
+
+              <div className="modal-body">
+                <p className="text-muted mb-3">
+                  Vui lòng chọn cách thức thanh toán cho dịch vụ của bạn:
+                </p>
+
+                {/* Lựa chọn Tiền mặt */}
+                <div
+                  className={`border rounded p-3 mb-3 cursor-pointer ${paymentMethod === "CASH" ? "border-primary bg-light" : ""}`}
+                  onClick={() => setPaymentMethod("CASH")}
+                  style={{ cursor: "pointer" }}
+                >
+                  <div className="form-check">
+                    <input
+                      className="form-check-input"
+                      type="radio"
+                      checked={paymentMethod === "CASH"}
+                      onChange={() => setPaymentMethod("CASH")}
+                    />
+                    <label
+                      className="form-check-label fw-bold d-block"
+                      style={{ cursor: "pointer" }}
+                    >
+                      💵 Thanh toán tiền mặt
+                    </label>
+                    <small className="text-muted">
+                      Thanh toán sau khi nhân viên hoàn thành công việc.
+                    </small>
+                  </div>
+                </div>
+
+                {/* Lựa chọn VNPay */}
+                <div
+                  className={`border rounded p-3 cursor-pointer ${paymentMethod === "VNPAY" ? "border-primary bg-light" : ""}`}
+                  onClick={() => setPaymentMethod("VNPAY")}
+                  style={{ cursor: "pointer" }}
+                >
+                  <div className="form-check">
+                    <input
+                      className="form-check-input"
+                      type="radio"
+                      checked={paymentMethod === "VNPAY"}
+                      onChange={() => setPaymentMethod("VNPAY")}
+                    />
+                    <label
+                      className="form-check-label fw-bold d-block"
+                      style={{ cursor: "pointer" }}
+                    >
+                      💳 Thanh toán VNPay
+                    </label>
+                    <small className="text-muted">
+                      Chuyển khoản qua ứng dụng ngân hàng hoặc thẻ ATM/Visa.
+                    </small>
+                  </div>
+                </div>
+              </div>
+
+              <div className="modal-footer border-top-0">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => setShowPaymentModal(false)}
+                >
+                  Hủy
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-primary px-4 fw-bold"
+                  onClick={processBooking}
+                >
+                  Tiến hành thanh toán
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

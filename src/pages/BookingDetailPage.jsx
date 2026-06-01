@@ -121,14 +121,26 @@ const BookingDetailPage = () => {
           </div>
           <div className="bd-card-body">
             <div className="bd-note-box">
-              <h6>
-                <i className="bi bi-chat-left-text"></i> Ghi chú của bạn:
+              <h6 className="text-primary fw-bold mb-3">
+                <i className="bi bi-box-seam me-2"></i> Dịch vụ đã đặt:
               </h6>
-              <p>{details?.note || "Không có ghi chú nào."}</p>
+              {details?.bookingDetails && details.bookingDetails.length > 0 ? (
+                details.bookingDetails.map((item, index) => (
+                  <div key={item.id || index} className="mb-3">
+                    <div className="fw-bold fs-6">
+                      {item.service?.name || "Tên dịch vụ trống"}
+                    </div>
+                    <div className="text-muted small">
+                      {item.service?.description || "Không có mô tả."}
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-muted">Không có thông tin dịch vụ.</p>
+              )}
             </div>
 
             <h6 className="bd-timeline-title">Nhật ký cập nhật:</h6>
-
             {progressList && progressList.length > 0 ? (
               <div className="bd-timeline">
                 {progressList.map((report, index) => {
