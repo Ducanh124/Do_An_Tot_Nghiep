@@ -1,10 +1,10 @@
-// src/pages/BookingPage.jsx
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import serviceService from "../services/serviceService";
 import bookingService from "../services/bookingService";
 import authService from "../services/authService";
 import areaService from "../services/areaService";
+import discountService from "../services/discountService";
 import "./BookingPage.css";
 
 const BookingPage = () => {
@@ -18,7 +18,8 @@ const BookingPage = () => {
   const [selectedCityId, setSelectedCityId] = useState("");
   const [districts, setDistricts] = useState([]);
   const [selectedDistrictId, setSelectedDistrictId] = useState("");
-
+  const [availableDiscounts, setAvailableDiscounts] = useState([]); // Lưu toàn bộ mã từ API
+  const [appliedDiscount, setAppliedDiscount] = useState(null); // Lưu mã đã áp dụng thành công
   // --- STATE CÁC Ô NHẬP LIỆU CÒN LẠI ---
   const [address, setAddress] = useState("");
   const [date, setDate] = useState("");
@@ -32,13 +33,20 @@ const BookingPage = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const [serviceData, areaData] = await Promise.all([
+        const [serviceData, areaData, discountData] = await Promise.all([
           serviceService.getById(serviceId),
           areaService.getAll(),
+          discountService.getAllDiscounts(),
         ]);
 
         setService(serviceData);
         setAreas(areaData);
+        setAvailableDiscounts(discountData);
+        const validDiscounts = Array.isArray(discountData)
+          ? discountData
+          : discountData?.data || []; // Nếu bị lồng trong data thì bóc ra, lỗi thì lấy mảng rỗng
+
+        setAvailableDiscounts(validDiscounts);
       } catch (error) {
         console.error("Lỗi tải dữ liệu:", error);
       } finally {
@@ -72,7 +80,44 @@ const BookingPage = () => {
       setDistricts([]);
     }
   };
+  // Kiểm tra mã giảm giá
+  const handleApplyDiscount = () => {
+    const inputCode = discountCode.trim().toUpperCase();
 
+    if (inputCode === "") {
+      setAppliedDiscount(null);
+      return;
+    }
+
+    // 1. Tìm mã trong danh sách
+    const matchedDiscount = (availableDiscounts || []).find(
+      (d) => d.code.toUpperCase() === inputCode,
+    );
+
+    if (!matchedDiscount) {
+      setAppliedDiscount(null);
+      return alert("Mã giảm giá không tồn tại!");
+    }
+
+    // 2. Kiểm tra hạn sử dụng & trạng thái
+    const now = new Date();
+    if (!matchedDiscount.isActive || new Date(matchedDiscount.endDate) < now) {
+      setAppliedDiscount(null);
+      return alert("Mã giảm giá này đã hết hạn hoặc tạm dừng áp dụng!");
+    }
+
+    // 3. Kiểm tra điều kiện đơn tối thiểu
+    const currentPrice = Number(service?.price || 0);
+    if (currentPrice < Number(matchedDiscount.minBookingAmount)) {
+      setAppliedDiscount(null);
+      return alert(
+        `Mã này chỉ áp dụng cho đơn hàng từ ${Number(matchedDiscount.minBookingAmount).toLocaleString("vi-VN")}₫`,
+      );
+    }
+    // 4. Nếu qua hết các bài test, lưu mã vào State
+    setAppliedDiscount(matchedDiscount);
+    alert(`Áp dụng mã ${matchedDiscount.code} thành công!`);
+  };
   // Xử lý chốt đơn
   const handleBookingSubmit = async (e) => {
     e.preventDefault();
@@ -88,7 +133,7 @@ const BookingPage = () => {
       areaId: Number(selectedDistrictId), // Lấy ID của Quận để gửi đi
       address: address,
       scheduledTime: dateTimeString,
-      discountCodeId: discountCode.trim() !== "" ? discountCode : "",
+      discountCode: appliedDiscount ? appliedDiscount.code : null,
       status: "pending",
       note: note,
       serviceId: [Number(serviceId)],
@@ -97,7 +142,7 @@ const BookingPage = () => {
     try {
       await bookingService.createBooking(bookingPayload);
       alert(" Đặt lịch thành công! Cảm ơn bạn đã sử dụng dịch vụ.");
-      navigate("/");
+      navigate("/history");
     } catch (error) {
       console.error("Lỗi khi đặt lịch:", error);
       alert("Có lỗi xảy ra, vui lòng thử lại sau!");
@@ -112,7 +157,29 @@ const BookingPage = () => {
         Không tìm thấy dịch vụ!
       </div>
     );
+  //  LOGIC TÍNH TOÁN TIỀN HIỂN THỊ
+  const originalPrice = Number(service?.price || 0); // Giá gốc
+  let discountAmount = 0; // Tiền được giảm
+  let finalPrice = originalPrice; // Tổng thanh toán
 
+  if (appliedDiscount) {
+    const type = appliedDiscount.discountType;
+    const value = Number(appliedDiscount.discountValue || 0);
+    const maxDiscount = Number(appliedDiscount.maxDiscountAmount || 0);
+
+    if (type === "percentage") {
+      discountAmount = (originalPrice * value) / 100;
+      // Nếu có giới hạn giảm tối đa
+      if (maxDiscount > 0 && discountAmount > maxDiscount) {
+        discountAmount = maxDiscount;
+      }
+    } else if (type === "fixed_amount") {
+      discountAmount = value;
+    }
+
+    finalPrice = originalPrice - discountAmount;
+    if (finalPrice < 0) finalPrice = 0; // Đảm bảo không bị âm tiền
+  }
   return (
     <div className="booking-page-container pt-4">
       <div className="container">
@@ -134,7 +201,7 @@ const BookingPage = () => {
                 {service.description}
               </p>
 
-              {/* KHU VỰC THÊM HÌNH ẢNH DỊCH VỤ */}
+              {/* Hình ảnh dịch vụ */}
               {service.imageUrl ? (
                 <div className="service-image-container my-3 text-center flex-grow-1">
                   <img
@@ -158,13 +225,37 @@ const BookingPage = () => {
                 </div>
               )}
 
-              <div className="mt-auto pt-4 border-top d-flex justify-content-between align-items-center">
-                <span className="fw-bold fs-5 text-secondary">
-                  Tổng thanh toán:
-                </span>
-                <span className="fs-3 fw-bold text-danger">
-                  {Number(service.price).toLocaleString("vi-VN")} ₫
-                </span>
+              <div className="mt-auto pt-4 border-top">
+                {/* Hiện bảng so sánh chi tiết nếu có mã giảm giá */}
+                {appliedDiscount && (
+                  <div className="discount-summary mb-3 p-2 bg-light rounded border border-success border-opacity-25">
+                    <div className="d-flex justify-content-between align-items-center mb-1">
+                      <span className="text-muted small">Giá gốc dịch vụ:</span>
+                      <span className="text-muted small text-decoration-line-through">
+                        {originalPrice.toLocaleString("vi-VN")} ₫
+                      </span>
+                    </div>
+                    <div className="d-flex justify-content-between align-items-center">
+                      <span className="text-success small fw-bold">
+                        <i className="bi bi-tags-fill me-1"></i>Đã giảm (
+                        {appliedDiscount.code}):
+                      </span>
+                      <span className="text-success small fw-bold">
+                        -{discountAmount.toLocaleString("vi-VN")} ₫
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Tổng thanh toán cuối cùng */}
+                <div className="d-flex justify-content-between align-items-center">
+                  <span className="fw-bold fs-5 text-secondary">
+                    Tổng thanh toán:
+                  </span>
+                  <span className="fs-3 fw-bold text-danger">
+                    {finalPrice.toLocaleString("vi-VN")} ₫
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -243,7 +334,7 @@ const BookingPage = () => {
                   />
                 </div>
 
-                {/* --- CHỌN NGÀY GIỜ (Đã thêm setDate, setTime để hết lỗi đỏ) --- */}
+                {/* --- CHỌN NGÀY GIỜ  --- */}
                 <div className="row mb-3">
                   <div className="col-6">
                     <label className="custom-form-label">Ngày làm *</label>
@@ -281,6 +372,13 @@ const BookingPage = () => {
                       value={discountCode}
                       onChange={(e) => setDiscountCode(e.target.value)}
                     />
+                    <button
+                      className="btn btn-outline-primary"
+                      type="button"
+                      onClick={handleApplyDiscount}
+                    >
+                      Áp dụng
+                    </button>
                   </div>
                 </div>
 

@@ -49,9 +49,8 @@ axiosClient.interceptors.response.use(
 
     // Nếu lỗi 401 (Hết hạn) và chưa từng thử chạy lại API này
     if (
-      error.response &&
-      error.response.status === 401 &&
-      !originalRequest._retry
+      (error.response && error.response.status === 401) ||
+      (error.response.status === 403 && !originalRequest._retry)
     ) {
       // Nếu có 1 API khác đang refresh token rồi, các API này phải vào hàng đợi
       if (isRefreshing) {

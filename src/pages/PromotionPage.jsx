@@ -154,7 +154,7 @@ const PromotionsPage = () => {
                     </button>
                     <button
                       className="promo-btn-use"
-                      onClick={() => navigate("/")}
+                      onClick={() => navigate("/danh-muc")}
                     >
                       Dùng ngay
                     </button>
