@@ -1,33 +1,11 @@
-/* Container chính */
+/* Bố cục chung và tiêu đề */
 .bd-container {
   max-width: 1140px;
-  margin: 2rem auto 4rem auto;
+  margin: 2rem auto 4rem;
   padding: 0 1rem;
   font-family: Arial, sans-serif;
 }
 
-/* Nút quay lại */
-.bd-btn-back {
-  background: transparent;
-  border: 1px solid #160202;
-  color: #000000;
-  padding: 0.4rem 1rem;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-bottom: 1.5rem;
-  font-size: 0.95rem;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: all 0.2s;
-}
-
-.bd-btn-back:hover {
-  background: #0087fe;
-  color: #fff;
-}
-
-/* Tiêu đề trang */
 .bd-page-title {
   color: #0d6efd;
   font-weight: 700;
@@ -35,26 +13,87 @@
   font-size: 1.75rem;
 }
 
-/* CHIA LƯỚI 2 CỘT (Tỉ lệ 5 : 7) */
 .bd-layout-grid {
   display: grid;
   grid-template-columns: 5fr 7fr;
   gap: 1.5rem;
 }
+@media (max-width: 768px) {
+  .bd-layout-grid {
+    grid-template-columns: 1fr;
+  }
+}
 
-/* Khung Card */
+/*Hệ thống nút ấn  */
+.bd-header-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/* Dùng chung cho nút "Quay lại" và "Đánh giá" */
+.bd-action-btn {
+  background-color: #0b6afa;
+  border: 1px solid #6c757d;
+  color: #f8f5f5;
+  padding: 8px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.bd-action-btn:hover {
+  background: #0a7ae9; /* Hover chỉ sáng nền lên 1 chút */
+  border-color: #fffdfd;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Nút trong form Modal */
+.bd-btn-submit,
+.bd-btn-cancel {
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.bd-btn-submit {
+  background-color: #333;
+  color: white;
+  border: none;
+}
+.bd-btn-submit:hover {
+  background-color: #000;
+  transform: translateY(-1px);
+}
+.bd-btn-cancel {
+  background: transparent;
+  color: #333;
+  border: 1px solid #ced4da;
+}
+.bd-btn-cancel:hover {
+  background-color: #f8f9fa;
+}
+
+/* Khung card nội dung của Nhân Viên */
 .bd-card {
-  background-color: #ffffff;
+  background: #fff;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   display: flex;
   flex-direction: column;
-  overflow: hidden;
   height: 100%;
+  overflow: hidden;
 }
-
 .bd-card-header {
-  background-color: #0d6efd;
+  background: #0d6efd;
   color: white;
   font-weight: bold;
   padding: 1rem 1.25rem;
@@ -63,76 +102,53 @@
   gap: 0.5rem;
   font-size: 1.1rem;
 }
-
 .bd-card-body {
   padding: 1.5rem;
   flex: 1;
 }
 
-/* Cột trái: Căn giữa nhân viên */
 .bd-staff-content {
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
-
 .bd-avatar {
   width: 130px;
   height: 130px;
   object-fit: cover;
   border-radius: 50%;
   border: 3px solid #e9ecef;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-bottom: 1rem;
 }
-
 .bd-staff-name {
   font-weight: 700;
   font-size: 1.25rem;
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 0.5rem;
   color: #333;
 }
-
 .bd-staff-phone {
   color: #6c757d;
   font-size: 1.1rem;
-  margin: 0 0 1rem 0;
+  margin: 0 0 1rem;
 }
-
-.bd-badge {
+.bd-badge-success {
   padding: 0.4rem 1rem;
   border-radius: 50px;
   font-size: 0.9rem;
   font-weight: 600;
-}
-
-.bd-badge-success {
-  background-color: #198754;
+  background: #198754;
   color: white;
 }
 
-/* Cột phải: Hộp ghi chú */
+/* Tiến độ và ghi chú  */
 .bd-note-box {
-  background-color: #f8f9fa;
+  background: #f8f9fa;
   border: 1px solid #0dcaf0;
   border-radius: 6px;
   padding: 1rem;
   margin-bottom: 1.5rem;
 }
-
-.bd-note-box h6 {
-  color: #0dcaf0;
-  font-weight: bold;
-  margin: 0 0 0.5rem 0;
-}
-
-.bd-note-box p {
-  margin: 0;
-  color: #333;
-}
-
-/* Timeline Tiến độ */
 .bd-timeline-title {
   font-weight: 700;
   color: #6c757d;
@@ -141,68 +157,55 @@
   margin-bottom: 1rem;
   font-size: 1.1rem;
 }
-
 .bd-timeline-item {
   display: flex;
   align-items: flex-start;
-  background-color: #fff;
+  background: #fff;
   border: 1px solid #dee2e6;
   border-radius: 6px;
   padding: 1rem;
   margin-bottom: 1rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
-
 .bd-timeline-icon {
   color: #198754;
   font-size: 1.5rem;
   margin-right: 1rem;
   line-height: 1;
 }
-
-.bd-timeline-content {
-  flex: 1;
-}
-
 .bd-step-name {
   font-weight: 700;
   color: #333;
-  margin: 0 0 0.25rem 0;
+  margin: 0 0 0.25rem;
   font-size: 1rem;
 }
-
 .bd-step-note {
-  background-color: #f8f9fa;
-  color: #6c757d;
-  font-size: 0.85rem;
+  background: #f8f9fa;
+  color: #0d0d0d;
+  font-size: 1rem;
   padding: 0.3rem 0.5rem;
   border-radius: 4px;
-  margin: 0.25rem 0 0.5rem 0;
+  margin: 0.25rem 0 0.5rem;
 }
-
 .bd-step-time {
-  color: #6c757d;
+  color: #0e0e0e;
   font-size: 0.85rem;
   display: flex;
   align-items: center;
   gap: 0.3rem;
 }
-
-.bd-step-evidence {
-  margin-top: 0.75rem;
-}
-
 .bd-step-evidence img {
   max-height: 100px;
   border-radius: 6px;
   border: 1px solid #dee2e6;
-  object-fit: contain;
+  margin-top: 0.75rem;
 }
 
-/* Các trạng thái rỗng và Loading */
+/* Các trạng thái trống và hiệu ứng loàd */
 .bd-empty-state {
   color: #6c757d;
   padding: 3rem 0;
+  text-align: center;
 }
 .bd-empty-state i {
   font-size: 3rem;
@@ -210,22 +213,19 @@
   display: block;
   margin-bottom: 1rem;
 }
-
 .bd-empty-state-small {
-  background-color: #f8f9fa;
+  background: #f8f9fa;
   color: #6c757d;
   text-align: center;
   padding: 1rem;
   border-radius: 6px;
   border: 1px solid #dee2e6;
 }
-
 .bd-loading {
   text-align: center;
   padding: 5rem 0;
   color: #0d6efd;
 }
-
 .bd-spinner {
   border: 4px solid rgba(0, 0, 0, 0.1);
   width: 40px;
@@ -233,21 +233,177 @@
   border-radius: 50%;
   border-left-color: #0d6efd;
   animation: spin 1s linear infinite;
-  margin: 0 auto 1rem auto;
+  margin: 0 auto 1rem;
 }
-
 @keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
   100% {
     transform: rotate(360deg);
   }
 }
 
-/* Responsive: Thu nhỏ màn hình thì xếp chồng 2 cột lên nhau */
-@media (max-width: 768px) {
-  .bd-layout-grid {
-    grid-template-columns: 1fr;
+/* Model đánh giá  */
+.bd-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(3px);
+}
+.bd-modal-content {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 450px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  animation: slideDown 0.3s ease;
+}
+@keyframes slideDown {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
   }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.bd-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+.bd-modal-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #2c3e50;
+  margin: 0;
+}
+.bd-btn-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #6c757d;
+  transition: 0.2s;
+}
+.bd-btn-close:hover {
+  color: #dc3545;
+}
+
+.bd-star-rating {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  cursor: pointer;
+}
+.bd-star-rating i {
+  transition: transform 0.2s ease;
+}
+.bd-star-rating i:hover {
+  transform: scale(1.2);
+}
+
+.bd-review-textarea {
+  width: 100%;
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  padding: 12px;
+  min-height: 100px;
+  margin-bottom: 20px;
+  font-family: inherit;
+  resize: vertical;
+}
+.bd-review-textarea:focus {
+  outline: none;
+  border-color: #333;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+}
+.bd-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+/* =========================================
+   7. FORM NHẬP LIỆU (CHO MODAL SỬA ĐƠN)
+========================================= */
+.bd-form-group {
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+.bd-form-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+.bd-form-input {
+  width: 100%;
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+  background-color: #fff;
+}
+
+.bd-form-input:focus {
+  outline: none;
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
+}
+
+textarea.bd-form-input {
+  min-height: 90px;
+  resize: vertical;
+}
+/* =========================================
+   FORM NHẬP LIỆU (CHO MODAL SỬA ĐƠN)
+========================================= */
+.bd-form-group {
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+.bd-form-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+.bd-form-input {
+  width: 100%;
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+  background-color: #fff;
+}
+
+.bd-form-input:focus {
+  outline: none;
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
+}
+
+textarea.bd-form-input {
+  min-height: 90px;
+  resize: vertical;
 }

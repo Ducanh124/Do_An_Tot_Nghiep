@@ -22,7 +22,6 @@ const bookingService = {
           limit: limit,
         },
       });
-
       // 👉 In ra để chắc chắn file này đã được chạy
       console.log("=== CHECK RESPONSE TRONG SERVICE ===", response);
 
@@ -60,6 +59,15 @@ const bookingService = {
       console.error("Lỗi lấy chi tiết đơn:", error);
       throw error;
     }
+  },
+  updateBooking: async (id, payload) => {
+    const response = await axiosClient.put(`/bookings/${id}`, payload);
+    return response;
+  },
+
+  cancelBooking: async (id) => {
+    const response = await axiosClient.delete(`/bookings/${id}`);
+    return response;
   },
 };
 

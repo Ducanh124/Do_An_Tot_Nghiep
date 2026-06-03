@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import authService from "../services/authService";
 import bookingService from "../services/bookingService";
+import reviewService from "../services/reviewService";
 import "./BookingHistory.css";
 
 const BookingHistory = () => {
@@ -10,6 +11,9 @@ const BookingHistory = () => {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1); // Mặc định vào là trang 1
   const [totalPages, setTotalPages] = useState(1); // Tổng số trang (Backend sẽ trả về)
+
+  // lưu kết quả đánh giá số sao: { bookingId: số_sao }
+  const [reviewMap, setReviewMap] = useState({});
 
   //Thanh toán
   // Hàm xử lý trạng thái thanh toán (Chỉ dùng class CSS tự viết, không dùng nền)
@@ -46,7 +50,7 @@ const BookingHistory = () => {
       try {
         setLoading(true);
 
-        // Gọi API với đủ 3 tham số
+        // 1. Gọi API lấy Đơn hàng với đủ 3 tham số
         const result = await bookingService.getMyBookings(
           currentUser.id,
           currentPage,
@@ -59,6 +63,32 @@ const BookingHistory = () => {
 
         setBookings(sortedData); // Lưu danh sách để vẽ bảng
         setTotalPages(result.totalPages); // Lưu tổng số trang để vẽ nút bấm
+
+        // lấy số sao đuọc đánh giá cho đơn hàng có trạng thái HOÀN THÀNH
+        const completedBookings = sortedData.filter(
+          (b) => b.status?.toLowerCase() === "completed",
+        );
+
+        if (completedBookings.length > 0) {
+          // Gọi API kiểm tra đánh giá của từng đơn hàng
+          const reviewsData = await Promise.all(
+            completedBookings.map((b) =>
+              reviewService.getReviewByBookingId(b.id),
+            ),
+          );
+
+          // Ghi chép vào sổ tay reviewMap: { "Mã_Đơn_1": 5, "Mã_Đơn_2": 4 }
+          const newReviewMap = {};
+          completedBookings.forEach((b, index) => {
+            if (reviewsData[index]) {
+              // Gắn số sao (Lấy trường rating từ API trả về)
+              newReviewMap[b.id] = reviewsData[index].rating;
+            }
+          });
+          setReviewMap(newReviewMap);
+        } else {
+          setReviewMap({});
+        }
       } catch (error) {
         console.error("Lỗi tải lịch sử:", error);
       } finally {
@@ -104,11 +134,47 @@ const BookingHistory = () => {
         };
       default:
         return {
-          text: status || "Không rõ",
+          text: "Không có nhân viên ",
           className: "status-text-default",
           icon: "bi-question-circle",
         };
     }
+  };
+
+  // Hàm xử lý đánh giá
+  const getReviewStatus = (booking) => {
+    if (booking.status?.toLowerCase() !== "completed") {
+      return <span className="review-none">-</span>;
+    }
+    const ratingStar = reviewMap[booking.id]; // Tra sổ tay xem đơn này có sao chưa
+    if (ratingStar) {
+      // Đã đánh giá -> In ra ngôi sao bằng ký tự text
+      const stars = [];
+      for (let i = 0; i < 5; i++) {
+        stars.push(
+          <span
+            key={i}
+            style={{
+              color: i < ratingStar ? "#ffc107" : "#e4e5e9", // Màu vàng (#ffc107) nếu có sao, xám nhạt (#e4e5e9) nếu trống
+              fontSize: "1.2rem", // Chỉnh lại kích thước sao cho cân đối với bảng
+              margin: "0 2px", // Tạo khoảng cách nhỏ giữa các ngôi sao
+            }}
+          >
+            ★
+          </span>,
+        );
+      }
+      return <div className="review-stars">{stars}</div>;
+    }
+    // Chưa đánh giá truy cập vào link có nút ấn giống với chi tiết đơn
+    return (
+      <span
+        className="review-link"
+        onClick={() => navigate(`/history/${booking.id}?action=review`)}
+      >
+        Đánh giá
+      </span>
+    );
   };
 
   if (loading)
@@ -134,8 +200,9 @@ const BookingHistory = () => {
                   <th>Mã đơn</th>
                   <th>Thời gian làm</th>
                   <th>Địa chỉ</th>
-                  <th>Trạng thái</th>
+                  <th>Trạng thái công việc</th>
                   <th>Thanh toán</th>
+                  <th>Số sao cho nhân viên</th>
                   <th>Thao tác</th>
                 </tr>
               </thead>
@@ -147,9 +214,9 @@ const BookingHistory = () => {
                     "accepted",
                     "is_working",
                     "completed",
+                    "pending",
                   ].includes(booking.status?.toLowerCase());
-                  const canReview =
-                    booking.status?.toLowerCase() === "completed";
+
                   return (
                     <tr key={booking.id}>
                       <td className="text-center booking-id">
@@ -166,7 +233,18 @@ const BookingHistory = () => {
                           {date.toLocaleDateString("vi-VN")}
                         </div>
                       </td>
-                      <td>{booking.address}</td>
+                      <td>
+                        <div
+                          style={{
+                            maxWidth: "200px",
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                          }}
+                        >
+                          {booking.address}
+                        </div>
+                      </td>
 
                       <td className="text-center align-middle">
                         <span className={badgeInfo.className}>
@@ -174,6 +252,7 @@ const BookingHistory = () => {
                           {badgeInfo.text}
                         </span>
                       </td>
+
                       <td className="text-center">
                         <div className="fw-bold text-danger mb-1">
                           {Number(booking.totalAmount).toLocaleString("vi-VN")}{" "}
@@ -181,6 +260,12 @@ const BookingHistory = () => {
                         </div>
                         {getPaymentBadge(booking.paymentStatus)}
                       </td>
+
+                      {/* Cột đánh giá */}
+                      <td className="text-center align-middle">
+                        {getReviewStatus(booking)}
+                      </td>
+
                       <td className="text-center">
                         <div className="d-flex flex-column align-items-center gap-2">
                           {canViewDetails ? (
@@ -191,20 +276,7 @@ const BookingHistory = () => {
                               <i className="bi bi-eye"></i> Chi tiết
                             </button>
                           ) : (
-                            <span className="text-muted small">Chờ xử lý</span>
-                          )}
-
-                          {/* Nút Đánh giá (Chỉ hiện khi completed) */}
-                          {canReview && (
-                            <button
-                              className="custom-btn btn-table btn-review"
-                              onClick={() =>
-                                navigate(`/history/${booking.id}?action=review`)
-                              }
-                            >
-                              <i className="bi bi-star-fill text-danger"></i>{" "}
-                              Đánh giá
-                            </button>
+                            <span className="text-muted small">Chờ xử lí</span>
                           )}
                         </div>
                       </td>

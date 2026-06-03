@@ -51,7 +51,7 @@
 }
 /*  Trạng thái Đơn hàng  */
 .status-text-pending {
-  color: #fd7e14;
+  color: #ff0000;
 }
 .status-text-accepted {
   color: #0d6efd;
@@ -60,27 +60,27 @@
   color: #0dcaf0;
 }
 .status-text-completed {
-  color: #198754;
+  color: #08c06a;
 }
 .status-text-cancelled {
-  color: #dc3545;
+  color: #000000;
 }
 .status-text-default {
   color: #6c757d;
 }
 /*  Trạng thái Thanh toán (Có thêm margin để cách số tiền)  */
 .payment-status-paid {
-  color: #198754;
+  color: #08c06a;
   display: inline-block;
   margin-top: 4px;
 }
 .payment-status-pending {
-  color: #5c4501af;
+  color: #ff0000;
   display: inline-block;
   margin-top: 4px;
 }
 .payment-status-failed {
-  color: #dc3545;
+  color: #000000;
   display: inline-block;
   margin-top: 4px;
 }
@@ -144,15 +144,31 @@
   color: white;
 }
 
-.btn-review {
-  background-color: #ffffff;
-  color: #212529;
-  border-color: #07a0ff;
+/*đánh giá  */
+.review-stars {
+  display: flex;
+  gap: 2px;
+  justify-content: center;
+  font-size: 0.95rem;
+  white-space: nowrap;
 }
-.btn-review:hover:not(:disabled) {
-  background-color: #09bce9;
-  border-color: #00adeb;
-  color: white;
+
+.review-link {
+  color: #0d6efd;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.review-link:hover {
+  color: #0b5ed7;
+}
+
+.review-none {
+  color: #6c757d;
+  font-weight: 500;
 }
 
 /*  Nút Chính (Đặt lịch ngay, Đặt thêm) */

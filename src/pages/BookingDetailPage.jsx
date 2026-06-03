@@ -1,61 +1,157 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import bookingService from "../services/bookingService";
 import staffService from "../services/staffService";
 import progressService from "../services/progressService";
+
+// 👉 ĐÃ IMPORT FILE API REVIEW CHUẨN
+import reviewService from "../services/reviewService";
 import "./BookingDetailPage.css";
 
 const BookingDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [loading, setLoading] = useState(true);
   const [details, setDetails] = useState(null);
   const [staffInfo, setStaffInfo] = useState(null);
   const [progressList, setProgressList] = useState([]);
+  // STATE QUẢN LÝ FORM ĐÁNH GIÁ
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [rating, setRating] = useState(5);
+  const [reviewComment, setReviewComment] = useState("");
+
+  // 👉 THÊM: STATE QUẢN LÝ FORM SỬA ĐƠN
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editData, setEditData] = useState({
+    address: "",
+    scheduledTime: "",
+    note: "",
+  });
+
+  const fetchDetails = async () => {
+    try {
+      setLoading(true);
+      const detailData = await bookingService.getBookingById(id);
+      setDetails(detailData);
+
+      const staffId = detailData?.staffAssignments?.[0]?.staffId;
+
+      if (staffId) {
+        setStaffInfo(detailData.staff);
+        try {
+          const staffProfile = await staffService.getStaffProfile(staffId);
+          if (staffProfile) {
+            setStaffInfo((prev) => ({ ...prev, ...staffProfile }));
+          }
+        } catch (profileError) {
+          console.warn("Không lấy được hồ sơ chi tiết", profileError);
+        }
+        try {
+          const progressData = await progressService.getProgress({
+            bookingId: id,
+            staffId: staffId,
+          });
+          setProgressList(progressData);
+        } catch (progressError) {
+          console.error("Lỗi khi tải API ", progressError);
+        }
+      }
+    } catch (error) {
+      console.error("Lỗi lấy chi tiết:", error);
+      alert("Không thể tải thông tin. Đang quay lại trang lịch sử...");
+      navigate("/history");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchDetails = async () => {
-      try {
-        setLoading(true);
-        const detailData = await bookingService.getBookingById(id);
-        setDetails(detailData);
-
-        const staffId = detailData?.staffAssignments?.[0]?.staffId;
-
-        if (staffId) {
-          setStaffInfo(detailData.staff);
-
-          try {
-            const staffProfile = await staffService.getStaffProfile(staffId);
-            if (staffProfile) {
-              setStaffInfo((prev) => ({ ...prev, ...staffProfile }));
-            }
-          } catch (profileError) {
-            console.warn("Không lấy được hồ sơ chi tiết", profileError);
-          }
-
-          try {
-            const progressData = await progressService.getProgress({
-              bookingId: id,
-              staffId: staffId,
-            });
-            setProgressList(progressData);
-          } catch (progressError) {
-            console.error("Lỗi khi tải API ", progressError);
-          }
-        }
-      } catch (error) {
-        console.error("Lỗi lấy chi tiết:", error);
-        alert("Không thể tải thông tin. Đang quay lại trang lịch sử...");
-        navigate("/history");
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchDetails();
   }, [id, navigate]);
+
+  // TỰ ĐỘNG BẬT FORM NẾU TỪ TRANG LỊCH SỬ BẤM VÀO NÚT "CHƯA ĐÁNH GIÁ"
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get("action") === "review") {
+      setShowReviewModal(true);
+    }
+  }, [location]);
+
+  // 👉 HÀM GỌI API GỬI ĐÁNH GIÁ THẬT LÊN SERVER
+  const handleSubmitReview = async () => {
+    try {
+      // Lấy id nhân viên từ thông tin đơn hàng
+      const staffId = details?.staffAssignments?.[0]?.staffId;
+      const payload = {
+        bookingId: String(id),
+        customerId: String(details?.customerId || ""),
+        staffId: String(staffId || ""),
+        rating: Number(rating),
+        review: reviewComment || "Không có bình luận",
+        type: "customer",
+      };
+
+      console.log("Đang gửi đánh giá lên server:", payload);
+
+      // Gọi API POST
+      await reviewService.createReview(payload);
+
+      alert("Đánh giá thành công! Cảm ơn bạn.");
+      setShowReviewModal(false);
+
+      navigate("/history", { replace: true });
+    } catch (error) {
+      console.error("Lỗi khi gửi đánh giá:", error);
+      alert("Có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu đầu vào!");
+    }
+  };
+
+  // 👉 THÊM: HÀM LƯU THAY ĐỔI (SỬA ĐƠN) GỌI API PUT
+  const handleSaveEdit = async () => {
+    try {
+      const serviceIds =
+        details?.bookingDetails?.map((item) => item.serviceId) || [];
+      const payload = {
+        status: details.status || "pending",
+        address: editData.address,
+        areaId: details.areaId || 0,
+        scheduledTime: new Date(editData.scheduledTime).toISOString(),
+        serviceId: serviceIds,
+        note: editData.note,
+      };
+
+      await bookingService.updateBooking(id, payload);
+
+      alert("Cập nhật thông tin đơn hàng thành công!");
+      setShowEditModal(false);
+      fetchDetails(); // Load lại giao diện
+    } catch (error) {
+      console.error("Lỗi cập nhật:", error);
+      alert("Lỗi khi cập nhật đơn hàng. Vui lòng thử lại!");
+    }
+  };
+
+  // 👉 THÊM: HÀM HUỶ ĐƠN HÀNG GỌI API DELETE
+  const handleCancelBooking = async () => {
+    if (
+      window.confirm(
+        "Bạn có chắc chắn muốn huỷ đơn hàng này không? Hành động này không thể hoàn tác.",
+      )
+    ) {
+      try {
+        await bookingService.cancelBooking(id);
+        alert("Đã huỷ đơn hàng thành công!");
+        navigate("/history", { replace: true }); // Huỷ xong thì đẩy về Lịch sử
+      } catch (error) {
+        console.error("Lỗi huỷ đơn:", error);
+        alert(
+          "Lỗi khi huỷ đơn. Có thể đơn hàng đã được tiếp nhận và không thể huỷ!",
+        );
+      }
+    }
+  };
 
   if (loading)
     return (
@@ -69,16 +165,12 @@ const BookingDetailPage = () => {
 
   return (
     <div className="bd-container">
-      <button className="bd-btn-back" onClick={() => navigate("/history")}>
-        Quay lại Lịch sử
-      </button>
-
       <h3 className="bd-page-title">
         Chi tiết mã đơn #{String(details.id).substring(0, 8).toUpperCase()}
       </h3>
 
       <div className="bd-layout-grid">
-        {/* CỘT TRÁI: THÔNG TIN NHÂN VIÊN */}
+        {/* CỘT TRÁI: NHÂN VIÊN */}
         <div className="bd-card">
           <div className="bd-card-header">
             <i className="bi bi-person-badge"></i> Nhân viên phụ trách
@@ -114,7 +206,7 @@ const BookingDetailPage = () => {
           </div>
         </div>
 
-        {/* CỘT PHẢI: TIẾN ĐỘ VÀ BÁO CÁO */}
+        {/* CỘT PHẢI: TIẾN ĐỘ */}
         <div className="bd-card">
           <div className="bd-card-header">
             <i className="bi bi-card-checklist"></i> Tiến độ công việc
@@ -166,16 +258,13 @@ const BookingDetailPage = () => {
                         <h6 className="bd-step-name">
                           {translateStep(report.stepName)}
                         </h6>
-
                         {report.note && (
                           <p className="bd-step-note">Báo cáo: {report.note}</p>
                         )}
-
                         <span className="bd-step-time">
                           <i className="bi bi-clock"></i>
                           {new Date(report.recordedAt).toLocaleString("vi-VN")}
                         </span>
-
                         {report.evidenceImageUrl && (
                           <div className="bd-step-evidence">
                             <img
@@ -197,6 +286,184 @@ const BookingDetailPage = () => {
           </div>
         </div>
       </div>
+
+      {/* HEADER NÚT QUAY LẠI, ĐÁNH GIÁ VÀ CÁC THAO TÁC SỬA/HUỶ */}
+      <div className="bd-header-actions">
+        <button className="bd-action-btn" onClick={() => navigate("/history")}>
+          <i className="bi bi-arrow-left"></i> Quay lại Lịch sử
+        </button>
+
+        <div style={{ display: "flex", gap: "12px" }}>
+          {/* Nút xoá và sửa đơn hàng chỉ hiện khi */}
+          {details?.status?.toLowerCase() === "pending" && (
+            <>
+              <button
+                className="bd-action-btn"
+                style={{ borderColor: "#000000", color: "#fbfbfb" }}
+                onClick={() => {
+                  setEditData({
+                    address: details.address || "",
+                    scheduledTime: details.scheduledTime
+                      ? new Date(details.scheduledTime)
+                          .toISOString()
+                          .slice(0, 16)
+                      : "",
+                    note: details.note || "",
+                  });
+                  setShowEditModal(true);
+                }}
+              >
+                <i className="bi bi-pencil"></i> Sửa đơn
+              </button>
+
+              <button
+                className="bd-action-btn"
+                style={{ borderColor: "#000000", color: "#ffffff" }}
+                onClick={handleCancelBooking}
+              >
+                <i className="bi bi-x-circle"></i> Huỷ đơn
+              </button>
+            </>
+          )}
+
+          {details?.status?.toLowerCase() === "completed" && (
+            <button
+              className="bd-action-btn"
+              onClick={() => setShowReviewModal(true)}
+            >
+              <i className="bi bi-star"></i> Đánh giá dịch vụ
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* 👉 THÊM: BẢNG POPUP SỬA ĐƠN HÀNG */}
+      {showEditModal && (
+        <div className="bd-modal-overlay">
+          <div className="bd-modal-content">
+            <div className="bd-modal-header">
+              <h5 className="bd-modal-title">Sửa thông tin đơn hàng</h5>
+              <button
+                className="bd-btn-close"
+                onClick={() => setShowEditModal(false)}
+              >
+                &times;
+              </button>
+            </div>
+
+            <div className="bd-modal-body">
+              <div className="bd-form-group">
+                <label className="bd-form-label">Địa chỉ thực hiện:</label>
+                <input
+                  type="text"
+                  className="bd-form-input"
+                  value={editData.address}
+                  onChange={(e) =>
+                    setEditData({ ...editData, address: e.target.value })
+                  }
+                  placeholder="Nhập địa chỉ của bạn..."
+                />
+              </div>
+
+              <div className="bd-form-group">
+                <label className="bd-form-label">Thời gian làm việc:</label>
+                <input
+                  type="datetime-local"
+                  className="bd-form-input"
+                  value={editData.scheduledTime}
+                  onChange={(e) =>
+                    setEditData({ ...editData, scheduledTime: e.target.value })
+                  }
+                />
+              </div>
+
+              <div className="bd-form-group">
+                <label className="bd-form-label">Ghi chú cho nhân viên:</label>
+                <textarea
+                  className="bd-form-input"
+                  value={editData.note}
+                  onChange={(e) =>
+                    setEditData({ ...editData, note: e.target.value })
+                  }
+                  placeholder="Ví dụ: Mang theo thang chữ A..."
+                ></textarea>
+              </div>
+            </div>
+
+            <div className="bd-modal-footer">
+              <button
+                className="bd-btn-cancel"
+                onClick={() => setShowEditModal(false)}
+              >
+                Hủy
+              </button>
+              <button className="bd-btn-submit" onClick={handleSaveEdit}>
+                Lưu thay đổi
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* BẢNG ĐÁNH GIÁ (GIỮ NGUYÊN) */}
+      {showReviewModal && (
+        <div className="bd-modal-overlay">
+          <div className="bd-modal-content">
+            <div className="bd-modal-header">
+              <h5 className="bd-modal-title">Đánh giá dịch vụ</h5>
+              <button
+                className="bd-btn-close"
+                onClick={() => setShowReviewModal(false)}
+              >
+                &times;
+              </button>
+            </div>
+
+            <div className="bd-modal-body text-center">
+              <p className="text-muted mb-4">
+                Vui lòng chọn số sao để đánh giá chất lượng dịch vụ của chúng
+                tôi
+              </p>
+
+              <div className="bd-star-rating">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <span
+                    key={star}
+                    style={{
+                      color: star <= rating ? "#ffc107" : "#e4e5e9",
+                      cursor: "pointer",
+                      fontSize: "3rem",
+                      lineHeight: "1",
+                    }}
+                    onClick={() => setRating(star)}
+                  >
+                    ★
+                  </span>
+                ))}
+              </div>
+
+              <textarea
+                className="bd-review-textarea"
+                placeholder="Chia sẻ trải nghiệm của bạn (không bắt buộc)..."
+                value={reviewComment}
+                onChange={(e) => setReviewComment(e.target.value)}
+              ></textarea>
+            </div>
+
+            <div className="bd-modal-footer">
+              <button
+                className="bd-btn-cancel"
+                onClick={() => setShowReviewModal(false)}
+              >
+                Hủy
+              </button>
+              <button className="bd-btn-submit" onClick={handleSubmitReview}>
+                Gửi đánh giá
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
