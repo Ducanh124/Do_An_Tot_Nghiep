@@ -9,11 +9,10 @@ import HeroSlider from "./components/common/HeroSlider";
 import FeaturesSection from "./components/common/FeaturesSection";
 import Footer from "./components/layout/Footer.jsx";
 import Login from "./components/auth/Login.jsx";
-import ListCategory from "./pages/ListCategory.jsx";
+import ListCategory from "./pages/AllServices.jsx";
 import ScrollToTop from "./components/common/ScrollToTop.jsx";
 import BookingHistory from "./pages/BookingHistory.jsx";
 import ProtectedRoute from "./components/auth/ProtectedRoute.jsx";
-import ServiceListByCategory from "./pages/ServiceListByCategory.jsx";
 import ProfilePage from "./components/auth/ProfilePage.jsx";
 import Policy from "./pages/Policy.jsx";
 import BookingDetailPage from "./pages/BookingDetailPage.jsx";
@@ -41,14 +40,6 @@ function App() {
           element={
             <ProtectedRoute>
               <ListCategory />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/dich-vu/:categoryId"
-          element={
-            <ProtectedRoute>
-              <ServiceListByCategory />
             </ProtectedRoute>
           }
         />

@@ -3,9 +3,10 @@ import { useParams, useNavigate, useLocation } from "react-router-dom";
 import bookingService from "../services/bookingService";
 import staffService from "../services/staffService";
 import progressService from "../services/progressService";
-
-// 👉 ĐÃ IMPORT FILE API REVIEW CHUẨN
 import reviewService from "../services/reviewService";
+
+// 👉 THÊM MỚI: Import api lấy địa điểm
+import areaService from "../services/areaService";
 import "./BookingDetailPage.css";
 
 const BookingDetailPage = () => {
@@ -17,19 +18,38 @@ const BookingDetailPage = () => {
   const [details, setDetails] = useState(null);
   const [staffInfo, setStaffInfo] = useState(null);
   const [progressList, setProgressList] = useState([]);
-  // STATE QUẢN LÝ FORM ĐÁNH GIÁ
+
+  // STATE QUẢN LÝ FORM ĐÁNH GIÁ (Của bạn - Giữ nguyên)
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [rating, setRating] = useState(5);
   const [reviewComment, setReviewComment] = useState("");
 
-  // 👉 THÊM: STATE QUẢN LÝ FORM SỬA ĐƠN
+  // 👉 THÊM MỚI: STATE QUẢN LÝ FORM SỬA ĐƠN
   const [showEditModal, setShowEditModal] = useState(false);
+  const [areas, setAreas] = useState([]); // Chứa danh sách Tỉnh/Thành phố
+  const [districts, setDistricts] = useState([]); // Chứa danh sách Quận/Huyện
   const [editData, setEditData] = useState({
+    cityId: "",
+    districtId: "",
     address: "",
     scheduledTime: "",
     note: "",
   });
 
+  // 👉 THÊM MỚI: Lấy danh sách Tỉnh/Thành lúc vừa vào trang
+  useEffect(() => {
+    const fetchAreas = async () => {
+      try {
+        const areaData = await areaService.getAll();
+        setAreas(areaData);
+      } catch (error) {
+        console.error("Lỗi tải danh sách Thành phố:", error);
+      }
+    };
+    fetchAreas();
+  }, []);
+
+  // Đưa hàm fetchDetails ra ngoài để tái sử dụng
   const fetchDetails = async () => {
     try {
       setLoading(true);
@@ -71,7 +91,7 @@ const BookingDetailPage = () => {
     fetchDetails();
   }, [id, navigate]);
 
-  // TỰ ĐỘNG BẬT FORM NẾU TỪ TRANG LỊCH SỬ BẤM VÀO NÚT "CHƯA ĐÁNH GIÁ"
+  // TỰ ĐỘNG BẬT FORM NẾU TỪ TRANG LỊCH SỬ BẤM VÀO NÚT "CHƯA ĐÁNH GIÁ" (Giữ nguyên)
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     if (params.get("action") === "review") {
@@ -79,10 +99,9 @@ const BookingDetailPage = () => {
     }
   }, [location]);
 
-  // 👉 HÀM GỌI API GỬI ĐÁNH GIÁ THẬT LÊN SERVER
+  // HÀM GỌI API GỬI ĐÁNH GIÁ (Giữ nguyên)
   const handleSubmitReview = async () => {
     try {
-      // Lấy id nhân viên từ thông tin đơn hàng
       const staffId = details?.staffAssignments?.[0]?.staffId;
       const payload = {
         bookingId: String(id),
@@ -94,13 +113,9 @@ const BookingDetailPage = () => {
       };
 
       console.log("Đang gửi đánh giá lên server:", payload);
-
-      // Gọi API POST
       await reviewService.createReview(payload);
-
       alert("Đánh giá thành công! Cảm ơn bạn.");
       setShowReviewModal(false);
-
       navigate("/history", { replace: true });
     } catch (error) {
       console.error("Lỗi khi gửi đánh giá:", error);
@@ -108,32 +123,103 @@ const BookingDetailPage = () => {
     }
   };
 
-  // 👉 THÊM: HÀM LƯU THAY ĐỔI (SỬA ĐƠN) GỌI API PUT
+  // 👉 THÊM MỚI: Hàm xử lý khi chọn lại Tỉnh/Thành
+  const handleCityChangeEdit = async (e) => {
+    const cityId = Number(e.target.value);
+    setEditData({ ...editData, cityId: cityId, districtId: "" });
+
+    if (!cityId) {
+      setDistricts([]);
+      return;
+    }
+
+    try {
+      const cityData = await areaService.getById(cityId);
+      if (cityData && cityData.children) {
+        setDistricts(cityData.children);
+      } else {
+        setDistricts([]);
+      }
+    } catch (error) {
+      console.error("Lỗi khi tải danh sách Quận/Huyện:", error);
+      setDistricts([]);
+    }
+  };
+
+  // 👉 THÊM MỚI: Hàm mở Modal Sửa và nạp dữ liệu cũ
+  // 👉 HÀM MỞ FORM SỬA VÀ NẠP DỮ LIỆU CŨ (ĐÃ SỬA LỖI TỰ ĐỘNG HIỆN ĐỊA CHỈ)
+  const handleOpenEditModal = async () => {
+    const savedAreaId = Number(details?.areaId || 0);
+    let foundCityId = "";
+    let foundDistricts = [];
+
+    try {
+      // 1. Tìm ID của Thành phố (Dựa vào parentId của Quận cũ)
+      // Ưu tiên lấy từ dữ liệu có sẵn nếu Backend trả về
+      foundCityId = details?.area?.parentId || details?.area?.cityId || "";
+
+      // Nếu không có sẵn, gọi API để hỏi Backend xem Quận này thuộc Thành phố nào
+      if (!foundCityId && savedAreaId) {
+        const districtInfo = await areaService.getById(savedAreaId);
+        foundCityId = districtInfo?.parentId || districtInfo?.cityId || "";
+      }
+
+      // 2. Khi đã biết Thành phố cũ, gọi API lấy danh sách các Quận của Thành phố đó
+      if (foundCityId) {
+        const cityData = await areaService.getById(foundCityId);
+        if (cityData && cityData.children) {
+          foundDistricts = cityData.children;
+        }
+      }
+    } catch (error) {
+      console.error("Lỗi khi tự động tải địa điểm cũ:", error);
+    }
+
+    // 3. Nạp dữ liệu vào Form và bật Popup
+    setDistricts(foundDistricts);
+    setEditData({
+      cityId: foundCityId, // Tự động chọn đúng Thành phố
+      districtId: savedAreaId, // Tự động chọn đúng Quận/Huyện
+      address: details?.address || "", // Chỉ hiện chi tiết số nhà (String) như bạn yêu cầu
+      scheduledTime: details?.scheduledTime
+        ? new Date(details.scheduledTime).toISOString().slice(0, 16)
+        : "",
+      note: details?.note || "",
+    });
+
+    setShowEditModal(true);
+  };
+
+  // 👉 THÊM MỚI: Hàm Lưu Sửa Đơn gọi API PUT
   const handleSaveEdit = async () => {
+    if (!editData.districtId) return alert("Vui lòng chọn Quận/Huyện!");
+    if (!editData.address || !editData.scheduledTime)
+      return alert("Vui lòng nhập đủ địa chỉ và thời gian!");
+
     try {
       const serviceIds =
-        details?.bookingDetails?.map((item) => item.serviceId) || [];
+        details?.bookingDetails?.map((item) => Number(item.serviceId)) || [];
       const payload = {
-        status: details.status || "pending",
+        customerId: String(details?.customerId || ""),
+        areaId: Number(editData.districtId),
         address: editData.address,
-        areaId: details.areaId || 0,
         scheduledTime: new Date(editData.scheduledTime).toISOString(),
-        serviceId: serviceIds,
+        status: details?.status || "pending",
         note: editData.note,
+        serviceId: serviceIds,
       };
 
       await bookingService.updateBooking(id, payload);
-
       alert("Cập nhật thông tin đơn hàng thành công!");
       setShowEditModal(false);
-      fetchDetails(); // Load lại giao diện
+      fetchDetails(); // Load lại dữ liệu mới nhất lên màn hình
     } catch (error) {
       console.error("Lỗi cập nhật:", error);
       alert("Lỗi khi cập nhật đơn hàng. Vui lòng thử lại!");
     }
   };
 
-  // 👉 THÊM: HÀM HUỶ ĐƠN HÀNG GỌI API DELETE
+  // 👉 THÊM MỚI: Hàm Huỷ Đơn gọi API DELETE
   const handleCancelBooking = async () => {
     if (
       window.confirm(
@@ -143,7 +229,7 @@ const BookingDetailPage = () => {
       try {
         await bookingService.cancelBooking(id);
         alert("Đã huỷ đơn hàng thành công!");
-        navigate("/history", { replace: true }); // Huỷ xong thì đẩy về Lịch sử
+        navigate("/history", { replace: true });
       } catch (error) {
         console.error("Lỗi huỷ đơn:", error);
         alert(
@@ -294,24 +380,13 @@ const BookingDetailPage = () => {
         </button>
 
         <div style={{ display: "flex", gap: "12px" }}>
-          {/* Nút xoá và sửa đơn hàng chỉ hiện khi */}
+          {/* 👉 NÚT SỬA & HUỶ ĐƠN */}
           {details?.status?.toLowerCase() === "pending" && (
             <>
               <button
                 className="bd-action-btn"
                 style={{ borderColor: "#000000", color: "#fbfbfb" }}
-                onClick={() => {
-                  setEditData({
-                    address: details.address || "",
-                    scheduledTime: details.scheduledTime
-                      ? new Date(details.scheduledTime)
-                          .toISOString()
-                          .slice(0, 16)
-                      : "",
-                    note: details.note || "",
-                  });
-                  setShowEditModal(true);
-                }}
+                onClick={handleOpenEditModal}
               >
                 <i className="bi bi-pencil"></i> Sửa đơn
               </button>
@@ -337,7 +412,7 @@ const BookingDetailPage = () => {
         </div>
       </div>
 
-      {/* 👉 THÊM: BẢNG POPUP SỬA ĐƠN HÀNG */}
+      {/* 👉 THÊM MỚI: BẢNG POPUP SỬA ĐƠN HÀNG */}
       {showEditModal && (
         <div className="bd-modal-overlay">
           <div className="bd-modal-content">
@@ -352,6 +427,44 @@ const BookingDetailPage = () => {
             </div>
 
             <div className="bd-modal-body">
+              {/* CHỌN KHU VỰC GIỐNG HỆT TRANG BOOKING */}
+              <div className="row mb-3">
+                <div className="col-6 bd-form-group mb-0">
+                  <label className="bd-form-label">Tỉnh/Thành phố *</label>
+                  <select
+                    className="bd-form-input"
+                    value={editData.cityId}
+                    onChange={handleCityChangeEdit}
+                  >
+                    <option value="">-- Chọn --</option>
+                    {areas.map((city) => (
+                      <option key={city.id} value={city.id}>
+                        {city.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="col-6 bd-form-group mb-0">
+                  <label className="bd-form-label">Quận/Huyện *</label>
+                  <select
+                    className="bd-form-input"
+                    value={editData.districtId}
+                    onChange={(e) =>
+                      setEditData({ ...editData, districtId: e.target.value })
+                    }
+                    disabled={!editData.cityId}
+                  >
+                    <option value="">-- Chọn --</option>
+                    {districts.map((district) => (
+                      <option key={district.id} value={district.id}>
+                        {district.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
               <div className="bd-form-group">
                 <label className="bd-form-label">Địa chỉ thực hiện:</label>
                 <input
@@ -405,7 +518,7 @@ const BookingDetailPage = () => {
         </div>
       )}
 
-      {/* BẢNG ĐÁNH GIÁ (GIỮ NGUYÊN) */}
+      {/* BẢNG ĐÁNH GIÁ (GIỮ NGUYÊN HOÀN TOÀN CỦA BẠN) */}
       {showReviewModal && (
         <div className="bd-modal-overlay">
           <div className="bd-modal-content">

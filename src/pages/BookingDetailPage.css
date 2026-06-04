@@ -407,3 +407,45 @@ textarea.bd-form-input {
   min-height: 90px;
   resize: vertical;
 }
+/* =========================================
+   FORM NHẬP LIỆU (CHO MODAL SỬA ĐƠN)
+========================================= */
+.bd-form-group {
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+.bd-form-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+.bd-form-input {
+  width: 100%;
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+  background-color: #fff;
+}
+
+.bd-form-input:focus {
+  outline: none;
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
+}
+
+.bd-form-input:disabled {
+  background-color: #e9ecef;
+  cursor: not-allowed;
+}
+
+textarea.bd-form-input {
+  min-height: 90px;
+  resize: vertical;
+}
