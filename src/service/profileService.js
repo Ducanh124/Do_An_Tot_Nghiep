@@ -10,7 +10,6 @@ export const profileService = {
   },
 
 
-
   // GỌI API ĐỂ ĐÓNG GÓI CARD NUMBER VÀ SKILLS GỬI LÊN BACKEND
   addProfile: async (userId, data) => {
     // Lưu ý: Dùng api.post hoặc api.put tùy thuộc vào cấu hình Backend của bạn

@@ -28,3 +28,10 @@ export const getDistricts = async (cityId) => {
   const res = await api.get(`/areas/${cityId}/get`);
   return res.data;
 };
+  //API ĐĂNG KÝ KHU VỰC LÀM VIỆC MỚI
+export const addWorkingArea = async (data) => {
+  const response = await api.post("/staff/add-area", data);
+  return response.data;
+};
+
+

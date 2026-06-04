@@ -3,10 +3,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  min-height: 100vh;  
   background-color: #f4f7f6; /* Nền xám nhạt */
   font-family: "Inter", sans-serif;
-  padding: 16px;
 }
 
 .login-card {
@@ -37,58 +36,21 @@
   color: #333;
 }
 
-/* Khối bao bọc Input để chứa Icon */
+/* Khối bao bọc Input */
 .input-wrapper {
-  position: relative;
   display: flex;
   align-items: center;
 }
 
-.input-icon {
-  position: absolute;
-  left: 16px;
-  color: #888;
-  font-size: 18px;
-}
-
 .input-wrapper input {
   width: 100%;
-  padding: 14px 16px 14px 44px; /* Padding trái to ra để nhường chỗ cho Icon */
+  padding: 14px 16px; 
   border: 1px solid #d9d9d9;
   border-radius: 8px;
   font-size: 14px;
   outline: none;
   transition: all 0.2s;
   box-sizing: border-box;
-}
-
-/* Hiệu ứng khi click vào ô input */
-.input-wrapper input:focus {
-  border-color: #4caf50;
-  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
-}
-
-.input-wrapper input::placeholder {
-  color: #bfbfbf;
-}
-
-/* Nút ẩn/hiện mật khẩu (Con mắt) */
-.btn-toggle-password {
-  position: absolute;
-  right: 12px;
-  background: none;
-  border: none;
-  color: #888;
-  font-size: 18px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 4px;
-}
-
-.btn-toggle-password:hover {
-  color: #333;
 }
 
 /* --- Nút Đăng nhập --- */
@@ -101,23 +63,8 @@
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition:
-    background-color 0.2s,
-    transform 0.1s;
+  transition: background-color 0.2s, transform 0.1s;
   margin-top: 8px;
-}
-
-.btn-login:hover {
-  background-color: #43a047;
-}
-
-.btn-login:active {
-  transform: scale(0.98);
-}
-
-.btn-login:disabled {
-  background-color: #a5d6a7;
-  cursor: not-allowed;
 }
 
 /* --- Footer --- */
@@ -126,16 +73,6 @@
   text-align: center;
   font-size: 14px;
   color: #666;
-}
-
-.login-footer a {
-  color: #4caf50;
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.login-footer a:hover {
-  text-decoration: underline;
 }
 
 /* Responsive cho điện thoại nhỏ */

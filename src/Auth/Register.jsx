@@ -6,7 +6,6 @@ import { regis, getCities, getDistricts } from "../service/authService.js";
 const Register = () => {
   const navigate = useNavigate();
 
-  // --- STATE QUẢN LÝ FORM ---
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -14,22 +13,22 @@ const Register = () => {
     phone: "",
     address: "",
     areaId: "",
-    gender: "",
+    gender: "male", // 👉 Cập nhật mặc định là 'male' để thẻ select không bị rỗng ban đầu
     role: "customer",
   });
 
-  // --- STATE QUẢN LÝ THÀNH PHỐ VÀ QUẬN ---
   const [cities, setCities] = useState([]);
   const [districts, setDistricts] = useState([]);
-  const [selectedCity, setSelectedCity] = useState(""); // Lưu ID thành phố đang chọn
-
+  const [selectedCity, setSelectedCity] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  // 1. GỌI API LẤY DANH SÁCH THÀNH PHỐ KHI VÀO TRANG
+  // 👉 THÊM MỚI: State lưu trữ lỗi của từng ô input
+  const [formErrors, setFormErrors] = useState({});
+
   useEffect(() => {
     const fetchCities = async () => {
       try {
-        const responseData = await getCities(); // Dùng hàm từ Service
+        const responseData = await getCities();
         const cityData = responseData.data.data || [];
         setCities(cityData);
       } catch (error) {
@@ -39,18 +38,21 @@ const Register = () => {
     fetchCities();
   }, []);
 
-  // 2. XỬ LÝ KHI NGƯỜI DÙNG CHỌN 1 THÀNH PHỐ
   const handleCityChange = async (e) => {
     const cityId = e.target.value;
     setSelectedCity(cityId);
     setDistricts([]);
     setFormData({ ...formData, areaId: "" });
+    
+    // 👉 Xóa lỗi của areaId nếu người dùng chọn lại Thành phố
+    if (formErrors.areaId) {
+      setFormErrors({ ...formErrors, areaId: "" });
+    }
 
     if (cityId) {
       try {
-        const responseData = await getDistricts(cityId); // Dùng hàm từ Service
-        const districtData =
-          responseData.children || responseData.data?.children || [];
+        const responseData = await getDistricts(cityId);
+        const districtData = responseData.children || responseData.data?.children || [];
         setDistricts(districtData);
       } catch (error) {
         console.error("Lỗi khi tải danh sách quận/huyện:", error);
@@ -58,50 +60,61 @@ const Register = () => {
     }
   };
 
-  // 3. XỬ LÝ THAY ĐỔI CÁC Ô INPUT KHÁC
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+
+    // 👉 THÊM MỚI: Xóa dòng lỗi màu đỏ ngay khi người dùng bắt đầu gõ lại vào ô đó
+    if (formErrors[name]) {
+      setFormErrors({ ...formErrors, [name]: "" });
+    }
   };
 
-  // 4. XỬ LÝ GỬI FORM LÊN BACKEND
   const handleRegister = async (e) => {
     e.preventDefault();
 
     if (!formData.areaId) {
-      alert("Vui lòng chọn Quận/Huyện!");
+      setFormErrors({ ...formErrors, areaId: "Vui lòng chọn Quận/Huyện" });
       return;
     }
 
     setIsLoading(true);
+    setFormErrors({}); // Reset lại toàn bộ lỗi trước khi gửi form mới
 
-    // Đóng gói dữ liệu theo đúng yêu cầu Backend: name, email, password, phone, address, areaid, role, gender
     const payload = {
       name: formData.name,
       email: formData.email,
       password: formData.password,
       phone: formData.phone,
       address: formData.address,
-      areaId: Number(formData.areaId), // Chuyển sang số nếu Backend yêu cầu số nguyên
+      areaId: Number(formData.areaId),
       role: formData.role,
       gender: formData.gender,
     };
 
-    console.log("Dữ liệu đăng ký đóng gói gửi đi:", payload);
-
     try {
-      // GỌI API ĐĂNG KÝ THẬT TỪ authService
       await regis(payload);
-
       alert("Đăng ký tài khoản thành công!");
       navigate("/login");
     } catch (error) {
       const backendError = error.response?.data;
-      console.error("🚨 Chi tiết lỗi từ Backend:", backendError);
-      console.error("Lỗi đăng ký:", error);
-      const errorMsg =
-        error.response?.data?.message || "Đăng ký thất bại. Vui lòng thử lại!";
-      alert(errorMsg);
+      
+      // 👉 THÊM MỚI: Logic bóc tách mảng lỗi từ Backend
+      if (backendError && backendError.errors && Array.isArray(backendError.errors)) {
+        const errorsObj = {};
+        backendError.errors.forEach((err) => {
+          // Nếu 1 trường (ví dụ gender) trả về 2 lỗi, ta chỉ lấy lỗi đầu tiên hiển thị cho gọn
+          if (!errorsObj[err.field]) {
+            errorsObj[err.field] = err.message;
+          }
+        });
+        // Đẩy toàn bộ cục lỗi vừa nhặt được vào State để hiển thị ra màn hình
+        setFormErrors(errorsObj); 
+      } else {
+        // Lỗi chung chung (không phải lỗi do điền sai form)
+        const errorMsg = backendError?.message || "Đăng ký thất bại. Vui lòng thử lại!";
+        alert(errorMsg);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -115,91 +128,87 @@ const Register = () => {
           <p>Điền thông tin bên dưới để trải nghiệm dịch vụ.</p>
         </div>
 
-        <form onSubmit={handleRegister} className="register-form">
+        {/* Thêm autoComplete="off" để tắt gợi ý khó chịu của trình duyệt */}
+        <form onSubmit={handleRegister} >
           <div className="form-grid">
             {/* --- CỘT TRÁI --- */}
             <div className="form-column">
               <div className="form-group">
-                <label>
-                  Họ và tên <span className="required">*</span>
-                </label>
+                <label>Họ và tên</label>
                 <div className="input-wrapper">
                   <input
                     type="text"
                     name="name"
-                    placeholder="Ví dụ: Nguyễn Văn A"
                     value={formData.name}
                     onChange={handleInputChange}
                     required
+                    style={{ borderColor: formErrors.name ? "#ff4d4f" : "" }}
                   />
                 </div>
+                {/* HIỂN THỊ LỖI */}
+                {formErrors.name && <span className="error-message">{formErrors.name}</span>}
               </div>
 
               <div className="form-group">
-                <label>
-                  Email <span className="required">*</span>
-                </label>
+                <label>Email</label>
                 <div className="input-wrapper">
                   <input
                     type="email"
                     name="email"
-                    placeholder="email@example.com"
                     value={formData.email}
                     onChange={handleInputChange}
                     required
+                    style={{ borderColor: formErrors.email ? "#ff4d4f" : "" }}
                   />
                 </div>
+                {/* HIỂN THỊ LỖI */}
+                {formErrors.email && <span className="error-message">{formErrors.email}</span>}
               </div>
 
               <div className="form-group">
-                <label>
-                  Mật khẩu <span className="required">*</span>
-                </label>
+                <label>Mật khẩu</label>
                 <div className="input-wrapper">
                   <input
                     type="password"
                     name="password"
-                    placeholder="Tối thiểu 6 ký tự"
                     value={formData.password}
                     onChange={handleInputChange}
                     required
+                    style={{ borderColor: formErrors.password ? "#ff4d4f" : "" }}
                   />
                 </div>
+                {/* HIỂN THỊ LỖI */}
+                {formErrors.password && <span className="error-message">{formErrors.password}</span>}
               </div>
 
               <div className="form-group">
-                <label>
-                  Số điện thoại <span className="required">*</span>
-                </label>
+                <label>Số điện thoại</label>
                 <div className="input-wrapper">
                   <input
                     type="tel"
                     name="phone"
-                    placeholder="0912xxx888"
                     value={formData.phone}
                     onChange={handleInputChange}
                     required
+                    style={{ borderColor: formErrors.phone ? "#ff4d4f" : "" }}
                   />
                 </div>
+                {/* HIỂN THỊ LỖI */}
+                {formErrors.phone && <span className="error-message">{formErrors.phone}</span>}
               </div>
             </div>
 
             {/* --- CỘT PHẢI --- */}
             <div className="form-column">
-              {/* CHỌN THÀNH PHỐ */}
               <div className="form-group">
-                <label>
-                  Thành phố <span className="required">*</span>
-                </label>
+                <label>Thành phố</label>
                 <div className="input-wrapper">
                   <select
                     value={selectedCity}
                     onChange={handleCityChange}
                     required
                   >
-                    <option value="" disabled>
-                      -- Chọn Thành phố --
-                    </option>
+                    <option value="" disabled>-- Chọn Thành phố --</option>
                     {cities.map((city) => (
                       <option key={city.id} value={city.id}>
                         {city.name}
@@ -209,22 +218,18 @@ const Register = () => {
                 </div>
               </div>
 
-              {/* CHỌN QUẬN / HUYỆN */}
               <div className="form-group">
-                <label>
-                  Quận/Huyện <span className="required">*</span>
-                </label>
+                <label>Quận/Huyện</label>
                 <div className="input-wrapper">
                   <select
                     name="areaId"
                     value={formData.areaId}
                     onChange={handleInputChange}
                     required
-                    disabled={!selectedCity} // Khóa lại nếu chưa chọn thành phố
+                    disabled={!selectedCity}
+                    style={{ borderColor: formErrors.areaId ? "#ff4d4f" : "" }}
                   >
-                    <option value="" disabled>
-                      -- Chọn Quận/Huyện --
-                    </option>
+                    <option value="" disabled>-- Chọn Quận/Huyện --</option>
                     {districts.map((district) => (
                       <option key={district.id} value={district.id}>
                         {district.name}
@@ -232,65 +237,43 @@ const Register = () => {
                     ))}
                   </select>
                 </div>
+                {/* HIỂN THỊ LỖI */}
+                {formErrors.areaId && <span className="error-message">{formErrors.areaId}</span>}
               </div>
 
-              {/* NHẬP ĐỊA CHỈ NHÀ */}
               <div className="form-group">
-                <label>
-                  Địa chỉ nhà <span className="required">*</span>
-                </label>
+                <label>Địa chỉ nhà</label>
                 <div className="input-wrapper">
                   <input
                     type="text"
                     name="address"
-                    placeholder="Số nhà, tên đường..."
                     value={formData.address}
                     onChange={handleInputChange}
                     required
+                    style={{ borderColor: formErrors.address ? "#ff4d4f" : "" }}
                   />
                 </div>
+                {/* HIỂN THỊ LỖI */}
+                {formErrors.address && <span className="error-message">{formErrors.address}</span>}
               </div>
 
-              <div
-                className="form-group"
-                style={{ display: "flex", gap: "16px" }}
-              >
-                <div style={{ flex: 1 }}>
-                  <label>
-                    Giới tính <span className="required">*</span>
-                  </label>
-                  <div className="input-wrapper">
-                    <select
-                      name="gender"
-                      value={formData.gender}
-                      onChange={handleInputChange}
-                      required
-                    >
-                      <option value="" disabled>-- Chọn Giới tính --</option>
-                      <option value="male">Nam</option>
-                      <option value="female">Nữ</option>
-                      <option value="other">Khác</option>
-                    </select>
-                  </div>
+              <div className="form-group">
+                <label>Giới tính</label>
+                <div className="input-wrapper">
+                  <select
+                    name="gender"
+                    value={formData.gender}
+                    onChange={handleInputChange}
+                    required
+                    style={{ borderColor: formErrors.gender ? "#ff4d4f" : "" }}
+                  >
+                    <option value="male">Nam</option>
+                    <option value="female">Nữ</option>
+                    <option value="other">Khác</option>
+                  </select>
                 </div>
-
-                <div style={{ flex: 1 }}>
-                  <label>
-                    Vai trò <span className="required">*</span>
-                  </label>
-                  <div className="input-wrapper">
-                    <select
-                      name="role"
-                      value={formData.role}
-                      onChange={handleInputChange}
-                      required
-                    >
-                      <option value="customer">Khách hàng</option>
-                      <option value="staff">Nhân viên</option>
-                      <option value="admin">Admin</option>
-                    </select>
-                  </div>
-                </div>
+                {/* HIỂN THỊ LỖI */}
+                {formErrors.gender && <span className="error-message">{formErrors.gender}</span>}
               </div>
             </div>
           </div>
@@ -299,8 +282,6 @@ const Register = () => {
             {isLoading ? "Đang xử lý..." : "Hoàn tất Đăng ký"}
           </button>
         </form>
-
-
       </div>
     </div>
   );

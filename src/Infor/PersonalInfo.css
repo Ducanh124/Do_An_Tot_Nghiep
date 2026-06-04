@@ -1,17 +1,8 @@
-/* PersonalInfo.css */
-.personal-info-container {
-  background-color: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  padding: 32px;
-  font-family: "Inter", sans-serif;
-}
 
-/* Phần Tiêu đề */
+
+/* --- 1. SECTION HEADER --- */
 .section-header {
-  margin-bottom: 32px;
-  border-bottom: 1px solid #f0f0f0;
-  padding-bottom: 16px;
+  margin-bottom: 32px;       /* Đẩy các phần tử bên dưới ra xa 32px */
 }
 
 .section-header h2 {
@@ -27,81 +18,22 @@
   margin: 0;
 }
 
-/* Bố cục chính chia làm 2 phần: Avatar (trái) và Form (phải) */
-.personal-info-content {
-  display: flex;
-  gap: 40px;
-}
-
-/* --- Khu vực Ảnh đại diện --- */
-.avatar-section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 200px;
-  flex-shrink: 0;
-}
-
-.avatar-preview {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  overflow: hidden;
-  border: 3px solid #e8f5e9;
-  margin-bottom: 16px;
-}
-
-.avatar-preview img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.btn-upload {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 10px 16px;
-  background-color: #f4f7f6;
-  border: 1px solid #d9d9d9;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 500;
-  color: #333;
-  width: 100%;
-  transition: all 0.2s;
-}
-
-.btn-upload:hover {
-  background-color: #e8f5e9;
-  border-color: #4caf50;
-  color: #4caf50;
-}
-
-.upload-hint {
-  font-size: 12px;
-  color: #888;
-  text-align: center;
-  margin-top: 12px;
-}
-
-/* --- Khu vực Form --- */
-.form-section {
-  flex: 1;
-}
-
+/* --- 2. LAYOUT GRID (LƯỚI) --- */
+/* Lưới 2 cột cho thông tin cá nhân */
 .form-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* Chia 2 cột đều nhau */
+  grid-template-columns: repeat(2, 1fr);
   gap: 20px;
 }
 
-/* Ép thẻ input chiếm toàn bộ chiều rộng (Ví dụ: Địa chỉ) */
-.full-width {
-  grid-column: span 2;
+/* Lưới 1 cột cho phần kỹ năng/kinh nghiệm */
+.additional-info-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
 }
 
+/* --- 3. FORM GROUPS & LABELS --- */
 .form-group {
   display: flex;
   flex-direction: column;
@@ -111,55 +43,37 @@
 .form-group label {
   font-size: 14px;
   font-weight: 500;
-  color: #333;
+  color: #333; 
 }
 
-.required {
-  color: #ff4d4f;
-  margin-left: 2px;
-}
-
+/* --- 4. INPUT, SELECT, TEXTAREA CHUNG --- */
 .form-group input,
-.form-group select {
+.form-group select,
+.form-group textarea {
   padding: 12px 16px;
   border: 1px solid #d9d9d9;
   border-radius: 8px;
   font-size: 14px;
   outline: none;
-  transition: border-color 0.2s;
   background-color: #fff;
+  font-family: "Inter", sans-serif;
+  transition: border-color 0.2s;
 }
 
 
 
-.form-group input::placeholder {
-  color: #bfbfbf;
+/* Tùy chỉnh riêng cho Textarea */
+.form-group textarea {
+  resize: vertical;
+  height: 100px;
+  
 }
 
-/* --- Khu vực Nút bấm --- */
+/* --- 5. NÚT BẤM (FORM ACTIONS) --- */
 .form-actions {
   display: flex;
-  justify-content: flex-end;
-  gap: 16px;
-  margin-top: 32px;
-  padding-top: 24px;
-  border-top: 1px solid #f0f0f0;
-}
-
-.btn-cancel {
-  padding: 10px 24px;
-  background-color: transparent;
-  border: 1px solid #d9d9d9;
-  border-radius: 8px;
-  color: #666;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.btn-cancel:hover {
-  background-color: #f5f5f5;
-  color: #333;
+  justify-content: right;
+  margin-top: 15px;
 }
 
 .btn-save {
@@ -167,7 +81,7 @@
   align-items: center;
   gap: 8px;
   padding: 10px 24px;
-  background-color: #0832bc; /* Màu chủ đạo hệ thống */
+  background-color: green;
   border: none;
   border-radius: 8px;
   color: white;
@@ -177,8 +91,12 @@
 }
 
 
+.btn-save:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
 
-/* --- Responsive cho màn hình nhỏ --- */
+/* --- 6. RESPONSIVE --- */
 @media (max-width: 768px) {
   .personal-info-content {
     flex-direction: column;
@@ -186,10 +104,85 @@
   }
 
   .form-grid {
-    grid-template-columns: 1fr; /* Chuyển về 1 cột trên mobile */
+    grid-template-columns: 1fr; /* Gộp 2 cột thành 1 cột trên điện thoại */
   }
 
   .full-width {
     grid-column: span 1;
   }
 }
+
+/* Focus hiệu ứng chung khi click vào ô */
+/* .form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: #1890ff;  Chuyển màu viền khi đang gõ 
+} */
+
+/* --- 4. Khu vực Form nhập liệu (Form Section) --- */
+/* .form-section {
+  flex: 1;                   Form sẽ chiếm trọn không gian chiều ngang còn lại 
+} */
+
+/* Bố cục chia làm 2 phần: Avatar (trái) và Form (phải) */
+/* .personal-info-content {
+  display: flex;              Sử dụng Flexbox để dàn hàng ngang 
+  gap: 40px;                  Khoảng cách giữa khu vực Avatar và Form là 40px 
+} */
+
+/* =========================================
+   --- PHẦN AVATAR ĐÃ ĐƯỢC COMMENT ẨN ĐI ---
+   ========================================= */
+/*
+.avatar-section {
+  display: flex;
+  flex-direction: column;    
+  align-items: center;       
+  width: 200px;              
+  flex-shrink: 0;            
+}
+
+.avatar-preview {
+  width: 150px;
+  height: 150px;             
+  border-radius: 50%;        
+  overflow: hidden;          
+  border: 3px solid #e8f5e9; 
+  margin-bottom: 16px;       
+}
+
+.avatar-preview img {
+  width: 100%;
+  height: 100%;              
+  object-fit: cover;         
+}
+
+.btn-upload {
+  display: flex;
+  align-items: center;
+  justify-content: center;   
+  gap: 8px;                  
+  padding: 10px 16px;
+  background-color: #f4f7f6; 
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  cursor: pointer;           
+  font-weight: 500;
+  color: #333;
+  width: 100%;               
+  transition: all 0.2s;      
+}
+
+.btn-upload:hover {
+  background-color: #e8f5e9; 
+  border-color: #4caf50;     
+  color: #4caf50;            
+}
+
+.upload-hint {
+  font-size: 12px;
+  color: #888;               
+  text-align: center;
+  margin-top: 12px;
+}
+*/

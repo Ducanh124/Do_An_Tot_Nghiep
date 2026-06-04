@@ -1,0 +1,231 @@
+/* LeaveList.css */
+
+.leave-container {
+  padding: 20px;
+  background-color: #f4f6f8;
+  min-height: 100vh;
+}
+
+.leave-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.leave-header h2 {
+  margin: 0;
+  font-size: 24px;
+  color: #333;
+}
+
+.btn-add-leave {
+  background-color: #00b96b;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-add-leave:hover {
+  background-color: #009959;
+}
+
+/* --- BẢNG DỮ LIỆU --- */
+.table-wrapper {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.leave-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.leave-table th {
+  background-color: #fcfcfc;
+  color: #666;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 16px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+  text-transform: uppercase;
+}
+
+.leave-table td {
+  padding: 16px;
+  border-bottom: 1px solid #f0f0f0;
+  color: #333;
+  vertical-align: middle;
+}
+
+/* Highlight dòng chẵn/lẻ giống ảnh */
+.leave-table tbody tr:nth-child(even) {
+  background-color: #fbfbfb;
+}
+
+.leave-table tbody tr:hover {
+  background-color: #f5f5f5;
+}
+
+.time-col {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.date-text {
+  font-weight: 500;
+  color: #1a73e8; /* Màu xanh biển cho ngày tháng giống ảnh mẫu */
+}
+
+.arrow {
+  color: #999;
+  font-size: 12px;
+}
+
+.reason-text {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* --- TRẠNG THÁI (BADGES) --- */
+.status-badge {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  min-width: 120px;
+}
+
+.pending {
+  background-color: #fffbe6;
+  color: #faad14;
+  border: 1px solid #ffe58f;
+}
+
+.approved {
+  background-color: #f6ffed;
+  color: #52c41a;
+  border: 1px solid #b7eb8f;
+}
+
+.rejected {
+  background-color: #fff1f0;
+  color: #ff4d4f;
+  border: 1px solid #ffa39e;
+}
+
+/* --- PHÂN TRANG --- */
+.pagination {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 16px;
+  gap: 16px;
+  border-top: 1px solid #eee;
+}
+
+.pagination button {
+  padding: 6px 12px;
+  border: 1px solid #d9d9d9;
+  background-color: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.pagination button:disabled {
+  background-color: #f5f5f5;
+  color: #b8b8b8;
+  cursor: not-allowed;
+}
+
+/* --- MODAL POPUP FORM --- */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  width: 90%;
+  max-width: 500px;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+
+.modal-content h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 20px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.required {
+  color: red;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.btn-cancel {
+  padding: 10px 16px;
+  border: 1px solid #d9d9d9;
+  background-color: white;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-submit {
+  padding: 10px 16px;
+  border: none;
+  background-color: #1890ff;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btn-submit:disabled {
+  background-color: #91caff;
+  cursor: not-allowed;
+}

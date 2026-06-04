@@ -54,6 +54,7 @@ const PersonalInfo = () => {
   // Hàm dùng chung để bắt sự kiện thay đổi cho TẤT CẢ các ô nhập
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    // lấy dc name với value của giá trị vừa nhập
     setFormData({ ...formData, [name]: value });
   };
 
@@ -98,16 +99,12 @@ const PersonalInfo = () => {
   }
 
   return (
-    <div className="profile-page-container">
+    <div className="profile-page-container" >
       <form onSubmit={handleSubmit}>
-        <div className="profile-section">
           <div className="section-header">
             <h2>Thông tin cá nhân</h2>
           </div>
 
-          <div className="personal-info-content">
-            <div className="form-section">
-              <div className="info-form">
                 <div className="form-grid">
                   <div className="form-group">
                     <label>Họ và tên</label>
@@ -116,7 +113,7 @@ const PersonalInfo = () => {
                       name="fullName"
                       value={formData.fullName}
                       readOnly
-                      className="read-only-input"
+
                     />
                   </div>
 
@@ -127,7 +124,6 @@ const PersonalInfo = () => {
                       name="phone"
                       value={formData.phone}
                       readOnly
-                      className="read-only-input"
                     />
                   </div>
 
@@ -138,29 +134,27 @@ const PersonalInfo = () => {
                       name="email"
                       value={formData.email}
                       readOnly
-                      className="read-only-input"
+
                     />
                   </div>
 
                   <div className="form-group">
                     <label>
                       Số tài khoản / Thẻ ngân hàng{" "}
-                      <span className="required">*</span>
+              
                     </label>
                     <input
                       type="text"
                       name="cardNumber"
                       value={formData.cardNumber}
                       onChange={handleInputChange}
-                      placeholder="Nhập số tài khoản ngân hàng của bạn"
                       required
                     />
                   </div>
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
+
+
+
 
         {/* 👉 BƯỚC 3: Truyền 3 giá trị xuống Component Skills */}
         <Skills
@@ -170,9 +164,9 @@ const PersonalInfo = () => {
           onInputChange={handleInputChange}
         />
 
-        <div className="form-actions-global">
+        <div className="form-actions">
           <button type="submit" className="btn-save" disabled={isSaving}>
-            <FiSave /> {isSaving ? "Đang lưu..." : "Lưu thay đổi"}
+             {isSaving ? "Đang lưu..." : "Lưu thay đổi"}
           </button>
         </div>
       </form>

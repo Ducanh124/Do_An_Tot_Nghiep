@@ -1,74 +1,115 @@
-/* CurrentTaskInfo.css */
-.current-task-info {
-  margin-bottom: 8px;
-}
-
-.task-title {
-  font-size: 20px;
-  font-weight: 700;
-  color: #1a1a1a;
-  margin: 0 0 16px 0;
+/* TaskProgress.css */
+.task-progress-page {
+  padding: 24px;
+  max-width: 600px; /* Ép form hẹp lại để dễ nhìn trên màn hình to */
+  margin: 0 auto;
+  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  background-color: red;
 }
 
-.task-title .label {
-  font-size: 13px;
-  font-weight: 500;
-  text-transform: uppercase;
-  color: #888;
-  letter-spacing: 0.5px;
+/* --- Header & Nút Back --- */
+.progress-header {
+  margin-bottom: 0px;
 }
 
-/* Khối bao bọc thông tin - Màu xám nhạt để tạo chiều sâu */
-.task-details-box {
+.btn-back {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
-  background-color: #fafafa; /* Nền xám cực nhạt */
-  padding: 16px;
-  border-radius: 8px;
-  border: 1px solid #f0f0f0;
-}
-
-.detail-row {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  font-size: 14px;
-  color: #555;
-  line-height: 1.5;
-}
-
-.detail-icon {
-  margin-top: 3px;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  color: black; 
+  background-color: white;
   font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  transition: opacity 0.2s;
+}
+
+.btn-back:hover {
+  opacity: 0.7;
+}
+
+/* --- Nội dung chính (Thẻ màu trắng chứa 3 component con) --- */
+.progress-content {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  padding: 32px 24px; /* Tăng padding trên xuống cho thoáng */
+  flex: 1; 
+  display: flex;
+  flex-direction: column;
+  gap: 8px; /* Khoảng cách dự phòng giữa các component con */
+}
+
+/* Đường kẻ mờ phân chia Thông tin ca làm và Checklist */
+.divider {
+  height: 1px;
+  background-color: #f0f0f0;
+  margin: 16px 0;
+}
+
+/* --- Footer & Nút Gửi --- */
+.progress-footer {
+  margin-top: 24px;
+  padding-bottom: 24px;
+  display: flex;
+  justify-content: flex-start; /* Để nút bên tay trái theo ý bạn */
+}
+
+.btn-submit-report {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 14px 24px; /* Làm nút to ra một chút để dễ bấm */
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.btn-submit-report:hover {
+  background-color: #43a047;
+}
+
+.btn-submit-report:active {
+  transform: scale(0.98); /* Hiệu ứng lún nút khi chạm vào */
+}
+
+.loading {
+  text-align: center;
+  padding: 50px;
   color: #888;
-  flex-shrink: 0; /* Ngăn icon bị bóp méo khi text địa chỉ quá dài */
+  font-weight: 500;
 }
 
-/* Nhấn mạnh thời gian bằng màu xanh chủ đạo */
-.time-highlight {
-  color: #4CAF50;
-}
-
-.time-highlight strong {
-  color: #4CAF50;
-  font-size: 15px;
-}
-
-.time-highlight .detail-icon {
-  color: #4CAF50;
-}
-
-/* Responsive cơ bản */
+/* ====================================================
+   TỐI ƯU HÓA CHO ĐIỆN THOẠI (Mobile Responsive)
+==================================================== */
 @media (max-width: 480px) {
-  .task-details-box {
-    padding: 12px;
+  .task-progress-page {
+    padding: 16px; /* Giảm lề ngoài cùng */
   }
-  
-  .task-title {
-    font-size: 18px;
+
+  .progress-content {
+    padding: 20px 16px; /* Giảm lề bên trong thẻ trắng để có thêm không gian hiển thị */
+  }
+
+  /* Kéo dài nút Gửi báo cáo tràn viền để bấm bằng 1 tay dễ hơn */
+  .progress-footer {
+    justify-content: stretch; 
+  }
+
+  .btn-submit-report {
+    width: 100%; 
   }
 }

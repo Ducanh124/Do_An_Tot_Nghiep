@@ -15,7 +15,7 @@ html {
 
 /* App.css */
 .main-content {
-  margin-left: 250px; /* Đẩy nội dung sang phải 250px để chừa chỗ cho Sidebar */
+  margin-left:250px; /* Đẩy nội dung sang phải 250px để chừa chỗ cho Sidebar */
   padding: 30px;
   width: calc(100% - 250px); /* Tính toán lại chiều rộng */
   min-height: 100vh;

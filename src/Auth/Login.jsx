@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FiMail, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
 import "./Login.css";
 import { login } from "../service/authService.js";
 
@@ -12,9 +11,6 @@ const Login = () => {
     email: "",
     password: "",
   });
-
-  // State quản lý việc ẩn/hiện mật khẩu
-  const [showPassword, setShowPassword] = useState(false);
 
   // State quản lý hiệu ứng loading khi bấm nút
   const [isLoading, setIsLoading] = useState(false);
@@ -31,38 +27,28 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      // Gọi API đăng nhập thực tế
       const data = await login(formData);
-
-      // IN LOG ĐỂ KIỂM TRA DỮ LIỆU BACKEND TRẢ VỀ
       console.log("Dữ liệu Login trả về từ Backend:", data);
 
-      // Cách lấy token an toàn: Cover nhiều trường hợp đặt tên biến của Backend
-      // (Bao gồm cả trường hợp data bọc trong một object data khác)
       const token = data?.data?.accessToken;
       if (token) {
-        // Lưu token vào localStorage để file axios.js có thể lấy và gắn vào header
         localStorage.setItem("access_token", token);
         console.log("Đã lưu token vào trình duyệt thành công!");
 
         alert("Đăng nhập thành công!");
-        // Điều hướng người dùng sang trang profile
-        navigate("/profile");
+        navigate("/schedule");
       } else {
-        // Cảnh báo nếu Backend trả về OK nhưng không có cấu trúc chứa token
         alert(
           "Đăng nhập thành công nhưng không tìm thấy Token. Vui lòng bật F12 (Console) để kiểm tra cấu trúc dữ liệu!",
         );
       }
     } catch (err) {
-      // Ưu tiên hiển thị message lỗi từ backend trả về
       const errorMessage =
         err.response?.data?.message ||
         err.message ||
         "Đăng nhập thất bại. Vui lòng thử lại!";
       alert(errorMessage);
     } finally {
-      // Dù thành công hay thất bại cũng phải tắt trạng thái loading
       setIsLoading(false);
     }
   };
@@ -72,15 +58,13 @@ const Login = () => {
       <div className="login-card">
         {/* Form Đăng nhập */}
         <form onSubmit={handleLogin} className="login-form">
-          {/* Ô nhập Email/Số điện thoại */}
+          {/* Ô nhập Email */}
           <div className="form-group">
-            <label>Email hoặc Số điện thoại</label>
+            <label>Nhập Email</label>
             <div className="input-wrapper">
-              <FiMail className="input-icon" />
-              <input
+              <input 
                 type="text"
                 name="email"
-                placeholder="Nhập email của bạn"
                 value={formData.email}
                 onChange={handleInputChange}
                 required
@@ -92,23 +76,14 @@ const Login = () => {
           <div className="form-group">
             <label>Mật khẩu</label>
             <div className="input-wrapper">
-              <FiLock className="input-icon" />
+              {/* Đã xóa nút bấm con mắt, cố định type là password */}
               <input
-                type={showPassword ? "text" : "password"}
+                type="password"
                 name="password"
-                placeholder="Nhập mật khẩu"
                 value={formData.password}
                 onChange={handleInputChange}
                 required
               />
-              {/* Nút bật/tắt con mắt */}
-              <button
-                type="button"
-                className="btn-toggle-password"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? <FiEyeOff /> : <FiEye />}
-              </button>
             </div>
           </div>
 

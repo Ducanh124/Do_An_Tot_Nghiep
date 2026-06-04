@@ -1,0 +1,118 @@
+/* RegisterArea.css */
+
+.register-area-container {
+  display: flex;
+  justify-content: flex-start;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  color: #333;
+}
+
+.register-area-card {
+  background-color: #fff;
+  width: 100%;
+  max-width: 500px;
+  padding: 30px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.register-area-card h2 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  font-size: 22px;
+}
+
+.register-area-card p {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+
+.register-area-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.required {
+  color: red;
+}
+
+.area-select {
+  padding: 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  outline: none;
+  background-color: #fafafa;
+  cursor: pointer;
+}
+
+.area-select:disabled {
+  background-color: #e9ecef;
+  cursor: not-allowed;
+  color: #999;
+}
+
+.area-select:focus {
+  border-color: #666;
+}
+
+/* Kiểu dáng cho nhóm Checkbox */
+.checkbox-group {
+  margin-top: 5px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.checkbox-text {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+/* Nút bấm Submit */
+.btn-submit-area {
+  margin-top: 10px;
+  padding: 14px;
+  background-color: #333;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-submit-area:hover {
+  background-color: #555;
+}
+
+.btn-submit-area:disabled {
+  background-color: #999;
+  cursor: not-allowed;
+}

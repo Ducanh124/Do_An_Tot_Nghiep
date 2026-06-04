@@ -17,9 +17,27 @@ export const scheduleService = {
     return response.data;
   },
 
-  // 👉 BỔ SUNG API GỬI BÁO CÁO TIẾN ĐỘ
+  //  BỔ SUNG API GỬI BÁO CÁO TIẾN ĐỘ
   postProgress: async (data) => {
     const response = await api.post("/progress", data);
     return response.data;
+  },
+
+  //  API CẬP NHẬT CÔNG VIỆC ĐƯỢC GIAO THEO ID
+ updateAssignment:  async (id, data) => {
+  const res = await api.put(`/assignments/${id}/`, data);
+  return res.data;
+},
+
+// 👉 API LẤY DANH SÁCH TIẾN ĐỘ THEO BOOKING ID
+  getProgressByBooking: async (bookingId) => {
+    const response = await api.get("/progress", {
+      params: {
+        bookingId: bookingId
+      }
+    });
+    return response.data;
   }
 };
+//  hãy viết giúp tôi api cập nhật thông tin phân công
+// put(`/assignments/${id}`) (id ở đây là của b)

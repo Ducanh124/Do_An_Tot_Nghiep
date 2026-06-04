@@ -5,7 +5,10 @@ import PersonalInfo from "./Infor/PersonalInfo.jsx";
 import Schedule from "./Schedule/ScheduleList.jsx";
 import TaskProgress from "./Schedule/Taskprogress/Taskprogress.jsx";
 import Login from "./Auth/Login.jsx";
-import Register from "./Auth/Register.jsx"; // 1. BẠN CẦN IMPORT THÊM FILE NÀY (Nhớ kiểm tra lại đường dẫn cho đúng)
+import Register from "./Auth/Register.jsx"; 
+import RegisterArea from "./RegisterArea/RegisterArea.jsx";
+import Leaves from "./Leaves/LeaveList.jsx"; 
+//từ Appjsx vào import
 
 import "./App.css";
 
@@ -30,12 +33,14 @@ function App() {
               <Sidebar />
               <div className="main-content">
                 <Routes>
-                  <Route path="/profile" element={<PersonalInfo />} />
                   <Route path="/schedule" element={<Schedule />} />
                   <Route
                     path="/schedule/progress/:id"
                     element={<TaskProgress />}
                   />
+                  <Route path="/profile" element={<PersonalInfo />} />
+                  <Route path="/register-area" element={<RegisterArea />} />
+                  <Route path="/leaves" element={<Leaves/>} />
                 </Routes>
               </div>
             </div>

@@ -1,24 +1,25 @@
-/* ShiftCard.css */
+/* =========================================
+   PHẦN 1: CSS GỐC CỦA THẺ CA LÀM VIỆC 
+========================================= */
+
 .shift-card {
   background-color: #ffffff;
   border-radius: 12px;
   border: 1px solid #f0f0f0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   padding: 20px;
   margin-bottom: 16px;
   font-family: 'Inter', sans-serif;
-  transition: transform 0.2s, box-shadow 0.2s;
+  position: relative; /* Dùng để gắn cái Badge lên góc phải */
 }
 
-.shift-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+/* Làm mờ thẻ ca làm việc nếu đã bị từ chối */
+.card-dimmed {
+  opacity: 0.6;
+  background-color: #f9f9f9;
 }
 
 /* --- Header --- */
 .shift-card-header {
-  display: flex;
-  justify-content: space-between;
   align-items: center;
   margin-bottom: 16px;
   padding-bottom: 12px;
@@ -32,28 +33,6 @@
   font-weight: 600;
   color: #1a1a1a;
   font-size: 16px;
-}
-
-.icon {
-  font-size: 16px;
-}
-
-/* Badge trạng thái */
-.status-badge {
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.status-badge.pending {
-  background-color: #fff7e6;
-  color: #fa8c16;
-}
-
-.status-badge.in_progress {
-  background-color: #e6f7ff;
-  color: #1890ff;
 }
 
 /* --- Body --- */
@@ -80,11 +59,6 @@
   line-height: 1.5;
 }
 
-.text-gray {
-  color: #8c8c8c;
-  margin-top: 2px;
-}
-
 .task-preview {
   display: flex;
   align-items: center;
@@ -92,7 +66,7 @@
   font-size: 13px;
   color: #666;
   background-color: #fafafa;
-  padding: 8px 12px;
+  padding: 12px 12px;
   border-radius: 6px;
   margin-top: 4px;
 }
@@ -100,7 +74,7 @@
 /* --- Footer (Khu vực Nút) --- */
 .shift-card-footer {
   display: flex;
-  justify-content: flex-end;
+  justify-content: right;
 }
 
 .btn-action {
@@ -110,34 +84,224 @@
   font-weight: 600;
   font-size: 14px;
   cursor: pointer;
-  transition: all 0.2s;
-  width: 100%; /* Trên mobile có thể cho nút full viền */
+  width: 100%;
 }
 
-/* Trạng thái 1: Nút Bắt đầu */
 .btn-start {
-  background-color: #4CAF50; /* Màu xanh lá chủ đạo */
+  background-color: #4CAF50;
   color: white;
 }
 
-.btn-start:hover {
-  background-color: #43a047;
-}
-
-/* Trạng thái 2: Nút Báo cáo tiến độ */
 .btn-report {
   background-color: #ffffff;
-  color: #1890ff; /* Chữ xanh dương nổi bật */
+  color: #1890ff; 
   border: 1px solid #1890ff;
 }
 
-.btn-report:hover {
-  background-color: #e6f7ff;
-}
-
-/* Reponsive */
 @media (min-width: 768px) {
   .btn-action {
-    width: auto; /* Trên PC nút chỉ dài vừa đủ nội dung */
+    width: auto;
   }
 }
+
+
+/* =========================================
+   PHẦN 2: CSS CHO CÁC TÍNH NĂNG MỚI NÂNG CẤP
+========================================= */
+
+/* --- BADGE GÓC TRÊN BÊN PHẢI --- */
+.top-badge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: default;
+}
+.badge-accepted {
+  background-color: #e6f7ff;
+  color: #1890ff;
+  border: 1px solid #91d5ff;
+}
+.badge-rejected {
+  background-color: #fff1f0;
+  color: #ff4d4f;
+  border: 1px solid #ffa39e;
+}
+.badge-completed {
+  background-color: #f6ffed;
+  color: #52c41a;
+  border: 1px solid #b7eb8f;
+}
+
+/* Nút lịch sử tiến độ */
+.btn-history {
+  background-color: #faad14;
+  color: white;
+}
+
+/* Cụm 2 nút cạnh nhau */
+.action-group {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+
+/* Nút từ chối phụ (Nút đỏ viền trắng) */
+.btn-reject-secondary {
+  background-color: white;
+  color: #ff4d4f;
+  border: 1px solid #ff4d4f;
+}
+.btn-reject-secondary:hover {
+  background-color: #fff1f0;
+}
+
+/* Khu vực hiển thị lý do dưới cùng thẻ card */
+.reject-reason-display {
+  margin-top: 12px;
+  padding: 10px;
+  background-color: #fff1f0;
+  border-left: 3px solid #ff4d4f;
+  color: #a8071a;
+  font-size: 13px;
+  border-radius: 4px;
+}
+
+/* --- PHÂN TRANG (ScheduleList) --- */
+.schedule-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 20px;
+  margin-bottom: 40px;
+}
+.schedule-pagination button {
+  padding: 8px 16px;
+  border: 1px solid #d9d9d9;
+  background-color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+.schedule-pagination button:disabled {
+  background-color: #f5f5f5;
+  color: #b8b8b8;
+  cursor: not-allowed;
+}
+
+/* --- CSS CHO MODAL POPUP --- */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+.modal-content {
+  background-color: white;
+  width: 90%;
+  max-width: 450px;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+.reject-textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  font-family: inherit;
+  margin-top: 10px;
+  box-sizing: border-box;
+}
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+}
+.btn-cancel {
+  padding: 10px 16px;
+  border: 1px solid #d9d9d9;
+  background-color: white;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.btn-danger {
+  padding: 10px 16px;
+  background-color: #ff4d4f;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* --- CSS LỊCH SỬ TIẾN ĐỘ (TIMELINE) --- */
+.history-modal {
+  max-width: 500px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+}
+.history-header h3 { margin: 0; }
+.btn-close {
+  background: none; border: none; font-size: 20px; cursor: pointer; color: #888;
+}
+.history-body {
+  overflow-y: auto;
+}
+
+/* Timeline Design */
+.timeline {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  position: relative;
+}
+.timeline::before {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0; left: 6px;
+  width: 2px;
+  background-color: #e8e8e8;
+}
+.timeline-item {
+  position: relative;
+  padding-left: 24px;
+  margin-bottom: 20px;
+}
+.timeline-marker {
+  position: absolute;
+  top: 4px; left: 0;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background-color: #1890ff;
+  border: 2px solid white;
+  box-shadow: 0 0 0 2px #1890ff;
+}
+.timeline-content h4 { margin: 0; font-size: 15px; color: #333; }
+.timeline-time { display: block; font-size: 12px; color: #888; margin-bottom: 5px; }
+.timeline-note { font-size: 13px; color: #555; background: #f5f5f5; padding: 6px 10px; border-radius: 4px; margin: 5px 0;}
+.evidence-link {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 13px;
+  color: #1890ff;
+  text-decoration: none;
+  font-weight: 600;
+}
+.evidence-link:hover { text-decoration: underline; }
