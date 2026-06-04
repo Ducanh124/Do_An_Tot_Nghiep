@@ -23,6 +23,7 @@ export const getCities = async () => {
   return res.data;
 };
 
+
 // Lấy danh sách Quận/Huyện dựa vào ID của Thành phố
 export const getDistricts = async (cityId) => {
   const res = await api.get(`/areas/${cityId}/get`);

@@ -8,7 +8,9 @@ import Login from "./Auth/Login.jsx";
 import Register from "./Auth/Register.jsx"; 
 import RegisterArea from "./RegisterArea/RegisterArea.jsx";
 import Leaves from "./Leaves/LeaveList.jsx"; 
+import Report from "./Report/reportRevenue.jsx";
 //từ Appjsx vào import
+
 
 import "./App.css";
 
@@ -41,6 +43,7 @@ function App() {
                   <Route path="/profile" element={<PersonalInfo />} />
                   <Route path="/register-area" element={<RegisterArea />} />
                   <Route path="/leaves" element={<Leaves/>} />
+                  <Route path="/performance" element={<Report/>} />
                 </Routes>
               </div>
             </div>

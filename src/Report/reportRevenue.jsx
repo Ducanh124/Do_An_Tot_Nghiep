@@ -1,0 +1,180 @@
+import React, { useState, useEffect } from "react";
+import "./ReportRevenue.css";
+import { getReport } from "../service/reportRevenue.js"; // Sửa lại đường dẫn nếu cần
+
+const ReportRevenue = () => {
+  // 1. Khởi tạo ngày mặc định (Từ đầu tháng đến ngày hiện tại)
+  const today = new Date();
+  const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+
+  // Hàm chuyển Date sang chuỗi YYYY-MM-DD
+  const formatDateForInput = (dateObj) => {
+    // Lưu ý: getTimezoneOffset để tránh bị lùi 1 ngày do múi giờ VN
+    const offset = dateObj.getTimezoneOffset() * 60000;
+    const localISOTime = new Date(dateObj - offset).toISOString().split("T")[0];
+    return localISOTime;
+  };
+
+  // State cho bộ lọc
+  const [fromDate, setFromDate] = useState(formatDateForInput(firstDayOfMonth));
+  const [toDate, setToDate] = useState(formatDateForInput(today));
+  const [groupBy, setGroupBy] = useState("day");
+
+  // State cho dữ liệu
+  const [reportData, setReportData] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  // State tính tổng
+  const [summary, setSummary] = useState({ totalAmount: 0, totalBookings: 0 });
+
+  // 2. Hàm gọi API lấy dữ liệu
+  const fetchReport = async () => {
+    if (!fromDate || !toDate) {
+      alert("Vui lòng chọn đầy đủ thời gian bắt đầu và kết thúc!");
+      return;
+    }
+
+    if (new Date(fromDate) > new Date(toDate)) {
+      alert("Ngày bắt đầu không được lớn hơn ngày kết thúc!");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const payload = {
+        from: fromDate, // YYYY-MM-DD
+        to: toDate,     // YYYY-MM-DD
+        groupBy: groupBy // "day", "month", "year"
+      };
+
+      const res = await getReport(payload);
+      const data = res.data || [];
+      
+      setReportData(data);
+
+      // Tính tổng hiển thị lên thẻ tóm tắt (Chỉ tính các ca đã hoàn thành theo yêu cầu)
+      const sumAmount = data.reduce((acc, curr) => acc + Number(curr.totalCompletedAmount || 0), 0);
+      const sumBookings = data.reduce((acc, curr) => acc + Number(curr.totalCompletedBookings || 0), 0);
+      
+      setSummary({ totalAmount: sumAmount, totalBookings: sumBookings });
+
+    } catch (error) {
+      console.error("Lỗi khi tải báo cáo:", error);
+      alert("Không thể tải dữ liệu báo cáo!");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+  // Tự động load dữ liệu lần đầu khi vào trang
+  useEffect(() => {
+    fetchReport();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Hàm định dạng tiền tệ VNĐ
+  const formatCurrency = (amount) => {
+    return Number(amount).toLocaleString("vi-VN") + " đ";
+  };
+
+  return (
+    <div className="report-container">
+      <h2 className="report-title">Hiệu suất và Thu nhập</h2>
+
+      {/* --- BỘ LỌC --- */}
+      <div className="report-filters">
+        <div className="filter-group">
+          <label>Từ ngày</label>
+          <input 
+            type="date" 
+            value={fromDate} 
+            onChange={(e) => setFromDate(e.target.value)} 
+            className="filter-input"
+          />
+        </div>
+
+        <div className="filter-group">
+          <label>Đến ngày</label>
+          <input 
+            type="date" 
+            value={toDate} 
+            onChange={(e) => setToDate(e.target.value)} 
+            className="filter-input"
+          />
+        </div>
+
+        <div className="filter-group">
+          <label>Nhóm theo</label>
+          <select 
+            value={groupBy} 
+            onChange={(e) => setGroupBy(e.target.value)}
+            className="filter-input"
+          >
+            <option value="day">Ngày</option>
+            <option value="month">Tháng</option>
+            <option value="year">Năm</option>
+          </select>
+        </div>
+
+        <button className="btn-filter" onClick={fetchReport} disabled={loading}>
+          {loading ? "Đang lọc..." : "Lọc dữ liệu"}
+        </button>
+      </div>
+
+      {/* --- THẺ TÓM TẮT --- */}
+      <div className="summary-cards">
+        <div className="card summary-card-blue">
+          <h3>Tổng doanh thu (Hoàn thành)</h3>
+          <p className="summary-value">{formatCurrency(summary.totalAmount)}</p>
+        </div>
+        <div className="card summary-card-green">
+          <h3>Tổng số đơn (Hoàn thành)</h3>
+          <p className="summary-value">{summary.totalBookings} <span style={{fontSize: '16px', fontWeight: 'normal'}}>đơn</span></p>
+        </div>
+      </div>
+
+      {/* --- BẢNG CHI TIẾT --- */}
+      <div className="card table-card">
+        <h3>Chi tiết doanh thu</h3>
+        {loading ? (
+          <p style={{ textAlign: "center", padding: "20px" }}>Đang tải dữ liệu...</p>
+        ) : reportData.length === 0 ? (
+          <p style={{ textAlign: "center", padding: "20px", color: "#888" }}>
+            Không có dữ liệu trong khoảng thời gian này.
+          </p>
+        ) : (
+          <div className="table-responsive">
+            <table className="report-table">
+              <thead>
+                <tr>
+                  <th>Thời gian</th>
+                  <th style={{textAlign: "right"}}>Doanh thu hoàn thành</th>
+                  <th style={{textAlign: "center"}}>Số đơn hoàn thành</th>
+                  <th style={{textAlign: "center"}}>Tỉ lệ hoàn thành</th>
+                </tr>
+              </thead>
+              <tbody>
+                {reportData.map((row, index) => (
+                  <tr key={index}>
+                    <td className="font-semibold">{row.recordDate}</td>
+                    <td style={{textAlign: "right", color: "#00b96b", fontWeight: "bold"}}>
+                      {formatCurrency(row.totalCompletedAmount)}
+                    </td>
+                    <td style={{textAlign: "center"}}>{row.totalCompletedBookings}</td>
+                    <td style={{textAlign: "center"}}>
+                      <span className={`rate-badge ${Number(row.completedRate) > 50 ? 'rate-high' : 'rate-low'}`}>
+                        {row.completedRate}%
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default ReportRevenue;
