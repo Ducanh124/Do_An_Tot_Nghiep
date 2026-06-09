@@ -13,8 +13,9 @@ const Register = () => {
     phone: "",
     address: "",
     areaId: "",
-    gender: "male", // 👉 Cập nhật mặc định là 'male' để thẻ select không bị rỗng ban đầu
+    gender: "male", //  Cập nhật mặc định là 'male' để thẻ select không bị rỗng ban đầu
     role: "customer",
+    avatar: "", 
   });
 
   const [cities, setCities] = useState([]);
@@ -22,7 +23,7 @@ const Register = () => {
   const [selectedCity, setSelectedCity] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  // 👉 THÊM MỚI: State lưu trữ lỗi của từng ô input
+  //  State lưu trữ lỗi của từng ô input
   const [formErrors, setFormErrors] = useState({});
 
   useEffect(() => {
@@ -44,7 +45,7 @@ const Register = () => {
     setDistricts([]);
     setFormData({ ...formData, areaId: "" });
     
-    // 👉 Xóa lỗi của areaId nếu người dùng chọn lại Thành phố
+    // Xóa lỗi của areaId nếu người dùng chọn lại Thành phố
     if (formErrors.areaId) {
       setFormErrors({ ...formErrors, areaId: "" });
     }
@@ -64,9 +65,22 @@ const Register = () => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
 
-    // 👉 THÊM MỚI: Xóa dòng lỗi màu đỏ ngay khi người dùng bắt đầu gõ lại vào ô đó
+    // Xóa dòng lỗi màu đỏ ngay khi người dùng bắt đầu gõ lại vào ô đó
     if (formErrors[name]) {
       setFormErrors({ ...formErrors, [name]: "" });
+    }
+  };
+
+  //  THÊM MỚI: Xử lý sự kiện khi người dùng chọn ảnh
+  const handleAvatarChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Dùng FileReader để mã hóa ảnh thành chuỗi Base64 (string $binary)
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData({ ...formData, avatar: reader.result }); // reader.result chính là chuỗi Base64
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -90,6 +104,8 @@ const Register = () => {
       areaId: Number(formData.areaId),
       role: formData.role,
       gender: formData.gender,
+      //  THÊM MỚI: Đóng gói trường avatar gửi xuống Backend (Nếu ko chọn ảnh thì gửi chuỗi rỗng "")
+      avatar: formData.avatar,
     };
 
     try {
@@ -99,7 +115,7 @@ const Register = () => {
     } catch (error) {
       const backendError = error.response?.data;
       
-      // 👉 THÊM MỚI: Logic bóc tách mảng lỗi từ Backend
+      // Logic bóc tách mảng lỗi từ Backend
       if (backendError && backendError.errors && Array.isArray(backendError.errors)) {
         const errorsObj = {};
         backendError.errors.forEach((err) => {
@@ -129,7 +145,30 @@ const Register = () => {
         </div>
 
         {/* Thêm autoComplete="off" để tắt gợi ý khó chịu của trình duyệt */}
-        <form onSubmit={handleRegister} >
+        <form onSubmit={handleRegister} autoComplete="off">
+          
+          {/* 👉 THÊM MỚI: GIAO DIỆN UPLOAD ẢNH ĐẠI DIỆN */}
+          <div className="avatar-upload-container">
+            <div className="avatar-preview">
+              {formData.avatar ? (
+                <img src={formData.avatar} alt="Avatar Preview" />
+              ) : (
+                <span className="avatar-placeholder">Ảnh đại diện (Tùy chọn)</span>
+              )}
+            </div>
+            {/* Input file bị ẩn đi, dùng label bọc lại để tạo nút bấm đẹp hơn */}
+            <input
+              type="file"
+              id="avatar-upload"
+              accept="image/*"
+              onChange={handleAvatarChange}
+              style={{ display: "none" }}
+            />
+            <label htmlFor="avatar-upload" className="btn-upload-avatar">
+              Chọn ảnh
+            </label>
+          </div>
+
           <div className="form-grid">
             {/* --- CỘT TRÁI --- */}
             <div className="form-column">

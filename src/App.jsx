@@ -9,6 +9,7 @@ import Register from "./Auth/Register.jsx";
 import RegisterArea from "./RegisterArea/RegisterArea.jsx";
 import Leaves from "./Leaves/LeaveList.jsx"; 
 import Report from "./Report/reportRevenue.jsx";
+import Review from "./Review/reportReview.jsx";
 //từ Appjsx vào import
 
 
@@ -44,6 +45,7 @@ function App() {
                   <Route path="/register-area" element={<RegisterArea />} />
                   <Route path="/leaves" element={<Leaves/>} />
                   <Route path="/performance" element={<Report/>} />
+                  <Route path="/reviews" element={<Review/>} />
                 </Routes>
               </div>
             </div>

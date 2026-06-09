@@ -58,9 +58,10 @@ const ShiftCard = ({ shift, onRefresh }) => {
   };
 
   // Xử lý nút Chấp nhận (Trạng thái bình thường)
+// Xử lý nút Chấp nhận
   const handleStartShift = async () => {
     try {
-      // <-- Thêm note vào payload ở đây
+      // SỬA: Dùng originalAssignmentId thay vì shift.id
       await scheduleService.updateAssignment(shift.id, { 
         status: "accepted",
         note: shift.note || "" 

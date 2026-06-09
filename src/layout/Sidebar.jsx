@@ -14,8 +14,18 @@ const Sidebar = () => {
     { path: "/leaves", name: "Quản lý nghỉ phép" },
     { path: "/profile", name: "Hồ sơ năng lực" },
     { path: "/register-area", name: "Đăng ký nơi làm việc" },
-    { path: "/incidents", name: "Báo cáo sự cố" },
+  
   ];
+
+  // ==========================================
+  // THÊM MỚI: Nghiệp vụ xử lý Đăng xuất
+  // ==========================================
+const handleLogout = () => {
+    localStorage.clear();
+    // Ép trình duyệt reload và chuyển hướng, tự động hủy mọi State cũ
+    window.location.href = "/login"; 
+}
+  // ==========================================
 
   return (
     <aside className="sidebar">
@@ -44,7 +54,8 @@ const Sidebar = () => {
 
       {/* Phần Nút Đăng xuất ở cuối */}
       <div className="sidebar-footer">
-        <button className="logout-btn">
+        {/* Đã bổ sung sự kiện onClick={handleLogout} vào nút ban đầu */}
+        <button className="logout-btn" onClick={handleLogout}>
           Đăng xuất
         </button>
       </div>

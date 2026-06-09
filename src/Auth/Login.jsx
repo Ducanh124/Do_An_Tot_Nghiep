@@ -33,6 +33,7 @@ const Login = () => {
       const token = data?.data?.accessToken;
       if (token) {
         localStorage.setItem("access_token", token);
+        window.location.href = '/schedule';
         console.log("Đã lưu token vào trình duyệt thành công!");
 
         alert("Đăng nhập thành công!");

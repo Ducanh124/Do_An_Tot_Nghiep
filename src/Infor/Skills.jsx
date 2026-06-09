@@ -16,7 +16,7 @@ const Skills = ({
         
         {/* Ô NHẬP KỸ NĂNG */}
         <div className="form-group input">
-          <label>Kỹ năng (Dịch vụ) </label>
+          <label>Kỹ năng  </label>
           <input 
             type="text"
             name="skills" 

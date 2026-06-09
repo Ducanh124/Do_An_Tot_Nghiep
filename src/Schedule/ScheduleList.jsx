@@ -14,7 +14,7 @@ const ScheduleList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5; // Tối đa 5 ca làm việc 1 trang
 
-  useEffect(() => {
+ useEffect(() => {
     const fetchSchedule = async () => {
       if (!user?.id) return;
 
@@ -23,41 +23,40 @@ const ScheduleList = () => {
         const jobsRes = await scheduleService.getStaffJobs(user.id);
         const assignments = jobsRes.data?.data || [];
         
-        const detailedShifts = await Promise.all(
-          assignments.map(async (assignment) => {
-            const detailRes = await scheduleService.getBookingDetails(assignment.bookingId);
-            const bookingDetail = detailRes.data;
+const detailedShifts = await Promise.all(
+  assignments.map(async (assignment) => {
+    const detailRes = await scheduleService.getBookingDetails(assignment.bookingId);
+    const bookingDetail = detailRes.data;
 
-            return {
-              id: assignment.id, 
-              bookingId: bookingDetail.id,
-              staffId: assignment.staffId || user.id, // Lấy thêm staffId
-              status: assignment.status, 
-              reason: assignment.reason, // Lấy thêm lý do từ chối từ DB
-              scheduledTime: bookingDetail.scheduledTime,
-              address: bookingDetail.address,
-              note: bookingDetail.note,
-              customerName: bookingDetail.customer?.name || "Khách hàng ẩn danh",
-              phone: bookingDetail.customer?.phone || "Không có SĐT",
-              unitPrice: bookingDetail.bookingDetails?.[0]?.unitPrice || "0",
-              serviceName: bookingDetail.bookingDetails?.[0]?.service?.name || "Dịch vụ",
-            };
-          })
-        );
+    // === FIX LOGIC Ở ĐÂY ===
+    // 1. Tạo chuỗi gộp tên tất cả các dịch vụ (Ví dụ: "Đưa đón người thân, Bảo mẫu cho trẻ")
+    const combinedServiceNames = bookingDetail.bookingDetails
+      ?.map(detail => detail.service?.name)
+      .join(" + ") || "Dịch vụ tổng hợp";
 
-        //  Bỏ filter 'rejected' để giữ lại các ca đã từ chối
-        let filteredShifts = detailedShifts;
-        
-        // Sắp xếp: Completed và Rejected/Cancelled đẩy xuống dưới cùng
-        filteredShifts.sort((a, b) => {
-          const isA_Done = ['completed', 'rejected', 'cancelled'].includes(a.status);
-          const isB_Done = ['completed', 'rejected', 'cancelled'].includes(b.status);
-          if (isA_Done && !isB_Done) return 1; 
-          if (!isA_Done && isB_Done) return -1; 
-          return 0; 
-        });
+    // 2. Lấy đúng tổng tiền của cả đơn (Total Amount thay vì Unit Price của 1 dịch vụ)
+    const combinedTotalPrice = bookingDetail.totalAmount || "0";
+    // =======================
 
-        setShifts(filteredShifts);
+    return {
+      id: assignment.id, 
+      bookingId: bookingDetail.id,
+      staffId: assignment.staffId || user.id,
+      status: assignment.status, 
+      reason: assignment.reason, 
+      scheduledTime: bookingDetail.scheduledTime,
+      address: bookingDetail.address,
+      note: bookingDetail.note,
+      customerName: bookingDetail.customer?.name || "Khách hàng ẩn danh",
+      phone: bookingDetail.customer?.phone || "Không có SĐT",
+      
+      // Sử dụng biến đã gộp
+      unitPrice: combinedTotalPrice, 
+      serviceName: combinedServiceNames, 
+    };
+  })
+);
+        setShifts(detailedShifts);
       } catch (error) {
         console.error("Lỗi khi tải lịch làm việc:", error);
       } finally {
@@ -66,9 +65,9 @@ const ScheduleList = () => {
     };
 
     fetchSchedule();
-  }, [user, refreshKey]); 
+  }, [user, refreshKey]);
 
-  // 👉 LOGIC PHÂN TRANG
+  // 👉LOGIC PHÂN TRANG
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentShifts = shifts.slice(indexOfFirstItem, indexOfLastItem);

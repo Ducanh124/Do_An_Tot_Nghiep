@@ -160,26 +160,6 @@
   font-weight: 600;
 }
 
-/* Huy hiệu tỉ lệ phần trăm */
-.rate-badge {
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.rate-high {
-  background-color: #f6ffed;
-  color: #52c41a;
-  border: 1px solid #b7eb8f;
-}
-
-.rate-low {
-  background-color: #fff1f0;
-  color: #ff4d4f;
-  border: 1px solid #ffa39e;
-}
-
 /* Responsive cho điện thoại */
 @media (max-width: 768px) {
   .summary-cards {

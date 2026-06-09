@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./ReportRevenue.css";
-import { getReport } from "../service/reportRevenue.js"; // Sửa lại đường dẫn nếu cần
+import { getRevenue } from "../service/reportRevenue.js"; // Sửa lại đường dẫn nếu cần
 
 const ReportRevenue = () => {
   // 1. Khởi tạo ngày mặc định (Từ đầu tháng đến ngày hiện tại)
@@ -47,7 +47,7 @@ const ReportRevenue = () => {
         groupBy: groupBy // "day", "month", "year"
       };
 
-      const res = await getReport(payload);
+      const res = await getRevenue(payload);
       const data = res.data || [];
       
       setReportData(data);
@@ -150,7 +150,6 @@ const ReportRevenue = () => {
                   <th>Thời gian</th>
                   <th style={{textAlign: "right"}}>Doanh thu hoàn thành</th>
                   <th style={{textAlign: "center"}}>Số đơn hoàn thành</th>
-                  <th style={{textAlign: "center"}}>Tỉ lệ hoàn thành</th>
                 </tr>
               </thead>
               <tbody>
@@ -161,11 +160,6 @@ const ReportRevenue = () => {
                       {formatCurrency(row.totalCompletedAmount)}
                     </td>
                     <td style={{textAlign: "center"}}>{row.totalCompletedBookings}</td>
-                    <td style={{textAlign: "center"}}>
-                      <span className={`rate-badge ${Number(row.completedRate) > 50 ? 'rate-high' : 'rate-low'}`}>
-                        {row.completedRate}%
-                      </span>
-                    </td>
                   </tr>
                 ))}
               </tbody>
