@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
 const ServiceCard = ({ id, imageUrl, name }) => {
@@ -18,7 +17,7 @@ const ServiceCard = ({ id, imageUrl, name }) => {
       <div className="card-body d-flex flex-column text-center p-4">
         <h5 className="card-title fw-bold mb-4 text-dark">{name}</h5>
         <Link
-          to={`/dich-vu/${id}`}
+          to={`/danh-muc#category-${id}`}
           className="btn btn-outline-primary mt-auto w-100 rounded-pill fw-bold"
         >
           Khám phá ngay <i className="bi bi-arrow-right ms-1"></i>

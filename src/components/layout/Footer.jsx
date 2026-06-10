@@ -30,7 +30,7 @@ const Footer = () => {
 
             <p className="mb-2">
               Tổng đài Phản hồi Chất lượng:{" "}
-              <span className="footer-hotline">1900 6082</span>
+              <span className="footer-hotline">1900 2026</span>
             </p>
 
             <div className="social-icons">
@@ -117,8 +117,8 @@ const Footer = () => {
         {/* Dòng Copyright cuối cùng */}
         <div className="footer-bottom">
           <p className="mb-0">
-            © {new Date().getFullYear()} Bản quyền thuộc về Công ty CP Phát
-            Triển Dịch Vụ Nhà Sạch. Thiết kế bởi Sinh viên Thực hiện Đồ án.
+            © {new Date().getFullYear()} Thiết kế bởi sinh viên khoa Công Nghệ
+            Thông Tin trường Đại Học Hàng Hải Việt Nam
           </p>
         </div>
       </div>

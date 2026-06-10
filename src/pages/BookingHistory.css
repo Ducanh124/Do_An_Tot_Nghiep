@@ -79,6 +79,11 @@
   display: inline-block;
   margin-top: 4px;
 }
+.payment-status-cast {
+  color: #ff0000;
+  display: inline-block;
+  margin-top: 4px;
+}
 .payment-status-failed {
   color: #000000;
   display: inline-block;

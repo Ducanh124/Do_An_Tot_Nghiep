@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import categoryService from "../services/categoryService";
 import serviceService from "../services/serviceService";
 import "./AllServices.css";
-
 const categoryIcons = {
   1: "/icons/choi.png",
   2: "/icons/thucung.png",
@@ -18,6 +17,7 @@ const AllServices = () => {
   const navigate = useNavigate();
   const [dataList, setDataList] = useState([]);
   const [loading, setLoading] = useState(true);
+  const location = useLocation(); // lấy thông tin ủl hiện tại
 
   useEffect(() => {
     const fetchAllData = async () => {
@@ -45,6 +45,20 @@ const AllServices = () => {
     };
     fetchAllData();
   }, []);
+  useEffect(() => {
+    // Chỉ thực hiện cuộn khi đã load xong dữ liệu (loading === false)
+    // và trên URL có chứa mã hash (ví dụ: #category-1)
+    if (!loading && location.hash) {
+      // location.hash có dạng '#category-1', hàm substring(1) để cắt bỏ dấu '#'
+      const elementId = location.hash.substring(1);
+      const element = document.getElementById(elementId);
+
+      if (element) {
+        // Cuộn mượt mà đến đúng vị trí thẻ đó
+        element.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+  }, [loading, location.hash]); // Lắng nghe sự thay đổi của loading và URL
 
   if (loading) {
     return (

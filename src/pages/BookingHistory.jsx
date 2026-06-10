@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import authService from "../services/authService";
 import bookingService from "../services/bookingService";
 import reviewService from "../services/reviewService";
+//import progressService from "../services/progressService";
 import "./BookingHistory.css";
 
 const BookingHistory = () => {
@@ -16,7 +17,7 @@ const BookingHistory = () => {
   const [reviewMap, setReviewMap] = useState({});
 
   //Thanh toán
-  // Hàm xử lý trạng thái thanh toán (Chỉ dùng class CSS tự viết, không dùng nền)
+
   const getPaymentBadge = (paymentStatus) => {
     const p = paymentStatus ? paymentStatus.toUpperCase() : "";
     switch (p) {
@@ -24,6 +25,13 @@ const BookingHistory = () => {
         return (
           <span className="payment-status-paid">
             <i className="bi bi-check-circle me-1"></i>Đã thanh toán
+          </span>
+        );
+      case "CAST":
+        return (
+          <span className="payment-status-pending">
+            <i className="bi bi-clock-history me-1"></i>Chờ thanh toán bằng tiền
+            mặt
           </span>
         );
       case "PENDING":
@@ -35,7 +43,7 @@ const BookingHistory = () => {
       case "FAILED":
         return (
           <span className="payment-status-failed">
-            <i className="bi bi-x-circle me-1"></i>Thất bại
+            <i className="bi bi-x-circle me-1"></i>Thanh toán thất bại
           </span>
         );
       default:
@@ -102,41 +110,51 @@ const BookingHistory = () => {
   const getStatusBadge = (status) => {
     const s = status ? status.toLowerCase() : "";
     switch (s) {
-      case "pending":
+      case "assigned":
         return {
           text: "Đang chờ xác nhận",
           className: "status-text-pending",
-          icon: "bi-hourglass-split",
         };
       case "accepted":
         return {
           text: "Đã được chấp nhận",
           className: "status-text-accepted",
-          icon: "bi-person-check",
         };
       case "is_working":
         return {
           text: "Đang tiến hành làm",
           className: "status-text-working",
-          icon: "bi-tools",
         };
+      case "is_coming":
+        return {
+          text: "Đang đến nơi làm việc",
+          className: "status-text-working",
+        };
+
       case "completed":
         return {
           text: "Đã hoàn thành",
           className: "status-text-completed",
-          icon: "bi-check2-all",
         };
       case "cancelled":
         return {
           text: "Đã hủy",
           className: "status-text-cancelled",
-          icon: "bi-x-octagon",
+        };
+      case "no_staff_available":
+        return {
+          text: "Không có nhân viên tiếp nhận",
+          className: "status-text-cancelled",
+        };
+      case "pending":
+        return {
+          text: "Đang chờ nhân viên tiếp nhận",
+          className: "status-text-pending",
         };
       default:
         return {
-          text: "Không có nhân viên ",
+          text: "Đơn bị lỗi",
           className: "status-text-default",
-          icon: "bi-question-circle",
         };
     }
   };
@@ -211,12 +229,15 @@ const BookingHistory = () => {
                   const date = new Date(booking.scheduledTime);
                   const badgeInfo = getStatusBadge(booking.status);
                   const canViewDetails = [
-                    "accepted",
+                    "arrived",
+                    "no_staff_available",
                     "is_working",
                     "completed",
+                    "is_coming",
+                    "assigned",
+                    "accepted",
                     "pending",
                   ].includes(booking.status?.toLowerCase());
-
                   return (
                     <tr key={booking.id}>
                       <td className="text-center booking-id">

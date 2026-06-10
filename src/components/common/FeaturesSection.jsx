@@ -10,7 +10,6 @@ const FeaturesSection = () => {
         <div className="row mt-5">
           {/* Cột 1 */}
           <div className="col-12 col-md-4 mb-4">
-            {/* Dùng ảnh minh họa có tông màu xanh nhạt */}
             <img
               src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
               alt="Chuyên nghiệp"

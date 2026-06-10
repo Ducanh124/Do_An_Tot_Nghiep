@@ -5,7 +5,7 @@ import staffService from "../services/staffService";
 import progressService from "../services/progressService";
 import reviewService from "../services/reviewService";
 
-// 👉 THÊM MỚI: Import api lấy địa điểm
+//  THÊM MỚI: Import api lấy địa điểm
 import areaService from "../services/areaService";
 import "./BookingDetailPage.css";
 
@@ -24,7 +24,7 @@ const BookingDetailPage = () => {
   const [rating, setRating] = useState(5);
   const [reviewComment, setReviewComment] = useState("");
 
-  // 👉 THÊM MỚI: STATE QUẢN LÝ FORM SỬA ĐƠN
+  //  THÊM MỚI: STATE QUẢN LÝ FORM SỬA ĐƠN
   const [showEditModal, setShowEditModal] = useState(false);
   const [areas, setAreas] = useState([]); // Chứa danh sách Tỉnh/Thành phố
   const [districts, setDistricts] = useState([]); // Chứa danh sách Quận/Huyện
@@ -36,7 +36,7 @@ const BookingDetailPage = () => {
     note: "",
   });
 
-  // 👉 THÊM MỚI: Lấy danh sách Tỉnh/Thành lúc vừa vào trang
+  //  THÊM MỚI: Lấy danh sách Tỉnh/Thành lúc vừa vào trang
   useEffect(() => {
     const fetchAreas = async () => {
       try {
@@ -123,7 +123,7 @@ const BookingDetailPage = () => {
     }
   };
 
-  // 👉 THÊM MỚI: Hàm xử lý khi chọn lại Tỉnh/Thành
+  // THÊM MỚI: Hàm xử lý khi chọn lại Tỉnh/Thành
   const handleCityChangeEdit = async (e) => {
     const cityId = Number(e.target.value);
     setEditData({ ...editData, cityId: cityId, districtId: "" });
@@ -208,7 +208,6 @@ const BookingDetailPage = () => {
         note: editData.note,
         serviceId: serviceIds,
       };
-
       await bookingService.updateBooking(id, payload);
       alert("Cập nhật thông tin đơn hàng thành công!");
       setShowEditModal(false);
@@ -219,7 +218,7 @@ const BookingDetailPage = () => {
     }
   };
 
-  // 👉 THÊM MỚI: Hàm Huỷ Đơn gọi API DELETE
+  //  THÊM MỚI: Hàm Huỷ Đơn gọi API DELETE
   const handleCancelBooking = async () => {
     if (
       window.confirm(
@@ -266,7 +265,7 @@ const BookingDetailPage = () => {
               <>
                 <img
                   src={
-                    staffInfo.avatar ||
+                    staffInfo?.staff?.avatarUrl ||
                     "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
                   }
                   alt="Avatar"
@@ -380,8 +379,10 @@ const BookingDetailPage = () => {
         </button>
 
         <div style={{ display: "flex", gap: "12px" }}>
-          {/* 👉 NÚT SỬA & HUỶ ĐƠN */}
-          {details?.status?.toLowerCase() === "pending" && (
+          {/*  NÚT SỬA & HUỶ ĐƠN */}
+          {["pending", "no_staff_available"].includes(
+            details?.status?.toLowerCase(),
+          ) && (
             <>
               <button
                 className="bd-action-btn"
@@ -412,7 +413,7 @@ const BookingDetailPage = () => {
         </div>
       </div>
 
-      {/* 👉 THÊM MỚI: BẢNG POPUP SỬA ĐƠN HÀNG */}
+      {/*  THÊM MỚI: BẢNG POPUP SỬA ĐƠN HÀNG */}
       {showEditModal && (
         <div className="bd-modal-overlay">
           <div className="bd-modal-content">

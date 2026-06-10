@@ -2,16 +2,13 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./Header.css";
-
 const Header = () => {
   const navigate = useNavigate();
-
   // State 1: Lưu thông tin người dùng
   const [user, setUser] = useState(() => {
     const savedUser = localStorage.getItem("user");
     return savedUser ? JSON.parse(savedUser) : null;
   });
-
   // State 2 (MỚI): Công tắc bật/tắt menu xổ xuống
   const [showMenu, setShowMenu] = useState(false);
 
@@ -23,14 +20,12 @@ const Header = () => {
       navigate("/danh-muc");
     }
   };
-
   const handleLogout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("accessToken");
     setUser(null);
     window.location.href = "/login";
   };
-
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top py-2">
       <div className="container">
@@ -62,7 +57,6 @@ const Header = () => {
               </a>
             </li>
           </ul>
-
           <div className="nav-actions d-flex align-items-center gap-3">
             <button
               onClick={handleBookingClick}
@@ -70,7 +64,6 @@ const Header = () => {
             >
               Đặt dịch vụ ngay
             </button>
-
             {/* --- KHU VỰC SỬA MỚI: MENU DROPDOWN --- */}
             {user && (
               <div className="position-relative border-start ps-3">
@@ -87,7 +80,6 @@ const Header = () => {
                     style={{ fontSize: "0.8rem" }}
                   ></i>
                 </div>
-
                 {/* 2. Khối Menu xổ xuống */}
                 {showMenu && (
                   <div
