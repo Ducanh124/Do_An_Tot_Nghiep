@@ -6,33 +6,44 @@ import authService from "../services/authService";
 import areaService from "../services/areaService";
 import discountService from "../services/discountService";
 import paymentService from "../services/paymentService";
+import categoryService from "../services/categoryService"; // Thêm dòng này để gọi Danh mục
 import "./BookingPage.css";
 
 const BookingPage = () => {
   const { serviceId } = useParams();
   const navigate = useNavigate();
-  // dịch vụ
-  const [service, setService] = useState(null);
+
+  // --- STATE DỊCH VỤ (ĐÃ NÂNG CẤP THÀNH MẢNG) ---
+  const [selectedServices, setSelectedServices] = useState([]);
   const [loading, setLoading] = useState(true);
-  // địa điểm
+
+  // --- STATE MODAL THÊM DỊCH VỤ ---
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategoryIdModal, setSelectedCategoryIdModal] = useState("");
+  const [servicesInModal, setServicesInModal] = useState([]);
+  const [tempSelected, setTempSelected] = useState([]); // Giỏ hàng tạm trong lúc mở Modal
+
+  // --- STATE ĐỊA ĐIỂM & FORM CŨ ---
   const [areas, setAreas] = useState([]);
   const [selectedCityId, setSelectedCityId] = useState("");
   const [districts, setDistricts] = useState([]);
   const [selectedDistrictId, setSelectedDistrictId] = useState("");
-  // mã khuyến mãi
-  const [availableDiscounts, setAvailableDiscounts] = useState([]); // Lưu toàn bộ mã từ API
-  const [appliedDiscount, setAppliedDiscount] = useState(null); // Lưu mã đã áp dụng thành công
-  // --- STATE CÁC Ô NHẬP LIỆU CÒN LẠI ---
   const [address, setAddress] = useState("");
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [note, setNote] = useState("");
+
+  // --- STATE KHUYẾN MÃI & THANH TOÁN ---
+  const [availableDiscounts, setAvailableDiscounts] = useState([]);
+  const [appliedDiscount, setAppliedDiscount] = useState(null);
   const [discountCode, setDiscountCode] = useState("");
-  //thanh toán
   const [paymentMethod, setPaymentMethod] = useState("CASH");
-  const [showPaymentModal, setShowPaymentModal] = useState(false); // trạng thái để mở hộp thoại
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+
   const currentUser = authService.getCurrentUser();
 
+  // 1. TẢI DỮ LIỆU BAN ĐẦU
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -43,35 +54,31 @@ const BookingPage = () => {
           discountService.getAllDiscounts(),
         ]);
 
-        setService(serviceData);
+        setSelectedServices([serviceData]); // Khởi tạo mảng với dịch vụ đầu tiên
         setAreas(areaData);
-        setAvailableDiscounts(discountData);
+
         const validDiscounts = Array.isArray(discountData)
           ? discountData
-          : discountData?.data || []; // Nếu bị lồng trong data thì bóc ra, lỗi thì lấy mảng rỗng
-
+          : discountData?.data || [];
         setAvailableDiscounts(validDiscounts);
       } catch (error) {
-        console.error("Lỗi tải dữ liệu:", error);
+        console.error("Lỗi tải dữ liệu ban đầu:", error);
       } finally {
         setLoading(false);
       }
     };
-
     fetchData();
   }, [serviceId]);
 
-  // Xử lý khi chọn Tỉnh/Thành
+  // 2. LOGIC ĐỊA CHỈ (Giữ nguyên)
   const handleCityChange = async (e) => {
     const cityId = Number(e.target.value);
     setSelectedCityId(cityId);
     setSelectedDistrictId("");
-    //nếu chọn lại thành phố thì xoá quận
     if (!cityId) {
       setDistricts([]);
       return;
     }
-
     try {
       const cityData = await areaService.getById(cityId);
       if (cityData && cityData.children) {
@@ -80,66 +87,141 @@ const BookingPage = () => {
         setDistricts([]);
       }
     } catch (error) {
-      console.error("Lỗi khi tải danh sách Quận/Huyện:", error);
+      console.error("Lỗi tải Quận/Huyện:", error);
       setDistricts([]);
     }
   };
-  // Kiểm tra mã giảm giá
+
+  // 3. LOGIC XỬ LÝ DỊCH VỤ & MODAL
+  const handleRemoveService = (idToRemove) => {
+    if (selectedServices.length <= 1) {
+      return alert("Đơn hàng phải có ít nhất 1 dịch vụ!");
+    }
+    setSelectedServices((prev) => prev.filter((s) => s.id !== idToRemove));
+  };
+
+  const handleOpenAddModal = async () => {
+    setShowAddModal(true);
+    setTempSelected([...selectedServices]); // Nạp đồ đã chọn vào giỏ tạm
+    try {
+      const cats = await categoryService.getCategories();
+      setCategories(cats);
+    } catch (error) {
+      console.error("Lỗi tải danh mục:", error);
+    }
+  };
+
+  const handleCategoryChangeModal = async (e) => {
+    const catId = e.target.value;
+    setSelectedCategoryIdModal(catId);
+    if (!catId) {
+      setServicesInModal([]);
+      return;
+    }
+    try {
+      // Giả sử serviceService của bạn có hàm getByCategoryId
+      const svcs = await serviceService.getByCategoryId(catId);
+      setServicesInModal(svcs);
+    } catch (error) {
+      console.error("Lỗi lấy dịch vụ:", error);
+    }
+  };
+
+  const handleToggleServiceModal = (svc) => {
+    const isExist = tempSelected.find((item) => item.id === svc.id);
+    if (isExist) {
+      setTempSelected(tempSelected.filter((item) => item.id !== svc.id));
+    } else {
+      setTempSelected([...tempSelected, svc]);
+    }
+  };
+
+  const handleConfirmAddServices = () => {
+    if (tempSelected.length === 0) {
+      return alert("Bạn phải chọn ít nhất 1 dịch vụ!");
+    }
+    setSelectedServices(tempSelected);
+    setShowAddModal(false);
+  };
+
+  // 4. LOGIC TÍNH TIỀN SÀNG LỌC MÃ GIẢM GIÁ (Tối ưu mới)
+  const originalPrice = selectedServices.reduce(
+    (sum, item) => sum + Number(item?.price || 0),
+    0,
+  );
+  let discountAmount = 0;
+  let finalPrice = originalPrice;
+
+  // Tự động hủy mã nếu xóa dịch vụ làm tổng tiền rớt dưới mức tối thiểu
+  useEffect(() => {
+    if (
+      appliedDiscount &&
+      originalPrice < Number(appliedDiscount.minBookingAmount)
+    ) {
+      setAppliedDiscount(null);
+      setDiscountCode("");
+      alert(
+        "Đã hủy mã giảm giá vì tổng đơn hàng không đủ điều kiện tối thiểu.",
+      );
+    }
+  }, [originalPrice, appliedDiscount]);
+
+  if (appliedDiscount) {
+    const type = appliedDiscount.discountType;
+    const value = Number(appliedDiscount.discountValue || 0);
+    const maxDiscount = Number(appliedDiscount.maxDiscountAmount || 0);
+
+    if (type === "percentage") {
+      discountAmount = (originalPrice * value) / 100;
+      if (maxDiscount > 0 && discountAmount > maxDiscount) {
+        discountAmount = maxDiscount;
+      }
+    } else if (type === "fixed_amount") {
+      discountAmount = value;
+    }
+    finalPrice = originalPrice - discountAmount;
+    if (finalPrice < 0) finalPrice = 0;
+  }
+
   const handleApplyDiscount = () => {
     const inputCode = discountCode.trim().toUpperCase();
-
     if (inputCode === "") {
       setAppliedDiscount(null);
       return;
     }
-
-    // 1. Tìm mã trong danh sách
     const matchedDiscount = (availableDiscounts || []).find(
       (d) => d.code.toUpperCase() === inputCode,
     );
-
     if (!matchedDiscount) {
       setAppliedDiscount(null);
       return alert("Mã giảm giá không tồn tại!");
     }
-
-    // 2. Kiểm tra hạn sử dụng & trạng thái
     const now = new Date();
     if (!matchedDiscount.isActive || new Date(matchedDiscount.endDate) < now) {
       setAppliedDiscount(null);
-      return alert("Mã giảm giá này đã hết hạn hoặc tạm dừng áp dụng!");
+      return alert("Mã giảm giá đã hết hạn hoặc tạm dừng!");
     }
-
-    // 3. Kiểm tra điều kiện đơn tối thiểu
-    const currentPrice = Number(service?.price || 0);
-    if (currentPrice < Number(matchedDiscount.minBookingAmount)) {
+    if (originalPrice < Number(matchedDiscount.minBookingAmount)) {
       setAppliedDiscount(null);
       return alert(
-        `Mã này chỉ áp dụng cho đơn hàng từ ${Number(matchedDiscount.minBookingAmount).toLocaleString("vi-VN")}₫`,
+        `Mã này chỉ áp dụng cho đơn từ ${Number(matchedDiscount.minBookingAmount).toLocaleString("vi-VN")}₫`,
       );
     }
-    // 4. Nếu qua hết các bài test, lưu mã vào State
     setAppliedDiscount(matchedDiscount);
     alert(`Áp dụng mã ${matchedDiscount.code} thành công!`);
   };
-  // Xử lý chốt đơn
-  // 1. HÀM KIỂM TRA FORM VÀ MỞ MODAL
-  const handleBookingSubmit = (e) => {
-    e.preventDefault(); // Ngăn load lại trang
 
-    // Kiểm tra dữ liệu đầu vào (Validation)
+  // 5. CHỐT ĐƠN & GỬI API
+  const handleBookingSubmit = (e) => {
+    e.preventDefault();
     if (!selectedDistrictId) return alert("Vui lòng chọn Quận/Huyện!");
     if (!address || !date || !time)
       return alert("Vui lòng điền đủ Địa chỉ, Ngày và Giờ!");
-
-    // Nếu qua bài test, mở Modal thanh toán lên
     setShowPaymentModal(true);
   };
 
-  // 2. HÀM GỌI API TẠO ĐƠN VÀ THANH TOÁN (Chạy khi ấn nút trong Modal)
   const processBooking = async () => {
     const dateTimeString = new Date(`${date}T${time}`).toISOString();
-
     const bookingPayload = {
       customerId: String(currentUser.id),
       areaId: Number(selectedDistrictId),
@@ -148,11 +230,10 @@ const BookingPage = () => {
       discountCode: appliedDiscount ? appliedDiscount.code : "",
       status: "pending",
       note: note,
-      serviceId: [Number(serviceId)],
+      serviceId: selectedServices.map((s) => Number(s.id)), // Lấy tất cả ID đang chọn
     };
 
     try {
-      // Gọi API tạo đơn đặt lịch
       const bookingRes = await bookingService.createBooking(bookingPayload);
       const newBookingId = bookingRes?.id || bookingRes?.data?.id;
 
@@ -160,14 +241,13 @@ const BookingPage = () => {
         alert(
           "Đã tạo đơn nhưng không lấy được mã đơn hàng. Vui lòng kiểm tra lịch sử!",
         );
-        setShowPaymentModal(false); // Đóng modal
+        setShowPaymentModal(false);
         navigate("/history");
         return;
       }
 
-      // Rẽ nhánh thanh toán
       if (paymentMethod === "CASH") {
-        alert(" Đặt lịch thành công! Bạn đã chọn thanh toán bằng Tiền mặt.");
+        alert("Đặt lịch thành công! Bạn đã chọn thanh toán Tiền mặt.");
         navigate("/history");
       } else if (paymentMethod === "VNPAY") {
         const paymentPayload = {
@@ -175,13 +255,12 @@ const BookingPage = () => {
           method: "VNPAY",
           status: "PENDING",
         };
-
         const paymentRes =
           await paymentService.createPaymentUrl(paymentPayload);
         const vnpayUrl = paymentRes?.paymentUrl || paymentRes?.data?.paymentUrl;
 
         if (vnpayUrl) {
-          window.location.href = vnpayUrl; // chuyển sang VNPay
+          window.location.href = vnpayUrl;
         } else {
           alert("Lỗi khi tạo link VNPay!");
           navigate("/history");
@@ -195,35 +274,13 @@ const BookingPage = () => {
 
   if (loading)
     return <div className="text-center mt-5">Đang tải dữ liệu...</div>;
-  if (!service)
+  if (selectedServices.length === 0)
     return (
       <div className="text-center mt-5 text-danger">
         Không tìm thấy dịch vụ!
       </div>
     );
-  //  LOGIC TÍNH TOÁN TIỀN HIỂN THỊ
-  const originalPrice = Number(service?.price || 0); // Giá gốc
-  let discountAmount = 0; // Tiền được giảm
-  let finalPrice = originalPrice; // Tổng thanh toán
 
-  if (appliedDiscount) {
-    const type = appliedDiscount.discountType;
-    const value = Number(appliedDiscount.discountValue || 0);
-    const maxDiscount = Number(appliedDiscount.maxDiscountAmount || 0);
-
-    if (type === "percentage") {
-      discountAmount = (originalPrice * value) / 100;
-      // Nếu có giới hạn giảm tối đa
-      if (maxDiscount > 0 && discountAmount > maxDiscount) {
-        discountAmount = maxDiscount;
-      }
-    } else if (type === "fixed_amount") {
-      discountAmount = value;
-    }
-
-    finalPrice = originalPrice - discountAmount;
-    if (finalPrice < 0) finalPrice = 0; // Đảm bảo không bị âm tiền
-  }
   return (
     <div className="booking-page-container pt-4">
       <div className="container">
@@ -232,49 +289,58 @@ const BookingPage = () => {
         </button>
 
         <div className="row g-4">
-          {/* CỘT TRÁI: THÔNG TIN DỊCH VỤ */}
+          {/* CỘT TRÁI: DANH SÁCH DỊCH VỤ ĐÃ CHỌN */}
           <div className="col-md-5">
             <div className="service-info-card d-flex flex-column h-100 p-4 bg-white rounded shadow-sm">
               <h5 className="text-muted mb-3 border-bottom pb-2">
-                Thông tin gói dịch vụ
+                Các gói dịch vụ đã chọn ({selectedServices.length})
               </h5>
-              <h4 className="service-info-title fw-bold text-primary">
-                {service.name}
-              </h4>
-              <p className="service-info-desc text-secondary">
-                {service.description}
-              </p>
 
-              {/* Hình ảnh dịch vụ */}
-              {service.imageUrl ? (
-                <div className="service-image-container my-3 text-center flex-grow-1">
-                  <img
-                    src={service.imageUrl}
-                    alt={service.name}
-                    className="img-fluid rounded shadow-sm"
-                    style={{
-                      maxHeight: "500px",
-                      width: "100%",
-                      objectFit: "cover",
-                    }}
-                  />
-                </div>
-              ) : (
-                // Nếu dịch vụ không có ảnh, hiện 1 cái khung trống xám xám cho đỡ bị hụt giao diện
-                <div
-                  className="my-3 flex-grow-1 d-flex align-items-center justify-content-center bg-light rounded"
-                  style={{ minHeight: "200px" }}
-                >
-                  <i className="bi bi-image text-muted fs-1"></i>
-                </div>
-              )}
+              <div
+                className="selected-services-list mb-3"
+                style={{
+                  maxHeight: "350px",
+                  overflowY: "auto",
+                  paddingRight: "10px",
+                }}
+              >
+                {selectedServices.map((svc) => (
+                  <div
+                    key={svc.id}
+                    className="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom"
+                  >
+                    <div>
+                      <h6 className="fw-bold text-primary mb-1">{svc.name}</h6>
+                      <span className="text-secondary fw-semibold">
+                        {Number(svc.price).toLocaleString("vi-VN")} ₫
+                      </span>
+                    </div>
+                    {selectedServices.length > 1 && (
+                      <button
+                        className="btn btn-sm btn-outline-danger"
+                        onClick={() => handleRemoveService(svc.id)}
+                        title="Xóa dịch vụ này"
+                      >
+                        <i className="bi bi-trash"></i>
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              <button
+                className="btn btn-outline-primary mb-4 fw-bold w-100"
+                onClick={handleOpenAddModal}
+              >
+                <i className="bi bi-plus-circle me-2"></i>Chọn thêm dịch vụ
+              </button>
 
               <div className="mt-auto pt-4 border-top">
-                {/* Hiện bảng so sánh chi tiết nếu có mã giảm giá */}
+                {/* HIỂN THỊ MÃ GIẢM GIÁ */}
                 {appliedDiscount && (
                   <div className="discount-summary mb-3 p-2 bg-light rounded border border-success border-opacity-25">
                     <div className="d-flex justify-content-between align-items-center mb-1">
-                      <span className="text-muted small">Giá gốc dịch vụ:</span>
+                      <span className="text-muted small">Giá gốc:</span>
                       <span className="text-muted small text-decoration-line-through">
                         {originalPrice.toLocaleString("vi-VN")} ₫
                       </span>
@@ -291,7 +357,7 @@ const BookingPage = () => {
                   </div>
                 )}
 
-                {/* Tổng thanh toán cuối cùng */}
+                {/* TỔNG TIỀN */}
                 <div className="d-flex justify-content-between align-items-center">
                   <span className="fw-bold fs-5 text-secondary">
                     Tổng thanh toán:
@@ -304,7 +370,7 @@ const BookingPage = () => {
             </div>
           </div>
 
-          {/* CỘT PHẢI: FORM ĐẶT LỊCH */}
+          {/* CỘT PHẢI: FORM ĐẶT LỊCH (GIỮ NGUYÊN HOÀN TOÀN) */}
           <div className="col-md-7">
             <div className="booking-form-card sticky-booking-form">
               <h4 className="fw-bold mb-4 border-bottom pb-3">
@@ -324,7 +390,6 @@ const BookingPage = () => {
                   />
                 </div>
 
-                {/* --- CHỌN KHU VỰC --- */}
                 <div className="row mb-3">
                   <div className="col-6">
                     <label className="custom-form-label">
@@ -378,7 +443,6 @@ const BookingPage = () => {
                   />
                 </div>
 
-                {/* --- CHỌN NGÀY GIỜ  --- */}
                 <div className="row mb-3">
                   <div className="col-6">
                     <label className="custom-form-label">Ngày làm *</label>
@@ -401,6 +465,7 @@ const BookingPage = () => {
                     />
                   </div>
                 </div>
+
                 <div className="mb-3">
                   <label className="custom-form-label">
                     Mã giảm giá (Nếu có)
@@ -450,6 +515,8 @@ const BookingPage = () => {
           </div>
         </div>
       </div>
+
+      {/* POPUP CHỌN PHƯƠNG THỨC THANH TOÁN (GIỮ NGUYÊN) */}
       {showPaymentModal && (
         <div
           className="modal show d-block"
@@ -466,16 +533,13 @@ const BookingPage = () => {
                 <button
                   type="button"
                   className="btn-close"
-                  onClick={() => setShowPaymentModal(false)} // Nút X để đóng Modal
+                  onClick={() => setShowPaymentModal(false)}
                 ></button>
               </div>
-
               <div className="modal-body">
                 <p className="text-muted mb-3">
                   Vui lòng chọn cách thức thanh toán cho dịch vụ của bạn:
                 </p>
-
-                {/* Lựa chọn Tiền mặt */}
                 <div
                   className={`border rounded p-3 mb-3 cursor-pointer ${paymentMethod === "CASH" ? "border-primary bg-light" : ""}`}
                   onClick={() => setPaymentMethod("CASH")}
@@ -486,7 +550,7 @@ const BookingPage = () => {
                       className="form-check-input"
                       type="radio"
                       checked={paymentMethod === "CASH"}
-                      onChange={() => setPaymentMethod("CASH")}
+                      readOnly
                     />
                     <label
                       className="form-check-label fw-bold d-block"
@@ -499,8 +563,6 @@ const BookingPage = () => {
                     </small>
                   </div>
                 </div>
-
-                {/* Lựa chọn VNPay */}
                 <div
                   className={`border rounded p-3 cursor-pointer ${paymentMethod === "VNPAY" ? "border-primary bg-light" : ""}`}
                   onClick={() => setPaymentMethod("VNPAY")}
@@ -511,7 +573,7 @@ const BookingPage = () => {
                       className="form-check-input"
                       type="radio"
                       checked={paymentMethod === "VNPAY"}
-                      onChange={() => setPaymentMethod("VNPAY")}
+                      readOnly
                     />
                     <label
                       className="form-check-label fw-bold d-block"
@@ -525,7 +587,6 @@ const BookingPage = () => {
                   </div>
                 </div>
               </div>
-
               <div className="modal-footer border-top-0">
                 <button
                   type="button"
@@ -541,6 +602,106 @@ const BookingPage = () => {
                 >
                   Tiến hành thanh toán
                 </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* POPUP CHỌN THÊM DỊCH VỤ (THÊM MỚI) */}
+      {showAddModal && (
+        <div
+          className="modal show d-block"
+          style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+        >
+          <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title fw-bold">Thêm dịch vụ vào đơn</h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={() => setShowAddModal(false)}
+                ></button>
+              </div>
+              <div className="modal-body">
+                <div className="mb-3">
+                  <label className="form-label fw-bold">
+                    1. Chọn Nhóm dịch vụ
+                  </label>
+                  <select
+                    className="form-select"
+                    value={selectedCategoryIdModal}
+                    onChange={handleCategoryChangeModal}
+                  >
+                    <option value="">-- Vui lòng chọn danh mục --</option>
+                    {categories.map((cat) => (
+                      <option key={cat.id} value={cat.id}>
+                        {cat.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {selectedCategoryIdModal && (
+                  <div className="services-list-modal mt-4">
+                    <label className="form-label fw-bold">
+                      2. Tích chọn dịch vụ cần thêm
+                    </label>
+                    {servicesInModal.length === 0 ? (
+                      <p className="text-muted small fst-italic">
+                        Không có dịch vụ nào trong mục này.
+                      </p>
+                    ) : (
+                      <div className="list-group">
+                        {servicesInModal.map((svc) => {
+                          const isChecked = tempSelected.some(
+                            (item) => item.id === svc.id,
+                          );
+                          return (
+                            <label
+                              key={svc.id}
+                              className="list-group-item d-flex justify-content-between align-items-center"
+                              style={{ cursor: "pointer" }}
+                            >
+                              <div>
+                                <input
+                                  className="form-check-input me-3"
+                                  type="checkbox"
+                                  checked={isChecked}
+                                  onChange={() => handleToggleServiceModal(svc)}
+                                />
+                                {svc.name}
+                              </div>
+                              <span className="text-danger fw-bold">
+                                {Number(svc.price).toLocaleString("vi-VN")} ₫
+                              </span>
+                            </label>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+              <div className="modal-footer d-flex justify-content-between align-items-center">
+                <span className="fw-bold text-primary">
+                  Tổng đang chọn: {tempSelected.length}
+                </span>
+                <div>
+                  <button
+                    className="btn btn-secondary me-2"
+                    onClick={() => setShowAddModal(false)}
+                  >
+                    Hủy
+                  </button>
+                  <button
+                    className="btn btn-primary fw-bold"
+                    onClick={handleConfirmAddServices}
+                  >
+                    Xác nhận thêm
+                  </button>
+                </div>
               </div>
             </div>
           </div>

@@ -69,6 +69,11 @@ const authService = {
       throw error;
     }
   },
+  getMe: async () => {
+    // axiosClient là instance axios của bạn đã được cấu hình gắn sẵn token
+    const response = await axiosClient.get("/auth/me");
+    return response.data;
+  },
 };
 
 export default authService;

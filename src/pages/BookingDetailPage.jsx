@@ -4,8 +4,6 @@ import bookingService from "../services/bookingService";
 import staffService from "../services/staffService";
 import progressService from "../services/progressService";
 import reviewService from "../services/reviewService";
-
-//  THÊM MỚI: Import api lấy địa điểm
 import areaService from "../services/areaService";
 import "./BookingDetailPage.css";
 
@@ -146,8 +144,8 @@ const BookingDetailPage = () => {
     }
   };
 
-  // 👉 THÊM MỚI: Hàm mở Modal Sửa và nạp dữ liệu cũ
-  // 👉 HÀM MỞ FORM SỬA VÀ NẠP DỮ LIỆU CŨ (ĐÃ SỬA LỖI TỰ ĐỘNG HIỆN ĐỊA CHỈ)
+  //  THÊM MỚI: Hàm mở Modal Sửa và nạp dữ liệu cũ
+  //  HÀM MỞ FORM SỬA VÀ NẠP DỮ LIỆU CŨ (ĐÃ SỬA LỖI TỰ ĐỘNG HIỆN ĐỊA CHỈ)
   const handleOpenEditModal = async () => {
     const savedAreaId = Number(details?.areaId || 0);
     let foundCityId = "";
@@ -190,7 +188,7 @@ const BookingDetailPage = () => {
     setShowEditModal(true);
   };
 
-  // 👉 THÊM MỚI: Hàm Lưu Sửa Đơn gọi API PUT
+  //  THÊM MỚI: Hàm Lưu Sửa Đơn gọi API PUT
   const handleSaveEdit = async () => {
     if (!editData.districtId) return alert("Vui lòng chọn Quận/Huyện!");
     if (!editData.address || !editData.scheduledTime)
