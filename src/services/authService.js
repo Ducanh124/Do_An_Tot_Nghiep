@@ -70,9 +70,16 @@ const authService = {
     }
   },
   getMe: async () => {
-    // axiosClient là instance axios của bạn đã được cấu hình gắn sẵn token
-    const response = await axiosClient.get("/auth/me");
-    return response.data;
+    try {
+      const response = await axiosClient.get("/auth/me");
+      console.log("=== KẾT QUẢ GỐC TỪ AXIOS KHỐI GET_ME ===", response);
+
+      // TRẢ VỀ NGUYÊN BẢN RESPONSE. Để Frontend tự bóc tách, không bóc ở đây nữa.
+      return response;
+    } catch (error) {
+      console.error("=== LỖI KHI GỌI API /auth/me ===", error);
+      return null; // Trả về null nếu lỗi, tuyệt đối không để rơi vào undefined
+    }
   },
 };
 

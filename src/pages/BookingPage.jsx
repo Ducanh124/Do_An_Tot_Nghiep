@@ -42,31 +42,96 @@ const BookingPage = () => {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
 
   const currentUser = authService.getCurrentUser();
-
-  // 1. TẢI DỮ LIỆU BAN ĐẦU
+  // 1. TẢI DỮ LIỆU BAN ĐẦU & AUTO-FILL ĐỊA CHỈ (BẢN TÁCH RỜI CHỐNG CHẾT CHÙM)
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const [serviceData, areaData, discountData] = await Promise.all([
-          serviceService.getById(serviceId),
-          areaService.getAll(),
-          discountService.getAllDiscounts(),
-        ]);
 
-        setSelectedServices([serviceData]); // Khởi tạo mảng với dịch vụ đầu tiên
-        setAreas(areaData);
+        // GỌI 4 API SONG SONG ĐỂ TĂNG TỐC ĐỘ LOAD TRANG
+        // Dùng .catch() để nếu 1 API chết, các API khác vẫn sống bình thường
+        const [serviceDataReq, areaDataReq, discountDataReq, userProfileRes] =
+          await Promise.all([
+            serviceService.getById(serviceId).catch(() => null),
+            areaService.getAll().catch(() => []),
+            discountService.getAllDiscounts().catch(() => []),
+            authService.getMe().catch(() => null),
+          ]);
 
-        const validDiscounts = Array.isArray(discountData)
-          ? discountData
-          : discountData?.data || [];
+        // 1. XỬ LÝ DỊCH VỤ
+        if (serviceDataReq) setSelectedServices([serviceDataReq]);
+
+        // 2. XỬ LÝ THÀNH PHỐ
+        const validAreas = areaDataReq?.data || areaDataReq || [];
+        setAreas(validAreas);
+
+        // 3. XỬ LÝ KHUYẾN MÃI
+        const validDiscounts = Array.isArray(discountDataReq)
+          ? discountDataReq
+          : discountDataReq?.data || [];
         setAvailableDiscounts(validDiscounts);
+
+        // =========================================================
+        // 4. AUTO-FILL ĐỊA CHỈ (BÓC TÁCH CHUẨN)
+        // =========================================================
+        if (userProfileRes) {
+          // Bóc tách đa tầng đảm bảo không bao giờ bị undefined
+          const userData =
+            userProfileRes?.data?.data ||
+            userProfileRes?.data ||
+            userProfileRes;
+
+          const savedAreaId = userData?.areaId ? Number(userData.areaId) : null;
+          let savedAddress = userData?.address || "";
+
+          // Điền số nhà ngay và luôn
+          if (savedAddress.includes("undefined")) {
+            savedAddress = savedAddress.replace(/undefined,?/g, "").trim();
+          }
+          if (savedAddress && savedAddress !== "null") {
+            setAddress(savedAddress);
+          }
+
+          // Lội ngược dòng siêu tốc
+          if (savedAreaId) {
+            try {
+              const rawDistrict = await areaService.getById(savedAreaId);
+              const districtInfo = rawDistrict?.data || rawDistrict;
+
+              const foundCityId =
+                districtInfo?.parentId ||
+                districtInfo?.cityId ||
+                districtInfo?.parent_id;
+
+              if (foundCityId) {
+                setSelectedCityId(Number(foundCityId));
+
+                const rawCity = await areaService.getById(foundCityId);
+                const cityInfo = rawCity?.data || rawCity;
+
+                if (cityInfo && cityInfo.children) {
+                  setDistricts(cityInfo.children); // Đổ quận vào form
+
+                  setTimeout(() => {
+                    setSelectedDistrictId(Number(savedAreaId));
+                  }, 50); // Độ trễ siêu nhỏ 50ms chỉ để React kịp render <option>
+                }
+              }
+            } catch (fillError) {
+              console.error(
+                "Lỗi ngầm khi lội ngược dòng Quận/Huyện:",
+                fillError,
+              );
+            }
+          }
+        }
       } catch (error) {
-        console.error("Lỗi tải dữ liệu ban đầu:", error);
+        console.error("Lỗi tổng quát:", error);
       } finally {
         setLoading(false);
       }
     };
+
     fetchData();
   }, [serviceId]);
 

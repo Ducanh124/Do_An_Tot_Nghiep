@@ -146,9 +146,9 @@ const BookingHistory = () => {
           text: "Không có nhân viên tiếp nhận",
           className: "status-text-cancelled",
         };
-      case "pending":
+      case "rejected":
         return {
-          text: "Đang chờ nhân viên tiếp nhận",
+          text: "Đơn hàng đã bị huỷ",
           className: "status-text-pending",
         };
       default:
@@ -236,7 +236,7 @@ const BookingHistory = () => {
                     "is_coming",
                     "assigned",
                     "accepted",
-                    "pending",
+                    
                   ].includes(booking.status?.toLowerCase());
                   return (
                     <tr key={booking.id}>
