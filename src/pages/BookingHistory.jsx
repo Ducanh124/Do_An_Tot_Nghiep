@@ -18,8 +18,19 @@ const BookingHistory = () => {
 
   //Thanh toán
 
-  const getPaymentBadge = (paymentStatus) => {
+  // Nhận thêm tham số bookingStatus vào hàm
+  const getPaymentBadge = (paymentStatus, bookingStatus) => {
     const p = paymentStatus ? paymentStatus.toUpperCase() : "";
+    const bStatus = bookingStatus ? bookingStatus.toLowerCase() : "";
+    if (bStatus === "completed" && (p === "CAST" || p === "CASH")) {
+      return (
+        <span className="payment-status-paid">
+          <i className="bi bi-check-circle me-1"></i>Đã thanh toán (Tiền mặt)
+        </span>
+      );
+    }
+
+    // Các trường hợp còn lại giữ nguyên như cũ của bạn
     switch (p) {
       case "PAID":
         return (
@@ -28,10 +39,11 @@ const BookingHistory = () => {
           </span>
         );
       case "CAST":
+      case "CASH":
         return (
           <span className="payment-status-pending">
-            <i className="bi bi-clock-history me-1"></i>Chờ thanh toán bằng tiền
-            mặt
+            <i className="bi bi-clock-history me-1"></i>Chờ thanh toán (Tiền
+            mặt)
           </span>
         );
       case "PENDING":
@@ -50,7 +62,6 @@ const BookingHistory = () => {
         return <span className="payment-status-unknown">Không rõ</span>;
     }
   };
-
   const currentUser = authService.getCurrentUser();
 
   useEffect(() => {
@@ -111,6 +122,11 @@ const BookingHistory = () => {
     const s = status ? status.toLowerCase() : "";
     switch (s) {
       case "assigned":
+        return {
+          text: "Đang chờ xác nhận",
+          className: "status-text-pending",
+        };
+      case "pending":
         return {
           text: "Đang chờ xác nhận",
           className: "status-text-pending",
@@ -236,7 +252,7 @@ const BookingHistory = () => {
                     "is_coming",
                     "assigned",
                     "accepted",
-                    
+                    "pending",
                   ].includes(booking.status?.toLowerCase());
                   return (
                     <tr key={booking.id}>
@@ -279,7 +295,7 @@ const BookingHistory = () => {
                           {Number(booking.totalAmount).toLocaleString("vi-VN")}{" "}
                           đ
                         </div>
-                        {getPaymentBadge(booking.paymentStatus)}
+                        {getPaymentBadge(booking.paymentStatus, booking.status)}
                       </td>
 
                       {/* Cột đánh giá */}

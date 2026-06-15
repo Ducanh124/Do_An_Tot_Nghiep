@@ -366,7 +366,7 @@ const BookingDetailPage = () => {
         </button>
 
         <div style={{ display: "flex", gap: "12px" }}>
-          {["assigned", "no_staff_available"].includes(
+          {["assigned", "pending", "no_staff_available"].includes(
             details?.status?.toLowerCase(),
           ) && (
             <>
