@@ -166,6 +166,11 @@ const BookingHistory = () => {
           text: "Đơn hàng đã bị huỷ",
           className: "status-text-pending",
         };
+      case "arrived":
+        return {
+          text: "Nhân viên đang đến",
+          className: "status-text-working",
+        };
       default:
         return {
           text: "Đơn bị lỗi",

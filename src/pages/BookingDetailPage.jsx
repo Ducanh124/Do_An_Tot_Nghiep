@@ -401,11 +401,44 @@ const BookingDetailPage = () => {
                           {new Date(report.recordedAt).toLocaleString("vi-VN")}
                         </span>
                         {report.evidenceImageUrl && (
-                          <div className="bd-step-evidence">
-                            <img
-                              src={report.evidenceImageUrl}
-                              alt="Bằng chứng công việc"
-                            />
+                          <div
+                            className="bd-step-evidence"
+                            style={{
+                              display: "flex",
+                              gap: "10px",
+                              flexWrap: "wrap",
+                              marginTop: "10px",
+                            }}
+                          >
+                            {/* Kiểm tra xem nó có phải là mảng và có dữ liệu không trước khi map */}
+                            {Array.isArray(report.evidenceImageUrl) &&
+                            report.evidenceImageUrl.length > 0
+                              ? report.evidenceImageUrl.map((url, imgIndex) => (
+                                  <img
+                                    key={imgIndex}
+                                    src={url}
+                                    alt={`Bằng chứng công việc ${imgIndex + 1}`}
+                                    style={{
+                                      width: "100px",
+                                      height: "100px",
+                                      objectFit: "cover",
+                                      borderRadius: "6px",
+                                    }}
+                                  />
+                                ))
+                              : /* Phòng trường hợp backend chỉ trả về 1 chuỗi string thay vì mảng */
+                                typeof report.evidenceImageUrl === "string" && (
+                                  <img
+                                    src={report.evidenceImageUrl}
+                                    alt="Bằng chứng công việc"
+                                    style={{
+                                      width: "100px",
+                                      height: "100px",
+                                      objectFit: "cover",
+                                      borderRadius: "6px",
+                                    }}
+                                  />
+                                )}
                           </div>
                         )}
                       </div>
