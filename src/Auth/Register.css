@@ -1,160 +1,198 @@
+/*
+   1. VÙNG CHỨA TỔNG THỂ (CONTAINER)
+*/
 .register-page-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #f4f7f6;
-  font-family: "Inter", sans-serif;
-  padding: 15px ;
-  /*chiều cao */
+  display: flex;             /* Bật chế độ Flexbox để dễ sắp xếp các phần tử con */
+  justify-content: center;   /* Căn giữa toàn bộ nội dung theo chiều ngang */
+  align-items: center;       /* Căn giữa toàn bộ nội dung theo chiều dọc */
+  background-color: #f4f7f6; /* Đặt màu nền của cả trang web thành màu xám nhạt */
+  font-family: "Inter", sans-serif; /* Sử dụng font chữ Inter (nếu máy không có thì dùng font mặc định) */
+  padding: 15px 15px 15px 0px ;   /* Tạo khoảng trống 15px ở tất cả các cạnh (trên phải dưới trái)          */
+  /* muốn điều chỉnh vị trí form thẻ thì điều chỉnh padding đi kèm và justify */
+  /* min-height: 100vh;  
+  box-sizing: border-box; */
 }
 
+/*
+   2. KHUNG FORM CHÍNH (CARD)
+*/
 .register-card {
-  background-color: #ffffff;
-  width: 75%;
-  padding: 40px;
-  border-radius: 30px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+  background-color: #ffffff; /* Màu nền trắng cho khung form đăng ký */
+  width: 75%;                /* Chiều rộng khung bằng 75% chiều rộng của màn hình */
+  padding: 40px;             /* Khoảng cách từ viền khung vào đến nội dung bên trong là 40px */
+  border-radius: 30px;       /* Bo tròn các góc của khung với độ cong 30px */
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05); /* Tạo bóng đổ mờ xung quanh để tạo hiệu ứng nổi 3D */
 }
 
+/*
+   3. TIÊU ĐỀ FORM (HEADER)
+========================================= */
 .register-header {
-  text-align: center;
-  margin-bottom: 32px;
+  text-align: center;        /* Căn giữa toàn bộ chữ trong phần tiêu đề */
+  margin-bottom: 32px;       /* Đẩy phần nội dung phía dưới cách tiêu đề ra 32px */
 }
 
 .register-header h2 {
-  font-size: 26px;
-  font-weight: 700;
-  color: #1a1a1a;
-  margin: 0 0 8px 0;
+  font-size: 26px;           /* Cỡ chữ to (26px) cho thẻ H2 */
+  font-weight: 700;          /* In đậm chữ */
+  color: #1a1a1a;            /* Màu xám đen cho chữ */
+  margin: 0 0 8px 0;         
+  /* trên phải dưới trải */
 }
 
 .register-header p {
-  color: #666;
-  margin: 0;
+  color: #666;               /* Màu xám cho đoạn văn bản phụ */
+  margin: 0;                 /* Xóa khoảng cách thừa mặc định của thẻ <p> */
 }
 
+/*
+   4. BỐ CỤC LƯỚI (GRID LAYOUT)
+*/
 .form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-  margin-bottom: 32px;
+  display: grid;             /* Bật chế độ lưới Grid */
+  grid-template-columns: 1fr 1fr; /* Chia form làm 2 cột có kích thước bằng nhau */
+  gap: 24px;                 /* Khoảng cách giữa 2 cột và các hàng là 24px */
+  margin-bottom: 32px;       /* Khoảng trống phía dưới lưới trước khi đến nút bấm */
 }
+
 /* ô input */
 .form-column {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+  display: flex;            /* Bật Flexbox cho cột */
+  flex-direction: column;    /* Xếp dọc các phần tử bên trong cột */
+  gap: 16px ;                 /* Khoảng cách giữa các cụm nhập liệu là 16px */
 }
+
 /* nhóm label với input */
 .form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  display: flex;             
+  flex-direction: column;    /* Xếp chữ label nằm trên, ô input nằm dưới */
+  /* gap: 100px !important; */
+
 }
 
 .form-group label {
-  font-size: 14px;
-  font-weight: 500;
-  color: #333;
+  font-size: 14px;           /* Cỡ chữ của nhãn (Họ tên, Email...) là 14px */
+  font-weight: 500;          /* Chữ hơi đậm một chút */
+  color: #333;               /* Chữ màu xám đậm */
 }
 
+/* =========================================
+   5. HIỂN THỊ LỖI VÀ Ô NHẬP LIỆU
+*/
 /* Style cho các dòng chữ báo lỗi bên dưới ô input */
 .error-message {
-  color: #ff4d4f; /* Màu đỏ báo lỗi tiêu chuẩn */
-  font-size: 12px;
-  margin-top: -4px; /* Kéo dòng text sát lên ô input một chút cho đẹp */
-  font-style: italic;
+  color: #ff4d4f;            /* Màu đỏ tiêu chuẩn để báo lỗi */
+  font-size: 12px;           /* Cỡ chữ nhỏ để không chiếm diện tích */
+  margin-top: -4px;          /* Kéo dòng text này xích lên trên 4px để nằm sát ô input hơn */
+  font-style: italic;        /* In nghiêng dòng báo lỗi */
 }
 
 .input-wrapper input,
 .input-wrapper select {
-  width: 100%;
-  padding: 12px 14px;
-  border: 1px solid #d9d9d9;
-  border-radius: 8px;
-  font-size: 14px;
-  outline: none;
-  /* color: red; */
-  background-color: #fff;
-  transition: border-color 0.2s;
-  box-sizing: border-box;
+  width: 100%;               /* Kéo dài chiều rộng ô nhập lấp đầy không gian cho phép */
+  padding: 12px 14px;        /* Khoảng trống bên trong ô: trên/dưới 12px, trái/phải 14px */
+  border: 1px   solid #d9d9d9; /* Viền xám nhạt dày 1px */
+/* border: 1px   solid #d9d9d9 !important;  */
+  border-radius: 8px;        /* Bo tròn góc ô nhập liệu 8px */
+  font-size: 14px;           /* Cỡ chữ người dùng nhập vào là 14px */
+  outline: none;             /* Xóa viền đen/xanh mặc định của trình duyệt khi click vào ô */
+  /* color: red !important;           */
+  background-color: #fff;    /* Nền ô màu trắng */
+
+  transition: border-color 0.2s; /* Hiệu ứng đổi màu viền mượt mà (0.2 giây) */
+  box-sizing: border-box;    /* Tính cả border và padding vào tổng kích thước 100% width */
 }
 
 .input-wrapper select {
-  cursor: pointer;
+  cursor: pointer;           /* Đổi con trỏ chuột thành hình bàn tay khi trỏ vào Dropdown */
 }
 
+/*
+   6. NÚT ĐĂNG KÝ
+*/
 .btn-register {
-  width: 100%;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  padding: 14px;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s;
+  width: 100%;               /* Nút bấm trải dài toàn bộ form */
+  background-color: #4caf50; /* Màu nền xanh lá cây */
+  color: white;              /* Chữ màu trắng */
+  border: none;              /* Bỏ viền nút */
+  padding: 14px;             /* Kích thước bên trong nút rộng rãi */
+  border-radius: 8px;        /* Bo góc 8px */
+  font-size: 16px;           /* Cỡ chữ to, rõ ràng */
+  font-weight: 600;          /* In đậm chữ */
+  cursor: pointer;           /* Con trỏ hình bàn tay */
+  transition: background-color 0.2s; /* Hiệu ứng đổi màu nền mượt khi hover */
+ 
 }
 
+/*
+   7. TÍNH NĂNG UPLOAD AVATAR
+*/
 /* --- CSS THÊM MỚI CHO TÍNH NĂNG UPLOAD AVATAR --- */
+/* khối ava và button */
 .avatar-upload-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 24px;
-  gap: 12px;
+  display: flex;   /* flexbox*/
+  flex-direction: column;    /* Sắp xếp hình ảnh và nút "Chọn ảnh" theo chiều dọc */
+  /* căn giữa ava và nút bấm */
+  align-items: center;       
+  /* align-items: flex-start;     */
+  margin-bottom: 24px;       /* Khoảng trống dưới khu vực này là 24px */
+  gap: 12px;                 /* Khoảng cách giữa hình tròn avatar và nút bấm là 12px */
 }
 
 .avatar-preview {
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
-  border: 2px dashed #d9d9d9;
-  overflow: hidden;
+  width:  80px;               /* Khung ảnh rộng 90px */
+  height: 90px;              /* Khung ảnh cao 90px */
+  border-radius: 50%;        /* Bo tròn 50% để tạo thành hình tròn */
+  border: 2px SOLID #d9d9d9;/* Viền nét đứt màu xám, dày 2px */
+  overflow: hidden;          /* Ẩn phần hình vuông thừa ra ngoài vòng tròn */
   display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #fafafa;
+  align-items: center;   /* Căn giữa chữ "Ảnh đại diện" nếu chưa có ảnh */
+  /* điều chỉnh chữ trên dưới thì dùng flex */
+  /* justify-content:flex-start; */
+  background-color: #fafafa; /* Nền xám nhạt khi trống */
+
 }
 
 .avatar-preview img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  width: 100%;               
+  height: 100%;              
+  object-fit: cover;         /* Cắt ảnh tự động để lấp đầy khung tròn mà không bị méo */
 }
 
 .avatar-placeholder {
-  font-size: 11px;
-  color: #888;
-  text-align: center;
-  padding: 10px;
+  font-size: 11px;           /* Chữ gợi ý rất nhỏ (11px) */
+  color: red;               /* Màu chữ xám nhạt */
+  text-align: center;        
+  padding: 10px;             
 }
 
 .btn-upload-avatar {
-  padding: 6px 16px;
-  border: 1px solid #4caf50;
-  color: #4caf50;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 500;
-  transition: all 0.2s;
-  background-color: transparent;
+  padding: 6px 16px ;         /* Nút bấm nhỏ hơn bình thường */
+  border: 1px solid #4caf50; /* Viền màu xanh lá */
+  color: #4caf50;            /* Chữ màu xanh lá */
+  border-radius: 6px;        /* Bo góc 6px */
+  cursor: pointer;           
+  font-size: 13px;           
+  font-weight: 500;          
+  transition: all 0.2s;      /* Hiệu ứng chuyển động mượt */
+  background-color: transparent; /* Nền trong suốt */
 }
 
 .btn-upload-avatar:hover {
-  background-color: #4caf50;
-  color: white;
+  background-color: #4caf50; /* Khi trỏ chuột vào, đổi nền thành xanh lá */
+  color: white;              /* Chữ đổi sang trắng */
 }
 
-@media (max-width: 768px) {
+/*
+   8. RESPONSIVE (CHO ĐIỆN THOẠI / TABLET)
+*/
+@media (max-width: 768px) {  /* Quy tắc chỉ áp dụng khi màn hình nhỏ hơn 768px */
   .register-card {
-    padding: 24px;
+    padding: 24px;           /* Thu hẹp khoảng cách viền để tiết kiệm diện tích trên điện thoại */
   }
 
   .form-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
+    grid-template-columns: 1fr; /* Gộp 2 cột thành 1 cột duy nhất (từ trên xuống dưới) */
+    gap: 16px;               /* Giảm khoảng cách giữa các phần tử xuống 16px */
   }
 }

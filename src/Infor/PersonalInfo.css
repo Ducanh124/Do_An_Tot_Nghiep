@@ -1,188 +1,118 @@
-
-
-/* --- 1. SECTION HEADER --- */
+/* --- 1. SECTION HEADER (Phần tiêu đề của khu vực) --- */
 .section-header {
-  margin-bottom: 32px;       /* Đẩy các phần tử bên dưới ra xa 32px */
+  margin-bottom: 30px; /* Tạo khoảng cách lề dưới 32px để đẩy các phần tử form bên dưới ra xa */
 }
 
 .section-header h2 {
-  font-size: 20px;
-  font-weight: 700;
-  color: #1a1a1a;
-  margin: 0 0 8px 0;
+  /* Nhắm vào thẻ tiêu đề <h2> nằm bên trong .section-header */
+  font-size: 20px; /* Đặt kích thước chữ là 20px */
+  font-weight: 700; /* Đặt độ đậm của chữ là 700 (tương đương với in đậm - bold) */
+  color: #1a1a1a; /* Đặt màu chữ là xám đậm (gần như đen) */
+  margin: 0 0 0px 0; /* Đặt margin theo thứ tự (Trên: 0, Phải: 0, Dưới: 8px, Trái: 0) */
 }
 
 .section-header p {
-  color: #666;
-  font-size: 14px;
-  margin: 0;
+  /* Nhắm vào thẻ đoạn văn <p> nằm bên trong .section-header */
+  color: #666; /* Đặt màu chữ là màu xám trung bình */
+  font-size: 14px; /* Đặt kích thước chữ nhỏ hơn tiêu đề, ở mức 14px */
+  margin: 0; /* Xóa toàn bộ khoảng cách lề mặc định của thẻ <p> để thiết kế gọn hơn */
 }
 
-/* --- 2. LAYOUT GRID (LƯỚI) --- */
+/* --- 2. LAYOUT GRID (Hệ thống lưới) --- */
+
 /* Lưới 2 cột cho thông tin cá nhân */
 .form-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
+  display: grid; /* Bật chế độ hiển thị lưới (CSS Grid) */
+  grid-template-columns: repeat( 2,1fr); /* Chia bố cục thành 2 cột, mỗi cột chiếm 1 phần không gian bằng nhau (1 fraction) */
+  gap: 20px ; /* Tạo khoảng trống 20px giữa các cột và các hàng trong lưới */
 }
 
-/* Lưới 1 cột cho phần kỹ năng/kinh nghiệm */
-.additional-info-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 20px;
-}
-
-/* --- 3. FORM GROUPS & LABELS --- */
+/* --- 3. FORM GROUPS & LABELS (Nhóm ô nhập liệu và nhãn dán) --- */
 .form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  /* Nhắm vào class bao bọc 1 cặp <label> và <input> */
+  display: flex; /* Bật chế độ Flexbox để dễ dàng sắp xếp phần tử con */
+  flex-direction: column; /* Xếp các phần tử con (label trên, input dưới) theo chiều dọc thành 1 cột */
+  gap: 100px  ;  /* Tạo khoảng cách 8px giữa <label> và <input> */
 }
 
 .form-group label {
-  font-size: 14px;
-  font-weight: 500;
-  color: #333; 
+  /* Nhắm vào nhãn mô tả nằm trong nhóm */
+  font-size: 14px; /* Kích thước chữ 14px */
+  font-weight: 500; /* Độ đậm chữ ở mức trung bình (Medium) */
+  color: black; /* Màu chữ là xám đậm */
 }
 
-/* --- 4. INPUT, SELECT, TEXTAREA CHUNG --- */
-.form-group input,
-.form-group select,
-.form-group textarea {
-  padding: 12px 16px;
-  border: 1px solid #d9d9d9;
-  border-radius: 8px;
-  font-size: 14px;
-  outline: none;
-  background-color: #fff;
-  font-family: "Inter", sans-serif;
-  transition: border-color 0.2s;
+.additional-info-grid {
+  display: grid; /* Bật chế độ hiển thị lưới (CSS Grid) */
+  grid-template-columns: 1fr; /* Chỉ chia 1 cột duy nhất, chiếm toàn bộ 100% không gian khả dụng */
+  gap: 0px; /* Tạo khoảng cách 20px giữa các hàng */
 }
 
-
-
-/* Tùy chỉnh riêng cho Textarea */
+/* --- 4. INPUT, SELECT, TEXTAREA CHUNG (Định dạng chung cho các ô nhập liệu) --- */
+.form-group input,           /* Chọn thẻ <input> */
+.form-group select,          /* VÀ thẻ <select> */
 .form-group textarea {
-  resize: vertical;
-  height: 100px;
-  
+  /* VÀ thẻ <textarea> để áp dụng chung một khối style bên dưới */
+  padding: 12px 16px; /* Khoảng cách từ viền ô nhập đến chữ bên trong: 12px (trên/dưới) và 16px (trái/phải) */
+  border: 1px solid #d9d9d9; /* Tạo viền mỏng 1px, nét liền, màu xám nhạt */
+  border-radius: 8px; /* Bo tròn 4 góc của ô nhập liệu với bán kính 8px */
+  font-size: 14px; /* Kích thước chữ người dùng gõ vào là 14px */
+  outline: none; /* Tắt viền xanh/đen mặc định của trình duyệt khi người dùng click vào ô (focus) */
+  background-color: #fff; /* Đặt nền của ô nhập liệu là màu trắng */
+  font-family:
+    "Inter", sans-serif; /* Sử dụng font chữ "Inter", nếu máy không có thì dùng font không chân (sans-serif) */
+  transition: border-color 0.2s; /* Khi có sự thay đổi màu viền (ví dụ: rê chuột, focus, báo lỗi), hiệu ứng sẽ chuyển mượt mà trong 0.2 giây */
+}
+
+/* Tùy chỉnh riêng cho Textarea (Ô nhập văn bản nhiều dòng) */
+.form-group textarea {
+  resize: vertical; /* Chỉ cho phép người dùng dùng chuột kéo giãn ô này theo chiều dọc, không cho kéo ngang */
+  height: 100px; /* Đặt chiều cao mặc định ban đầu của ô là 100px */
 }
 
 /* --- 5. NÚT BẤM (FORM ACTIONS) --- */
+
 .form-actions {
-  display: flex;
-  justify-content: right;
-  margin-top: 15px;
+  display: flex; /* Bật chế độ Flexbox cho khu vực chứa nút */
+  justify-content: right; /* Đẩy các nút bấm dạt sát về phía bên phải của container */
+  margin-top: 15px; /* Tạo khoảng cách 15px phía trên để cách ly với khu vực nhập liệu phía trên */
 }
 
 .btn-save {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 24px;
-  background-color: green;
-  border: none;
-  border-radius: 8px;
-  color: white;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s;
+  /* Nhắm vào nút Lưu/Cập nhật */
+  display: flex; /* Bật Flexbox bên trong nội bộ nút (hữu ích nếu nút có icon đi kèm chữ) */
+  align-items: center; /* Căn giữa chữ (hoặc icon) theo chiều dọc bên trong nút */
+  gap: 8px; /* Nếu có nhiều phần tử trong nút (VD: Icon + Text), chúng sẽ cách nhau 8px */
+  padding: 10px 24px; /* Khoảng cách từ viền nút đến chữ: 10px trên/dưới, 24px trái/phải */
+  background-color: green; /* Màu nền của nút là màu xanh lá cây */
+  border: none; /* Bỏ đường viền viền đen mặc định của thẻ <button> trong HTML */
+  border-radius: 8px; /* Bo tròn 4 góc nút 8px */
+  color: white; /* Màu chữ bên trong nút là màu trắng */
+  font-weight: 500; /* Chữ trong nút có độ đậm trung bình (Medium) */
+  cursor: pointer; /* Đổi con trỏ chuột thành hình "bàn tay chỉ" khi rê chuột lên nút */
+  transition: background-color 0.2s; /* Hiệu ứng chuyển đổi màu nền mượt mà trong 0.2 giây (dùng khi hover hoặc disabled) */
 }
-
 
 .btn-save:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
+  /* Áp dụng khi nút bị thêm thuộc tính disabled (VD: Đang xử lý lưu) */
+  background-color: #ccc; /* Đổi màu nền sang xám nhạt */
+  cursor: not-allowed; /* Đổi con trỏ chuột thành hình tròn gạch chéo (báo hiệu không thể bấm) */
 }
 
-/* --- 6. RESPONSIVE --- */
+/* --- 6. RESPONSIVE (Thích ứng trên thiết bị di động) --- */
 @media (max-width: 768px) {
+  /* Tất cả style trong ngoặc nhọn này CHỈ áp dụng khi màn hình có chiều rộng từ 768px trở xuống (Mobile/Tablet nhỏ) */
+
   .personal-info-content {
-    flex-direction: column;
-    align-items: center;
+    flex-direction: column; /* Chuyển hướng Flexbox từ ngang sang dọc (nếu có layout cha) */
+    align-items: center; /* Căn giữa nội dung khi xếp dọc */
   }
 
   .form-grid {
-    grid-template-columns: 1fr; /* Gộp 2 cột thành 1 cột trên điện thoại */
+    grid-template-columns: 1fr; /* Ghi đè thuộc tính lưới: Thu gọn từ 2 cột xuống còn 1 cột duy nhất để vừa màn hình điện thoại */
   }
 
   .full-width {
-    grid-column: span 1;
+    grid-column: span 1; /* Chỉ định class này chiếm 1 cột trên lưới (phù hợp với lưới 1 cột ở mobile) */
   }
 }
-
-/* Focus hiệu ứng chung khi click vào ô */
-/* .form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-  border-color: #1890ff;  Chuyển màu viền khi đang gõ 
-} */
-
-/* --- 4. Khu vực Form nhập liệu (Form Section) --- */
-/* .form-section {
-  flex: 1;                   Form sẽ chiếm trọn không gian chiều ngang còn lại 
-} */
-
-/* Bố cục chia làm 2 phần: Avatar (trái) và Form (phải) */
-/* .personal-info-content {
-  display: flex;              Sử dụng Flexbox để dàn hàng ngang 
-  gap: 40px;                  Khoảng cách giữa khu vực Avatar và Form là 40px 
-} */
-
-/* =========================================
-   --- PHẦN AVATAR ĐÃ ĐƯỢC COMMENT ẨN ĐI ---
-   ========================================= */
-/*
-.avatar-section {
-  display: flex;
-  flex-direction: column;    
-  align-items: center;       
-  width: 200px;              
-  flex-shrink: 0;            
-}
-
-.avatar-preview {
-  width: 150px;
-  height: 150px;             
-  border-radius: 50%;        
-  overflow: hidden;          
-  border: 3px solid #e8f5e9; 
-  margin-bottom: 16px;       
-}
-
-.avatar-preview img {
-  width: 100%;
-  height: 100%;              
-  object-fit: cover;         
-}
-
-.btn-upload {
-  display: flex;
-  align-items: center;
-  justify-content: center;   
-  gap: 8px;                  
-  padding: 10px 16px;
-  background-color: #f4f7f6; 
-  border: 1px solid #d9d9d9;
-  border-radius: 8px;
-  cursor: pointer;           
-  font-weight: 500;
-  color: #333;
-  width: 100%;               
-  transition: all 0.2s;      
-}
-
-.btn-upload:hover {
-  background-color: #e8f5e9; 
-  border-color: #4caf50;     
-  color: #4caf50;            
-}
-
-.upload-hint {
-  font-size: 12px;
-  color: #888;               
-  text-align: center;
-  margin-top: 12px;
-}
-*/

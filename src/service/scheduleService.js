@@ -29,7 +29,7 @@ export const scheduleService = {
   return res.data;
 },
 
-// 👉 API LẤY DANH SÁCH TIẾN ĐỘ THEO BOOKING ID
+//  API LẤY DANH SÁCH TIẾN ĐỘ THEO BOOKING ID
   getProgressByBooking: async (bookingId) => {
     const response = await api.get("/progress", {
       params: {
@@ -39,5 +39,3 @@ export const scheduleService = {
     return response.data;
   }
 };
-//  hãy viết giúp tôi api cập nhật thông tin phân công
-// put(`/assignments/${id}`) (id ở đây là của b)

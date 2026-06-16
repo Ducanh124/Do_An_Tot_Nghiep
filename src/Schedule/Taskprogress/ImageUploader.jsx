@@ -4,22 +4,23 @@ import './ImageUploader.css';
 
 const ImageUploader = ({ images, onAddImage, onRemoveImage }) => {
   // Hàm xử lý ngay khi người dùng chọn xong file từ thẻ input
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-//  Đóng gói cả File gốc và Chuỗi Base64 (preview) gửi lên cho Cha
-        onAddImage({ 
-          file: file, 
-          preview: reader.result 
-        });      };
-      reader.readAsDataURL(file);
-    }
-    
-    // Reset lại ô input để người dùng có thể chọn lại chính bức ảnh đó nếu lỡ tay xóa
-    e.target.value = null; 
-  };
+const handleFileChange = (e) => {
+  const files = Array.from(e.target.files); // Chuyển FileList thành Array
+  
+  files.forEach((file) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      onAddImage({ 
+        file: file, 
+        preview: reader.result 
+      });
+    };
+    reader.readAsDataURL(file);
+  });
+  
+  // Reset input để có thể chọn lại cùng 1 file
+  e.target.value = null; 
+};
 
   return (
     <div className="image-uploader-container">
@@ -29,11 +30,11 @@ const ImageUploader = ({ images, onAddImage, onRemoveImage }) => {
       </div>
 
       {/*  THẺ INPUT GỐC CỦA TRÌNH DUYỆT */}
-      {/* Chỉ hiển thị input nếu số ảnh hiện tại nhỏ hơn 4 */}
-      {images.length < 4 && (
+      {/* Chỉ hiển thị input nếu số ảnh hiện tại nhỏ hơn 10 */}
+      {images.length < 10 && (
         <div className="native-input-wrapper ">
           <input
-            type="file"
+            type="file"  multiple
             accept="image/*"
             onChange={handleFileChange}
             className="native-file-input "

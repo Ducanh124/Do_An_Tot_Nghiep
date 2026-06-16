@@ -36,31 +36,29 @@ const TaskProgress = () => {
 
     setIsSubmitting(true);
 
-    try {
-      //  Sử dụng FormData (Gói bưu phẩm chuyên dụng để gửi File)
-      const formData = new FormData();
-      formData.append("bookingId", bookingId);
-      formData.append("staffId", user.id);
-      formData.append("note", note);
-      formData.append("recordAt", new Date().toISOString());
+   try {
+    const formData = new FormData();
+    formData.append("bookingId", bookingId);
+    formData.append("staffId", user.id);
+    formData.append("note", note);
+    formData.append("recordAt", new Date().toISOString());
 
-      // Lấy cái file gốc từ bức ảnh đầu tiên (nếu có) nhét vào gói bưu phẩm
-      if (uploadedImages.length > 0) {
-        formData.append("image", uploadedImages[0].file);
-      }
+    // SỬA CHỖ NÀY: Lặp qua mảng uploadedImages để append tất cả
+    uploadedImages.forEach((imgObj) => {
+      formData.append("images", imgObj.file); // Cùng key "images", gọi nhiều lần
+    });
 
-      // Gọi API Progress và truyền cục formData này đi
-      await scheduleService.postProgress(formData);
+    await scheduleService.postProgress(formData);
 
-      alert("Đã gửi báo cáo tiến độ thành công!");
-      navigate("/schedule");
-    } catch (error) {
-      console.error("Lỗi gửi báo cáo:", error);
-      alert("Lỗi gửi báo cáo, vui lòng thử lại!");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+    alert("Đã gửi báo cáo tiến độ thành công!");
+    navigate("/schedule");
+  } catch (error) {
+    console.error("Lỗi gửi báo cáo:", error);
+    alert("Lỗi gửi báo cáo, vui lòng thử lại!");
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   return (
     <div>

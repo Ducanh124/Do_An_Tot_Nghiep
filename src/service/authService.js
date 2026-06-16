@@ -36,3 +36,9 @@ export const addWorkingArea = async (data) => {
 };
 
 
+export const getAreas = async (staffId) => {
+  const res = await api.get(`/staff/${staffId}/get-area`);
+  return res.data;
+};
+
+ 

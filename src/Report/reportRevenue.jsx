@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import "./ReportRevenue.css";
-import { getRevenue } from "../service/reportRevenue.js"; // Sửa lại đường dẫn nếu cần
+import "./reportRevenue.css";
+import { getRevenue } from "../service/reportRevenue.js"; 
 
 const ReportRevenue = () => {
   // 1. Khởi tạo ngày mặc định (Từ đầu tháng đến ngày hiện tại)
@@ -55,7 +55,8 @@ const ReportRevenue = () => {
       // Tính tổng hiển thị lên thẻ tóm tắt (Chỉ tính các ca đã hoàn thành theo yêu cầu)
       const sumAmount = data.reduce((acc, curr) => acc + Number(curr.totalCompletedAmount || 0), 0);
       const sumBookings = data.reduce((acc, curr) => acc + Number(curr.totalCompletedBookings || 0), 0);
-      
+      // cur là Đại diện cho dữ liệu của từng ngày khi vòng lặp chạy qua.
+      //tạo 1 biến tổng = 0, sau đó cộng dữ liệu của từng ngày vào tổng
       setSummary({ totalAmount: sumAmount, totalBookings: sumBookings });
 
     } catch (error) {
@@ -65,6 +66,7 @@ const ReportRevenue = () => {
       setLoading(false);
     }
   };
+  //sau khi gọi api sẽ lấy đc dữ liệu bên dưới, và dữ liệu tổng
 
 
   // Tự động load dữ liệu lần đầu khi vào trang
@@ -81,7 +83,7 @@ const ReportRevenue = () => {
     <div className="report-container">
       <h2 className="report-title">Hiệu suất và Thu nhập</h2>
 
-      {/* --- BỘ LỌC --- */}
+      {/* --- BỘ LỌC  gồm 2 ô nhập liệu và 1 ô lọc--- */}
       <div className="report-filters">
         <div className="filter-group">
           <label>Từ ngày</label>
@@ -116,7 +118,7 @@ const ReportRevenue = () => {
           </select>
         </div>
 
-        <button className="btn-filter" onClick={fetchReport} disabled={loading}>
+        <button className="btn-filter" onClick={fetchReport} disabled={loading} style={{marginLeft:"100px"}}>
           {loading ? "Đang lọc..." : "Lọc dữ liệu"}
         </button>
       </div>
@@ -125,11 +127,11 @@ const ReportRevenue = () => {
       <div className="summary-cards">
         <div className="card summary-card-blue">
           <h3>Tổng doanh thu (Hoàn thành)</h3>
-          <p className="summary-value">{formatCurrency(summary.totalAmount)}</p>
+          <p style={{color:"#1890ff",fontWeight:600}}>{formatCurrency(summary.totalAmount)}</p>
         </div>
         <div className="card summary-card-green">
           <h3>Tổng số đơn (Hoàn thành)</h3>
-          <p className="summary-value">{summary.totalBookings} <span style={{fontSize: '16px', fontWeight: 'normal'}}>đơn</span></p>
+          <p style={{color:"#00b96b",fontWeight:"600"}}>{summary.totalBookings} <span style={{fontSize: '16px', fontWeight: "600"}}>đơn</span></p>
         </div>
       </div>
 
@@ -147,16 +149,16 @@ const ReportRevenue = () => {
             <table className="report-table">
               <thead>
                 <tr>
-                  <th>Thời gian</th>
-                  <th style={{textAlign: "right"}}>Doanh thu hoàn thành</th>
+                  <th style={{textAlign: "left"}}>Thời gian</th>
+                  <th style={{textAlign: "center"}}>Doanh thu hoàn thành</th>
                   <th style={{textAlign: "center"}}>Số đơn hoàn thành</th>
                 </tr>
               </thead>
               <tbody>
                 {reportData.map((row, index) => (
                   <tr key={index}>
-                    <td className="font-semibold">{row.recordDate}</td>
-                    <td style={{textAlign: "right", color: "#00b96b", fontWeight: "bold"}}>
+                    <td style={{fontWeight:600}}>{row.recordDate}</td>
+                    <td style={{textAlign: "center", color: "#00b96b", fontWeight: "bold"}}>
                       {formatCurrency(row.totalCompletedAmount)}
                     </td>
                     <td style={{textAlign: "center"}}>{row.totalCompletedBookings}</td>

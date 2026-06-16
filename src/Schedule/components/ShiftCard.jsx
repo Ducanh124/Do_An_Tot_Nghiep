@@ -40,7 +40,7 @@ const ShiftCard = ({ shift, onRefresh }) => {
       status: rejectType, // "rejected" hoặc "cancelled"
       assignedAt: new Date().toISOString(),
       reason: rejectReason,
-      note: shift.note || "" // <-- Thêm note vào đây
+      note: shift.note || "" 
     };
 
     try {
@@ -58,10 +58,9 @@ const ShiftCard = ({ shift, onRefresh }) => {
   };
 
   // Xử lý nút Chấp nhận (Trạng thái bình thường)
-// Xử lý nút Chấp nhận
+  // Xử lý nút Chấp nhận
   const handleStartShift = async () => {
     try {
-      // SỬA: Dùng originalAssignmentId thay vì shift.id
       await scheduleService.updateAssignment(shift.id, { 
         status: "accepted",
         note: shift.note || "" 
@@ -115,6 +114,13 @@ const ShiftCard = ({ shift, onRefresh }) => {
     }
   };
 
+  // THÊM MỚI: Hàm dịch phương thức thanh toán
+  const formatPayment = (paymentStatus) => {
+    if (paymentStatus === "PAID") return "Chuyển khoản";
+    if (paymentStatus === "CAST") return "Tiền mặt";
+    return "Chưa xác định";
+  };
+
   // Render các Nút Bấm tùy theo Status
   const renderActionButtons = () => {
     switch (shift.status) {
@@ -165,7 +171,7 @@ const ShiftCard = ({ shift, onRefresh }) => {
     }
   };
 
-  // Render Badge trạng thái góc trên bên phải
+  // Render Badge trạng thái 
   const renderTopBadge = () => {
     if (['accepted', 'is_coming', 'arrived', 'is_working'].includes(shift.status)) {
       return <span className="top-badge badge-accepted">Đã chấp nhận</span>;
@@ -200,6 +206,11 @@ const ShiftCard = ({ shift, onRefresh }) => {
           <div className="info-row">
             Giá: {Number(shift.unitPrice).toLocaleString('vi-VN')} đ
           </div>
+          
+          <div className="info-row">
+            Thanh toán: <strong>{formatPayment(shift.paymentStatus)}</strong>
+          </div>
+
           <div className="info-row">
             {shift.address}
           </div>
@@ -225,10 +236,10 @@ const ShiftCard = ({ shift, onRefresh }) => {
         <div className="modal-overlay">
           <div className="modal-content">
             <h3>Nhập lý do từ chối</h3>
-            <form onSubmit={submitReject}>
+            <form onSubmit={submitReject} noValidate>
               <textarea
                 className="reject-textarea"
-                rows="4"
+                rows="10"
                 placeholder="Nhập lý do chi tiết..."
                 value={rejectReason}
                 onChange={(e) => setRejectReason(e.target.value)}
@@ -270,11 +281,35 @@ const ShiftCard = ({ shift, onRefresh }) => {
                         
                         {step.note && <p className="timeline-note">Ghi chú: {step.note}</p>}
                         
-                        {step.evidenceImageUrl && (
-                          <a href={step.evidenceImageUrl} target="_blank" rel="noopener noreferrer" className="evidence-link">
-                            🖼 Xem ảnh báo cáo
-                          </a>
+                        {/* 1. XỬ LÝ TRƯỜNG HỢP TRẢ VỀ LÀ MẢNG CÁC ẢNH (ARRAY) */}
+                        {Array.isArray(step.evidenceImageUrl) && step.evidenceImageUrl.length > 0 && (
+                          <div className="evidence-image-gallery">
+                            {step.evidenceImageUrl.map((url, idx) => (
+                              <img 
+                                key={idx} 
+                                src={url} 
+                                alt={`Báo cáo ${idx + 1}`} 
+                                className="evidence-thumbnail" 
+                                onClick={() => window.open(url, '_blank')}
+                                title="Nhấn vào để xem ảnh gốc"
+                              />
+                            ))}
+                          </div>
                         )}
+
+                        {/* 2. XỬ LÝ DỰ PHÒNG CHO CÁC BẢN GHI CŨ TRẢ VỀ DẠNG CHUỖI (STRING) */}
+                        {typeof step.evidenceImageUrl === 'string' && step.evidenceImageUrl !== "" && (
+                          <div className="evidence-image-gallery">
+                            <img 
+                              src={step.evidenceImageUrl} 
+                              alt="Báo cáo" 
+                              className="evidence-thumbnail" 
+                              onClick={() => window.open(step.evidenceImageUrl, '_blank')}
+                              title="Nhấn vào để xem ảnh gốc"
+                            />
+                          </div>
+                        )}
+                        
                       </div>
                     </li>
                   ))}

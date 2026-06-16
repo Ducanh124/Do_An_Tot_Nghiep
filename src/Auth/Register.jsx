@@ -1,3 +1,4 @@
+// src/pages/Register/Register.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Register.css";
@@ -13,9 +14,9 @@ const Register = () => {
     phone: "",
     address: "",
     areaId: "",
-    gender: "male", //  Cập nhật mặc định là 'male' để thẻ select không bị rỗng ban đầu
-    role: "customer",
-    avatar: "", 
+    gender: "",
+    role: "staff",
+    avatar: "",
   });
 
   const [cities, setCities] = useState([]);
@@ -23,7 +24,6 @@ const Register = () => {
   const [selectedCity, setSelectedCity] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  //  State lưu trữ lỗi của từng ô input
   const [formErrors, setFormErrors] = useState({});
 
   useEffect(() => {
@@ -44,16 +44,15 @@ const Register = () => {
     setSelectedCity(cityId);
     setDistricts([]);
     setFormData({ ...formData, areaId: "" });
-    
-    // Xóa lỗi của areaId nếu người dùng chọn lại Thành phố
-    if (formErrors.areaId) {
-      setFormErrors({ ...formErrors, areaId: "" });
-    }
+
+    // Xóa lỗi của city và areaId nếu người dùng chọn lại Thành phố
+    setFormErrors((prev) => ({ ...prev, city: "", areaId: "" }));
 
     if (cityId) {
       try {
         const responseData = await getDistricts(cityId);
-        const districtData = responseData.children || responseData.data?.children || [];
+        const districtData =
+          responseData.children || responseData.data?.children || [];
         setDistricts(districtData);
       } catch (error) {
         console.error("Lỗi khi tải danh sách quận/huyện:", error);
@@ -65,69 +64,117 @@ const Register = () => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
 
-    // Xóa dòng lỗi màu đỏ ngay khi người dùng bắt đầu gõ lại vào ô đó
     if (formErrors[name]) {
       setFormErrors({ ...formErrors, [name]: "" });
     }
   };
 
-  //  THÊM MỚI: Xử lý sự kiện khi người dùng chọn ảnh
   const handleAvatarChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Dùng FileReader để mã hóa ảnh thành chuỗi Base64 (string $binary)
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData({ ...formData, avatar: reader.result }); // reader.result chính là chuỗi Base64
-      };
-      reader.readAsDataURL(file);
+      const previewUrl = URL.createObjectURL(file);
+      setFormData({
+        ...formData,
+        avatarFile: file, 
+        avatarPreview: previewUrl, 
+      });
     }
   };
 
   const handleRegister = async (e) => {
     e.preventDefault();
 
-    if (!formData.areaId) {
-      setFormErrors({ ...formErrors, areaId: "Vui lòng chọn Quận/Huyện" });
-      return;
+    // 1. KIỂM TRA LỖI THÀNH PHỐ VÀ QUẬN HUYỆN (FRONTEND)
+    let hasLocalError = false;
+    const localErrors = {};
+
+    if (!selectedCity) {
+      localErrors.city = "Vui lòng chọn Thành phố";
+      hasLocalError = true;
+    }
+    if (selectedCity && !formData.areaId) {
+      localErrors.areaId = "Vui lòng chọn Quận/Huyện";
+      hasLocalError = true;
+    }
+
+    if (hasLocalError) {
+      setFormErrors(localErrors);
+      return; // Chặn không cho gửi API
     }
 
     setIsLoading(true);
-    setFormErrors({}); // Reset lại toàn bộ lỗi trước khi gửi form mới
+    setFormErrors({});
 
-    const payload = {
-      name: formData.name,
-      email: formData.email,
-      password: formData.password,
-      phone: formData.phone,
-      address: formData.address,
-      areaId: Number(formData.areaId),
-      role: formData.role,
-      gender: formData.gender,
-      //  THÊM MỚI: Đóng gói trường avatar gửi xuống Backend (Nếu ko chọn ảnh thì gửi chuỗi rỗng "")
-      avatar: formData.avatar,
-    };
+    // 2. ĐÓNG GÓI DỮ LIỆU
+    //tạo 1 biến formdatasend  kiể formdata
+    const formDataToSend = new FormData();
+    formDataToSend.append("name", formData.name);
+    formDataToSend.append("email", formData.email);
+    formDataToSend.append("password", formData.password);
+    formDataToSend.append("phone", formData.phone);
+    formDataToSend.append("address", formData.address);
+    formDataToSend.append("areaId", Number(formData.areaId));
+    formDataToSend.append("role", formData.role);
+    formDataToSend.append("gender", formData.gender);
 
+    if (formData.avatarFile) {
+      formDataToSend.append("avatar", formData.avatarFile);
+    }
+
+    // 3. GỌI API VÀ XỬ LÝ LỖI (BACKEND)
     try {
-      await regis(payload);
+      await regis(formDataToSend);
       alert("Đăng ký tài khoản thành công!");
       navigate("/login");
     } catch (error) {
       const backendError = error.response?.data;
-      
-      // Logic bóc tách mảng lỗi từ Backend
+
+      // Xử lý riêng biệt lỗi "Email đã tồn tại" (Vì backend trả về dạng Object chứ không phải Array)
+      if (backendError?.message === "Email đã tồn tại") {
+        setFormErrors({ email: "Email này đã được sử dụng, vui lòng chọn email khác" });
+        setIsLoading(false);
+        return;
+      }
+
+      // Xử lý các lỗi Validation (Backend trả về Array)
       if (backendError && backendError.errors && Array.isArray(backendError.errors)) {
         const errorsObj = {};
+        
+        // Từ điển biên dịch tên trường tiếng Anh sang tiếng Việt
+        const dictionary = {
+          name: "Họ và tên",
+          email: "Email",
+          password: "Mật khẩu",
+          phone: "Số điện thoại",
+          address: "Địa chỉ"
+        };
+
         backendError.errors.forEach((err) => {
-          // Nếu 1 trường (ví dụ gender) trả về 2 lỗi, ta chỉ lấy lỗi đầu tiên hiển thị cho gọn
           if (!errorsObj[err.field]) {
-            errorsObj[err.field] = err.message;
+            let msg = err.message;
+            const fieldNameVN = dictionary[err.field] || err.field;
+
+            // Dịch các câu báo lỗi máy móc sang tiếng Việt thân thiện
+            if (msg.includes("không được để trống")) {
+              msg = `${fieldNameVN} không được để trống`;
+            } else if (msg.includes("phải có ít nhất 6 ký tự")) {
+              msg = `${fieldNameVN} phải có ít nhất 6 ký tự`;
+            } else if (msg.includes("length must be 10 characters long")) {
+              msg = `${fieldNameVN} phải có đúng 10 chữ số`;
+            } else if (msg.includes("fails to match the required pattern")) {
+              msg = `${fieldNameVN} không hợp lệ (vui lòng chỉ nhập số)`;
+            } else {
+              // Nếu gặp lỗi lạ, tự động thay tên tiếng anh trong ngoặc kép bằng tiếng việt
+              msg = msg.replace(`"${err.field}"`, fieldNameVN);
+            }
+
+            errorsObj[err.field] = msg;
           }
         });
-        // Đẩy toàn bộ cục lỗi vừa nhặt được vào State để hiển thị ra màn hình
-        setFormErrors(errorsObj); 
+
+        // Cập nhật State để in lỗi ra giao diện
+        setFormErrors(errorsObj);
       } else {
-        // Lỗi chung chung (không phải lỗi do điền sai form)
         const errorMsg = backendError?.message || "Đăng ký thất bại. Vui lòng thử lại!";
         alert(errorMsg);
       }
@@ -144,19 +191,18 @@ const Register = () => {
           <p>Điền thông tin bên dưới để trải nghiệm dịch vụ.</p>
         </div>
 
-        {/* Thêm autoComplete="off" để tắt gợi ý khó chịu của trình duyệt */}
-        <form onSubmit={handleRegister} autoComplete="off">
-          
-          {/* 👉 THÊM MỚI: GIAO DIỆN UPLOAD ẢNH ĐẠI DIỆN */}
+        <form onSubmit={handleRegister} autoComplete="off" encType="multipart/formdata" noValidate>
           <div className="avatar-upload-container">
             <div className="avatar-preview">
-              {formData.avatar ? (
-                <img src={formData.avatar} alt="Avatar Preview" />
+              {/* kiểm tra xem có ava chưa,nếu có thì hiển thị ảnh , nếu chứa có thì hiển thị label */}
+              {formData.avatarPreview ? (
+                <img src={formData.avatarPreview} alt="Avatar Preview" />
               ) : (
-                <span className="avatar-placeholder">Ảnh đại diện (Tùy chọn)</span>
+                <span className="avatar-placeholder" >
+                  Ảnh đại diện (Tùy chọn)
+                </span>
               )}
             </div>
-            {/* Input file bị ẩn đi, dùng label bọc lại để tạo nút bấm đẹp hơn */}
             <input
               type="file"
               id="avatar-upload"
@@ -164,6 +210,7 @@ const Register = () => {
               onChange={handleAvatarChange}
               style={{ display: "none" }}
             />
+            {/* thay thể button */}
             <label htmlFor="avatar-upload" className="btn-upload-avatar">
               Chọn ảnh
             </label>
@@ -184,8 +231,10 @@ const Register = () => {
                     style={{ borderColor: formErrors.name ? "#ff4d4f" : "" }}
                   />
                 </div>
-                {/* HIỂN THỊ LỖI */}
-                {formErrors.name && <span className="error-message">{formErrors.name}</span>}
+                {/* nếu có lỗi thì in ra thẻ span */}
+                {formErrors.name && (
+                  <span className="error-message">{formErrors.name}</span>
+                )}
               </div>
 
               <div className="form-group">
@@ -200,8 +249,9 @@ const Register = () => {
                     style={{ borderColor: formErrors.email ? "#ff4d4f" : "" }}
                   />
                 </div>
-                {/* HIỂN THỊ LỖI */}
-                {formErrors.email && <span className="error-message">{formErrors.email}</span>}
+                {formErrors.email && (
+                  <span className="error-message">{formErrors.email}</span>
+                )}
               </div>
 
               <div className="form-group">
@@ -216,8 +266,9 @@ const Register = () => {
                     style={{ borderColor: formErrors.password ? "#ff4d4f" : "" }}
                   />
                 </div>
-                {/* HIỂN THỊ LỖI */}
-                {formErrors.password && <span className="error-message">{formErrors.password}</span>}
+                {formErrors.password && (
+                  <span className="error-message">{formErrors.password}</span>
+                )}
               </div>
 
               <div className="form-group">
@@ -232,13 +283,14 @@ const Register = () => {
                     style={{ borderColor: formErrors.phone ? "#ff4d4f" : "" }}
                   />
                 </div>
-                {/* HIỂN THỊ LỖI */}
-                {formErrors.phone && <span className="error-message">{formErrors.phone}</span>}
+                {formErrors.phone && (
+                  <span className="error-message">{formErrors.phone}</span>
+                )}
               </div>
             </div>
 
             {/* --- CỘT PHẢI --- */}
-            <div className="form-column">
+            <div className="form-column">       
               <div className="form-group">
                 <label>Thành phố</label>
                 <div className="input-wrapper">
@@ -246,6 +298,8 @@ const Register = () => {
                     value={selectedCity}
                     onChange={handleCityChange}
                     required
+                    style={{ borderColor: formErrors.city ? "#ff4d4f" : "" }}
+                    // nếu có lỗi thì viền sang màu đỏ
                   >
                     <option value="" disabled>-- Chọn Thành phố --</option>
                     {cities.map((city) => (
@@ -255,6 +309,10 @@ const Register = () => {
                     ))}
                   </select>
                 </div>
+                {/* HIỂN THỊ LỖI THÀNH PHỐ */}
+                {formErrors.city && (
+                  <span className="error-message">{formErrors.city}</span>
+                )}
               </div>
 
               <div className="form-group">
@@ -276,8 +334,9 @@ const Register = () => {
                     ))}
                   </select>
                 </div>
-                {/* HIỂN THỊ LỖI */}
-                {formErrors.areaId && <span className="error-message">{formErrors.areaId}</span>}
+                {formErrors.areaId && (
+                  <span className="error-message">{formErrors.areaId}</span>
+                )}
               </div>
 
               <div className="form-group">
@@ -292,8 +351,9 @@ const Register = () => {
                     style={{ borderColor: formErrors.address ? "#ff4d4f" : "" }}
                   />
                 </div>
-                {/* HIỂN THỊ LỖI */}
-                {formErrors.address && <span className="error-message">{formErrors.address}</span>}
+                {formErrors.address && (
+                  <span className="error-message">{formErrors.address}</span>
+                )}
               </div>
 
               <div className="form-group">
@@ -306,13 +366,15 @@ const Register = () => {
                     required
                     style={{ borderColor: formErrors.gender ? "#ff4d4f" : "" }}
                   >
+                     <option value="" disabled >-- Chọn giới tính --</option>
                     <option value="male">Nam</option>
                     <option value="female">Nữ</option>
                     <option value="other">Khác</option>
                   </select>
                 </div>
-                {/* HIỂN THỊ LỖI */}
-                {formErrors.gender && <span className="error-message">{formErrors.gender}</span>}
+                {formErrors.gender && (
+                  <span className="error-message">{formErrors.gender}</span>
+                )}
               </div>
             </div>
           </div>

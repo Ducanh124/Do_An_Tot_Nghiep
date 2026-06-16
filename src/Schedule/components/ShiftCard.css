@@ -305,3 +305,26 @@
   font-weight: 600;
 }
 .evidence-link:hover { text-decoration: underline; }
+/* --- CSS CHO BỘ SƯU TẬP ẢNH BÁO CÁO --- */
+.evidence-image-gallery {
+  display: flex;
+  flex-wrap: wrap; /* Nếu nhiều ảnh quá sẽ tự động rớt xuống dòng */
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.evidence-thumbnail {
+  width: 80px; /* Cố định kích thước để các ảnh đều nhau */
+  height: 80px;
+  object-fit: cover; /* Giữ tỷ lệ ảnh không bị méo */
+  border-radius: 6px;
+  border: 1px solid #d9d9d9;
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+/* Hiệu ứng phóng to nhẹ khi di chuột vào ảnh */
+.evidence-thumbnail:hover {
+  transform: scale(1.05);
+  border-color: #1890ff;
+}

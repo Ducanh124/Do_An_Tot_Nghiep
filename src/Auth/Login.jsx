@@ -77,7 +77,6 @@ const Login = () => {
           <div className="form-group">
             <label>Mật khẩu</label>
             <div className="input-wrapper">
-              {/* Đã xóa nút bấm con mắt, cố định type là password */}
               <input
                 type="password"
                 name="password"
@@ -97,7 +96,7 @@ const Login = () => {
         {/* Chuyển sang trang Đăng ký */}
         <div className="login-footer">
           <p>
-            Bạn chưa có tài khoản?{" "}
+            Bạn chưa có tài khoản?
             <span
               style={{
                 color: "blue",

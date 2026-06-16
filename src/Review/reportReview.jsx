@@ -1,3 +1,4 @@
+// src/pages/ReportReview/ReportReview.jsx
 import React, { useState, useEffect } from "react";
 import "./ReportReview.css";
 import { scheduleService } from "../service/scheduleService.js";
@@ -28,23 +29,33 @@ const ReportReview = () => {
           jobs = res;
         }
 
-        // 👉 BƯỚC 1: LỌC LẤY ĐÁNH GIÁ
-        // Đã bỏ điều kiện bắt buộc `job.status === "completed"`
-        // Giờ đây cứ ca nào có chứa `customerReview` là sẽ hiển thị lên hết!
+        //  BƯỚC 1: LỌC VÀ TRÍCH XUẤT THÊM DỊCH VỤ + ĐỊA CHỈ
         const validReviews = jobs
           .filter(
             (job) => job.booking && job.booking.customerReview
           )
-          .map((job) => ({
-            id: job.id,
-            bookingId: job.bookingId,
-            customerName: job.booking.customer?.name || "Khách hàng ẩn danh",
-            customerPhone: job.booking.customer?.phone || "Không có SĐT",
-            scheduledTime: job.booking.scheduledTime,
-            rating: job.booking.customerReview.rating || 0,
-            reviewText: job.booking.customerReview.review || "",
-            createdAt: job.booking.customerReview.createdAt,
-          }));
+          .map((job) => {
+            // Lặp qua mảng bookingDetails để gộp tên tất cả các dịch vụ (nếu có nhiều dịch vụ)
+            const combinedServiceNames = job.booking.bookingDetails
+              ?.map(detail => detail.service?.name)
+              .join(" + ") || "Dịch vụ tổng hợp";
+
+            return {
+              id: job.id,
+              bookingId: job.bookingId,
+              customerName: job.booking.customer?.name || "Khách hàng ẩn danh",
+              customerPhone: job.booking.customer?.phone || "Không có SĐT",
+              
+              // THÊM MỚI: Trích xuất tên dịch vụ và địa chỉ
+              serviceNames: combinedServiceNames,
+              address: job.booking.address || "Chưa có thông tin địa chỉ",
+              
+              scheduledTime: job.booking.scheduledTime,
+              rating: job.booking.customerReview.rating || 0,
+              reviewText: job.booking.customerReview.review || "",
+              createdAt: job.booking.customerReview.createdAt,
+            };
+          });
 
         // Sắp xếp đánh giá mới nhất lên đầu 
         validReviews.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -60,7 +71,7 @@ const ReportReview = () => {
     fetchReviews();
   }, [user]);
 
-  // 👉 BƯỚC 2: XỬ LÝ BỘ LỌC THEO SỐ SAO TRÊN GIAO DIỆN
+  //  BƯỚC 2: XỬ LÝ BỘ LỌC THEO SỐ SAO TRÊN GIAO DIỆN
   const displayedReviews = starFilter === "all" 
     ? allReviews 
     : allReviews.filter(r => r.rating === Number(starFilter));
@@ -124,9 +135,22 @@ const ReportReview = () => {
             <div key={item.id} className="review-card">
               {/* Cột Trái: Thông tin khách hàng & Thời gian */}
               <div className="review-info">
+                {/* HIỂN THỊ TÊN DỊCH VỤ TẠI ĐÂY */}
+                <div style={{ fontWeight: 'bold', color: '#1890ff', fontSize: '15px', marginBottom: '6px' }}>
+                  {item.serviceNames}
+                </div>
+                
                 <div className="customer-name">{item.customerName}</div>
                 <div className="customer-phone">{item.customerPhone}</div>
-                <div className="shift-time">Ca làm: {formatTime(item.scheduledTime)}</div>
+                
+                {/* HIỂN THỊ ĐỊA CHỈ KHÁCH HÀNG TẠI ĐÂY */}
+                <div style={{ fontSize: '13px', color: '#666', marginTop: '4px' }}>
+                  📍 {item.address}
+                </div>
+                
+                <div className="shift-time" style={{ marginTop: '6px' }}>
+                  Ca làm: {formatTime(item.scheduledTime)}
+                </div>
               </div>
               
               {/* Cột Phải: Số sao & Nội dung đánh giá */}

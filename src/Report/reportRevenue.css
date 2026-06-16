@@ -1,172 +1,179 @@
 /* ReportRevenue.css */
+
+/* --- CONTAINER CHÍNH --- */
 .report-container {
-  padding: 20px;
-  background-color: #f4f6f8;
-  min-height: 100vh;
-  font-family: 'Inter', sans-serif;
+ padding: 20px 0;/* Tạo khoảng cách (lề trong) 20px từ viền đẩy nội dung vào giữa */
+  background-color: #f4f6f8; /* Cài đặt màu nền của trang là màu xám nhạt */
+  min-height: 100vh; /* Chiều cao tối thiểu bằng 100% chiều cao màn hình (viewport height) để nền xám phủ kín */
+  font-family: 'Inter', sans-serif; /* Đặt font chữ chính là 'Inter', nếu máy không có thì dùng font không chân (sans-serif) */
+
 }
 
+/* --- TIÊU ĐỀ TRANG --- */
 .report-title {
-  margin-top: 0;
-  margin-bottom: 24px;
-  color: #333;
-  font-size: 24px;
+  margin-top: 0; /* Xóa khoảng cách mặc định ở phía trên của thẻ tiêu đề */
+  margin-bottom: 24px; /* Đẩy nội dung bên dưới cách tiêu đề một khoảng 24px */
+  color: #333; /* Cài đặt màu chữ là màu xám đậm (gần đen) để dịu mắt, dễ đọc */
+  font-size: 24px; /* Kích thước chữ của tiêu đề là 24px */
 }
 
 /* --- BỘ LỌC --- */
 .report-filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-  margin-bottom: 24px;
-  align-items: flex-end;
+  display: flex; /* Bật chế độ Flexbox để sắp xếp các phần tử con (ô input, nút bấm) nằm ngang */
+  flex-wrap: wrap; /* Cho phép các phần tử tự động rớt xuống dòng nếu chiều ngang màn hình không đủ chỗ */
+  gap: 20px; /* Tạo khoảng cách đều đặn 20px giữa tất cả các phần tử bên trong */
+  background-color: #fff; /* Đặt nền màu trắng cho khu vực bộ lọc */
+  padding: 20px; /* Lề trong 20px để nội dung không bị dính sát vào viền */
+  border-radius: 10px; /* Bo tròn 4 góc của khu vực bộ lọc với bán kính 10px */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05); /* Tạo bóng đổ nhẹ (màu đen mờ 5%) để làm nổi khối hộp lên */
+  margin-bottom: 24px; /* Cách khu vực bên dưới nó (các thẻ tóm tắt) 24px */
+  align-items: flex-end; /* Căn lề dưới cùng cho các phần tử con (giúp nút bấm thẳng hàng với phần nhập chữ của ô input) */
 }
 
+/* --- NHÓM LABEL VÀ INPUT --- */
 .filter-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  display: flex; /* Chuyển nhóm gồm 'tiêu đề' và 'ô nhập' thành Flexbox */
+  flex-direction: column; /* Sắp xếp các phần tử con theo chiều dọc (label nằm trên, input nằm dưới) */
+  gap: 8px; /* Khoảng cách giữa chữ label và ô input là 8px */
 }
 
 .filter-group label {
-  font-size: 14px;
-  font-weight: 600;
-  color: #555;
+  font-size: 14px; /* Kích thước chữ của nhãn (label) là 14px */
+  font-weight: 600; /* In đậm chữ (độ đậm 600) */
+  color: #555; /* Màu chữ xám vừa */
 }
 
 .filter-input {
-  padding: 10px 12px;
-  border: 1px solid #d9d9d9;
-  border-radius: 6px;
-  font-size: 14px;
-  outline: none;
-  min-width: 150px;
+  padding: 10px 12px; /* Lề trong của ô nhập: trên dưới 10px, trái phải 12px */
+  border: 1px solid #d9d9d9; /* Tạo viền mỏng 1px màu xám nhạt cho ô nhập */
+  border-radius: 6px; /* Bo tròn các góc của ô nhập với bán kính 6px */
+  font-size: 14px; /* Kích thước chữ người dùng gõ vào là 14px */
+  outline: none; /* Bỏ viền xanh mặc định của trình duyệt khi click vào ô nhập */
+  min-width: 150px; /* Chiều ngang tối thiểu của ô nhập là 150px (tránh bị co lại quá nhỏ) */
+  /* color: red; */
 }
 
 .filter-input:focus {
-  border-color: #1890ff;
+  border-color: #1890ff; /* Khi click chuột vào ô nhập (trạng thái focus), viền sẽ đổi sang màu xanh dương */
 }
 
+/* --- NÚT BẤM LỌC DỮ LIỆU --- */
 .btn-filter {
-  padding: 10px 24px;
-  background-color: #1890ff;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-weight: 600;
-  cursor: pointer;
-  height: 40px; /* Bằng chiều cao của input */
-  transition: 0.2s;
+  padding: 10px 24px ; /* Lề trong nút: trên dưới 10px, trái phải 24px */
+  background-color: #1890ff; /* Màu nền nút là xanh dương */
+  color: white; /* Màu chữ trên nút là màu trắng */
+  border: none; /* Xóa viền mặc định của nút */
+  border-radius: 6px; /* Bo tròn góc nút 6px (đồng bộ với ô input) */
+  font-weight: 600; /* In đậm chữ trên nút */
+  cursor: pointer; /* Đổi biểu tượng chuột thành hình bàn tay khi trỏ vào nút */
+  height: 40px; /* Ép chiều cao cố định là 40px (Bằng chiều cao của input để đồng đều) */
+  transition: 0.2s; /* Tạo hiệu ứng chuyển đổi từ từ trong 0.2 giây khi có sự thay đổi (như hover) */
+
 }
 
 .btn-filter:hover {
-  background-color: #096dd9;
+  background-color: #096dd9; /* Khi di chuột lên nút, màu xanh sẽ đổi thành tông đậm hơn một chút */
 }
 
 .btn-filter:disabled {
-  background-color: #91caff;
-  cursor: not-allowed;
+  background-color: #91caff; /* Khi nút bị vô hiệu hóa (đang tải), màu nền chuyển sang xanh nhạt */
+  cursor: not-allowed; /* Đổi biểu tượng chuột thành dấu cấm để báo cho người dùng không click được */
 }
 
 /* --- THẺ TÓM TẮT (CARDS) --- */
 .summary-cards {
-  display: flex;
-  gap: 20px;
-  margin-bottom: 24px;
+  display: flex; /* Sắp xếp các thẻ tóm tắt nằm ngang */
+  gap: 20px; /* Khoảng cách giữa các thẻ là 20px */
+  margin-bottom: 24px; /* Cách phần bảng chi tiết bên dưới 24px */
 }
 
 .card {
-  background-color: #fff;
-  padding: 20px 24px;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-  flex: 1;
+  background-color: #fff; /* Nền của mỗi thẻ là màu trắng */
+  padding: 20px 24px; /* Lề trong: trên dưới 20px, trái phải 24px */
+  border-radius: 10px; /* Bo tròn góc thẻ 10px */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05); /* Đổ bóng mờ nhẹ 5% để nổi khối thẻ */
+  flex: 1; /* Cho phép các thẻ tự động giãn đều kích thước chiếm hết khoảng trống (2 thẻ sẽ bằng nhau) */
 }
 
 .card h3 {
-  margin: 0 0 10px 0;
-  font-size: 15px;
-  color: #666;
-  font-weight: 600;
+  margin: 0 0 10px 0; /* Xóa lề trên, lề trái, lề phải; chỉ để lề dưới 10px đẩy con số xuống */
+  font-size: 15px; /* Kích thước chữ của tiêu đề thẻ là 15px */
+  color: #666; /* Màu chữ xám nhạt */
+  font-weight: 600; /* In đậm tiêu đề */
 }
 
 .summary-value {
-  margin: 0;
-  font-size: 28px;
-  font-weight: 700;
+  margin: 0; /* Xóa mọi khoảng cách lề mặc định của thẻ <p> */
+  font-size: 28px; /* Cỡ chữ của con số tổng to, nổi bật (28px) */
+  font-weight: 700; /* In đậm con số (độ đậm 700) */
+  background-color: white;  /* nền của số */
 }
 
 .summary-card-blue {
-  border-left: 5px solid #1890ff;
-}
-.summary-card-blue .summary-value {
-  color: #1890ff;
+  border-left: 5px solid #1890ff; /* Tạo điểm nhấn bằng một dải viền dọc dày 5px màu xanh dương ở mép trái thẻ */
 }
 
+
 .summary-card-green {
-  border-left: 5px solid #00b96b;
+  border-left: 5px solid #00b96b; /* Tạo điểm nhấn viền dọc dày 5px màu xanh lá ở mép trái thẻ */
 }
-.summary-card-green .summary-value {
-  color: #00b96b;
-}
+
 
 /* --- BẢNG CHI TIẾT --- */
 .table-card {
-  padding: 0;
-  overflow: hidden;
+  padding: 0; /* Bỏ lề trong mặc định để bảng có thể chạm sát mép khung */
+  overflow: hidden; /* Cắt bỏ phần nội dung thừa (ví dụ góc nhọn của bảng) nếu nó trồi ra ngoài phần bo tròn của card */
 }
 
 .table-card h3 {
-  padding: 20px 24px;
-  margin: 0;
-  border-bottom: 1px solid #f0f0f0;
-  color: #333;
-  font-size: 16px;
+  padding: 20px 24px; /* Tạo khoảng cách cho tiêu đề của bảng */
+  margin: 0; /* Bỏ lề ngoài của tiêu đề */
+  border-bottom: 1px solid #f0f0f0; /* Tạo một đường kẻ ngang mỏng dưới tiêu đề để phân tách với bảng */
+  color: #333; /* Màu chữ xám đậm */
+  font-size: 16px; /* Cỡ chữ 16px */
 }
 
 .table-responsive {
-  overflow-x: auto;
+  overflow-x: auto; /* Bật thanh cuộn ngang nếu bảng quá rộng so với màn hình hiện tại */
 }
 
+/*Chi tiết Bảng bên dưới */
+
 .report-table {
-  width: 100%;
-  border-collapse: collapse;
+  width: 100%; /* Bảng sẽ chiếm trọn 100% chiều ngang của vùng chứa nó */
+  border-collapse: collapse; /* Xóa bỏ khe hở kép giữa viền các ô, gộp chúng lại thành 1 nét duy nhất */
 }
 
 .report-table th {
-  background-color: #fafafa;
-  color: #555;
-  font-weight: 600;
-  padding: 16px 24px;
-  text-align: left;
-  border-bottom: 1px solid #f0f0f0;
+  background-color: #fafafa; /* Đặt nền màu xám rất nhạt cho các ô tiêu đề cột (th) */
+  color: #555; /* Chữ tiêu đề cột màu xám */
+  font-weight: 600; /* In đậm chữ tiêu đề cột */
+  padding: 16px 24px; /* Lề trong của mỗi ô tiêu đề */
+  border-bottom: 1px solid #f0f0f0; /* Kẻ đường viền xám dưới mỗi ô tiêu đề */
 }
 
 .report-table td {
-  padding: 16px 24px;
-  border-bottom: 1px solid #f0f0f0;
-  color: #333;
+  padding: 16px 24px; /* Lề trong của các ô chứa dữ liệu thông thường (td) */
+  border-bottom: 1px solid #f0f0f0; /* Kẻ đường viền ngang xám phân cách từng dòng của bảng */
+  color: #333; /* Màu chữ dữ liệu là xám đậm */
 }
 
 .report-table tbody tr:hover {
-  background-color: #fcfcfc;
+  background-color: #fcfcfc; /* Khi di chuột qua một dòng trong bảng, dòng đó sẽ nổi màu nền xám sáng (hiệu ứng highlight dòng) */
 }
 
-.font-semibold {
-  font-weight: 600;
-}
 
-/* Responsive cho điện thoại */
-@media (max-width: 768px) {
+
+/* --- RESPONSIVE CHO ĐIỆN THOẠI --- */
+@media (max-width: 768px) { 
+  /* Khối này chỉ chạy khi màn hình người dùng nhỏ hơn hoặc bằng 768px (Điện thoại/Tablet) */
+  
   .summary-cards {
-    flex-direction: column;
+    flex-direction: column; /* Xếp các thẻ tóm tắt nằm chồng lên nhau theo chiều dọc thay vì nằm ngang */
   }
+  
   .report-filters {
-    flex-direction: column;
-    align-items: stretch;
+    flex-direction: column; /* Xếp các ô chọn ngày, tháng nằm dọc xuống dưới */
+    align-items: stretch; /* Ép các ô input và nút bấm kéo dài ra chiếm toàn bộ chiều ngang của màn hình */
   }
 }

@@ -2,44 +2,64 @@
 import React, { useState, useEffect } from "react";
 import Skills from "./Skills";
 import "./PersonalInfo.css";
-import { FiSave } from "react-icons/fi";
 import { profileService } from "../service/profileService.js";
 
 const PersonalInfo = () => {
   const [userId, setUserId] = useState(null);
+  const [hasProfile, setHasProfile] = useState(false);
 
-  // 👉 BƯỚC 1: Gom tất cả dữ liệu vào 1 cục formData duy nhất
+  // THÊM MỚI: State lưu trữ dữ liệu GỐC để đem ra so sánh
+  const [originalData, setOriginalData] = useState({});
   const [formData, setFormData] = useState({
     fullName: "",
     phone: "",
     email: "",
-    cardNumber: "",
-    skills: "",       // Nhập chữ bình thường
-    experience: "",   // Select box
-    review: "",       // Textarea
+    cardNumber: "",   
+    skills: "",       
+    experience: "",   
+    review: "",       
   });
 
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [formErrors, setFormErrors] = useState({});
 
-  // --- GỌI API LẤY DỮ LIỆU KHI VÀO TRANG ---
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
         const userRes = await profileService.getProfile();
         const userData = userRes.data || userRes;
+        const currentUserId = userData._id || userData.id;
         
-        setUserId(userData._id || userData.id);
+        setUserId(currentUserId);
 
-        setFormData({
-          fullName: userData.name || userData.fullName || "",
-          phone: userData.phone || "",
-          email: userData.email || "",
-          cardNumber: userData.cardNumber || "",
-          skills: userData.skills || "", 
-          experience: userData.experience || "",
-          review: userData.review || "",
-        });
+        //kiểm tra xem đã điền bên dưới hay chưa
+        let profileData = null;
+        try {
+          const infoRes = await profileService.getInfo(currentUserId);
+          if (infoRes.data) {
+            profileData = infoRes.data; 
+            setHasProfile(true); 
+          }
+        } catch (err) {
+          console.log("Người dùng chưa lưu hồ sơ chi tiết lần nào.");
+          setHasProfile(false); 
+        }
+
+        const initialData = {
+          fullName: profileData?.staff?.name || userData.name || userData.fullName || "",
+          phone: profileData?.staff?.phone || userData.phone || "",
+          email: profileData?.staff?.email || userData.email || "",
+          //  Lúc GET về Backend trả `idCardNumber`, ta gán vào `cardNumber` của giao diện
+          cardNumber: profileData?.idCardNumber || userData.idCardNumber || "",
+          skills: profileData?.skills || "", 
+          experience: profileData?.experience || "",
+          review: profileData?.review || "",
+        };
+          //lưu vào formdata để hiển thị lên UI
+        setFormData(initialData);
+        // Lưu lại bản sao y hệt lúc vừa tải về để sau này so sánh
+        setOriginalData(initialData);
 
       } catch (error) {
         console.error("Lỗi khi tải dữ liệu hồ sơ:", error);
@@ -51,14 +71,15 @@ const PersonalInfo = () => {
     fetchProfileData();
   }, []);
 
-  // Hàm dùng chung để bắt sự kiện thay đổi cho TẤT CẢ các ô nhập
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    // lấy dc name với value của giá trị vừa nhập
     setFormData({ ...formData, [name]: value });
+    
+    if (formErrors[name]) {
+      setFormErrors({ ...formErrors, [name]: "" });
+    }
   };
 
-  // --- HÀM SUBMIT ĐÓNG GÓI DỮ LIỆU VÀ GỌI API ---
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -67,106 +88,144 @@ const PersonalInfo = () => {
       return;
     }
 
-    // 👉 BƯỚC 2: Đóng gói đúng 4 trường Backend cần
-    const payload = {
-      cardNumber: formData.cardNumber,
-      skills: formData.skills,
-      experience: formData.experience,
-      review: formData.review,
-    };
-
-    console.log("Đang gửi dữ liệu lên:", `/staff/${userId}/add-profile`, payload);
+    setFormErrors({});
     setIsSaving(true);
-
+//hàm submit sẽ kiểm tra bên dưới có dữ liệu hay k, nếu có thì kiểm tra có update hay k, nếu k update thì chờ ng dùng nhập rồi đóng gói dl gửi be
     try {
-      await profileService.addProfile(userId, payload);
-      alert("Đã cập nhật hồ sơ thành công!");
+      if (hasProfile) {
+        // LUỒNG CẬP NHẬT (PUT): CHỈ GỬI NHỮNG TRƯỜNG BỊ THAY ĐỔI
+        const payload = {};
+        // So sánh từng trường, nếu khác với ban đầu thì mới nhét vào payload
+        if (formData.cardNumber !== originalData.cardNumber)  payload.idCardNumber = formData.cardNumber;    
+        if (formData.skills !== originalData.skills) payload.skills = formData.skills;
+        if (formData.experience !== originalData.experience) payload.experience = formData.experience;
+        if (formData.review !== originalData.review) payload.review = formData.review;
+
+        // Nếu người dùng bấm Lưu nhưng chưa sửa gì cả thì chặn lại luôn
+        if (Object.keys(payload).length === 0) {
+          alert("Bạn chưa thay đổi thông tin nào!");
+          setIsSaving(false);
+          return;
+        }
+
+        await profileService.updateInfo(userId, payload);
+        alert("Đã cập nhật hồ sơ thành công!");
+        
+        // Cập nhật lại bản gốc sau khi lưu thành công (để có thể sửa tiếp mà không cần F5)
+        setOriginalData({ ...originalData, ...payload });
+
+      } else {
+
+        // LUỒNG THÊM MỚI (POST): GỬI TOÀN BỘ 4 TRƯỜNG
+        const payload = {
+          cardNumber: formData.cardNumber, 
+          skills: formData.skills,
+          experience: formData.experience,
+          review: formData.review,
+        };
+
+        await profileService.addProfile(userId, payload);
+        alert("Đã lưu hồ sơ thành công!");
+        setHasProfile(true); 
+        // Cập nhật lại bản gốc
+        setOriginalData({ ...formData });
+      }
+
     } catch (error) {
       console.error("Lỗi khi lưu profile:", error);
-      const backendError = error.response?.data?.message || "Lỗi không xác định từ server";
-      alert(`Backend báo lỗi: ${backendError}`); 
+      const backendError = error.response?.data;
+      
+      // Logic bóc tách mảng lỗi từ Backend
+      if (backendError && backendError.errors && Array.isArray(backendError.errors)) {
+        const errorsObj = {};
+        backendError.errors.forEach((err) => {
+          if (!errorsObj[err.field]) {
+            let errorMessage = err.message;
+            
+            // Dịch câu lỗi Pattern RegEx khô khan sang tiếng Việt
+            if (errorMessage.includes("fails to match the required pattern")) {
+              errorMessage = "Chỉ được phép nhập chữ số (0-9)";
+            }
+            // Dịch câu lỗi độ dài
+            if (errorMessage.includes("phải có ít nhất 9 ký tự")) {
+              errorMessage = "Số tài khoản phải có ít nhất 9 chữ số";
+            }
+            // Dịch câu lỗi bỏ trống để giấu cái chữ tiếng Anh "cardNumber" đi cho đẹp
+            if (errorMessage.includes("không được để trống") || errorMessage.includes("là bắt buộc")) {
+              errorMessage = "Vui lòng không để trống thông tin này";
+            }
+
+            errorsObj[err.field] = errorMessage;
+          }
+        });
+        setFormErrors(errorsObj); 
+      } else {
+        const errorMsg = backendError?.message || "Lỗi không xác định từ server";
+        alert(`Backend báo lỗi: ${errorMsg}`); 
+      }
     } finally {
       setIsSaving(false);
     }
   };
 
   if (isLoading) {
-    return (
-      <div style={{ padding: "24px", color: "#666" }}>
-        Đang tải thông tin...
-      </div>
-    );
+    return <div style={{ padding: "24px", color: "#666" }}>Đang tải thông tin...</div>;
   }
 
   return (
-    <div className="profile-page-container" >
-      <form onSubmit={handleSubmit}>
+    <div >
+      <form onSubmit={handleSubmit} autoComplete="off" noValidate >
           <div className="section-header">
             <h2>Thông tin cá nhân</h2>
           </div>
 
-                <div className="form-grid">
-                  <div className="form-group">
-                    <label>Họ và tên</label>
-                    <input
-                      type="text"
-                      name="fullName"
-                      value={formData.fullName}
-                      readOnly
+          <div className="form-grid">
+            <div className="form-group ">
+              <label>Họ và tên</label>
+              <input type="text" name="fullName" value={formData.fullName} readOnly />
+            </div>
 
-                    />
-                  </div>
+            <div className="form-group">
+              <label>Số điện thoại</label>
+              <input type="tel" name="phone" value={formData.phone} readOnly />
+            </div>
 
-                  <div className="form-group">
-                    <label>Số điện thoại</label>
-                    <input
-                      type="tel"
-                      name="phone"
-                      value={formData.phone}
-                      readOnly
-                    />
-                  </div>
+            <div className="form-group">
+              <label>Email</label>
+              <input type="email" name="email" value={formData.email} readOnly />
+            </div>
 
-                  <div className="form-group">
-                    <label>Email</label>
-                    <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      readOnly
+            <div className="form-group">
+              <label>Số tài khoản / Thẻ ngân hàng </label>
+              <input
+                type="text"
+                name="cardNumber"
+                value={formData.cardNumber}
+                onChange={handleInputChange}
+                required
+                style={{ borderColor: formErrors.cardNumber ? "#ff4d4f" : "" }}
+              />
+              {/* HIỂN THỊ LỖI */}
+              {formErrors.cardNumber && (
+                <span style={{ color: '#ff4d4f', fontSize: '13px', marginTop: '4px', display: 'block' }}>
+                  {formErrors.cardNumber}
+                </span>
+              )}
+            </div>
+          </div>
 
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label>
-                      Số tài khoản / Thẻ ngân hàng{" "}
-              
-                    </label>
-                    <input
-                      type="text"
-                      name="cardNumber"
-                      value={formData.cardNumber}
-                      onChange={handleInputChange}
-                      required
-                    />
-                  </div>
-                </div>
-
-
-
-
-        {/* 👉 BƯỚC 3: Truyền 3 giá trị xuống Component Skills */}
+        {/* Truyền thêm formErrors xuống Component Skills đề phòng Backend ném lỗi ở các trường này */}
         <Skills
           skills={formData.skills}
           experience={formData.experience}
           review={formData.review}                
           onInputChange={handleInputChange}
+          formErrors={formErrors}
         />
 
         <div className="form-actions">
           <button type="submit" className="btn-save" disabled={isSaving}>
-             {isSaving ? "Đang lưu..." : "Lưu thay đổi"}
+             {isSaving ? "Đang lưu..." : (hasProfile ? "Cập nhật" : "Lưu")}
           </button>
         </div>
       </form>

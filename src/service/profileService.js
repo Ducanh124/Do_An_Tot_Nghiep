@@ -16,7 +16,20 @@ export const profileService = {
     const response = await api.post(`/staff/${userId}/add-profile`, data);
     return response.data;
   },
-};
+
+   getInfo: async (id) => {
+  const res = await api.get(`/staff/${id}/profile`);
+  return res.data;
+  },
+
+// SỬA LẠI: 
+  updateInfo: async (id, data) => {
+    const res = await api.put(`/staff/${id}/update-profile`, data);
+    return res.data;
+  }
+
+}
+
 
 
 
