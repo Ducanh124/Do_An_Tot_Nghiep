@@ -16,9 +16,8 @@ const BookingHistory = () => {
   // lưu kết quả đánh giá số sao: { bookingId: số_sao }
   const [reviewMap, setReviewMap] = useState({});
 
-  //Thanh toán
-
-  // Nhận thêm tham số bookingStatus vào hàm
+  // thanh toán
+  // nhận thêm tham số bookingStatus vào hàm
   const getPaymentBadge = (paymentStatus, bookingStatus) => {
     const p = paymentStatus ? paymentStatus.toUpperCase() : "";
     const bStatus = bookingStatus ? bookingStatus.toLowerCase() : "";
@@ -30,7 +29,7 @@ const BookingHistory = () => {
       );
     }
 
-    // Các trường hợp còn lại giữ nguyên như cũ của bạn
+    // các trường hợp còn lại giữ nguyên như cũ của bạn
     switch (p) {
       case "PAID":
         return (
@@ -69,7 +68,7 @@ const BookingHistory = () => {
       try {
         setLoading(true);
 
-        // 1. Gọi API lấy Đơn hàng với đủ 3 tham số
+        // 1. gọi api lấy đơn hàng với đủ 3 tham số
         const result = await bookingService.getMyBookings(
           currentUser.id,
           currentPage,
@@ -80,27 +79,27 @@ const BookingHistory = () => {
           (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
         );
 
-        setBookings(sortedData); // Lưu danh sách để vẽ bảng
-        setTotalPages(result.totalPages); // Lưu tổng số trang để vẽ nút bấm
+        setBookings(sortedData); // lưu danh sách để vẽ bảng
+        setTotalPages(result.totalPages); // lưu tổng số trang để vẽ nút bấm
 
-        // lấy số sao đuọc đánh giá cho đơn hàng có trạng thái HOÀN THÀNH
+        // lấy số sao được đánh giá cho đơn hàng có trạng thái hoàn thành
         const completedBookings = sortedData.filter(
           (b) => b.status?.toLowerCase() === "completed",
         );
 
         if (completedBookings.length > 0) {
-          // Gọi API kiểm tra đánh giá của từng đơn hàng
+          // gọi api kiểm tra đánh giá của từng đơn hàng
           const reviewsData = await Promise.all(
             completedBookings.map((b) =>
               reviewService.getReviewByBookingId(b.id),
             ),
           );
 
-          // Ghi chép vào sổ tay reviewMap: { "Mã_Đơn_1": 5, "Mã_Đơn_2": 4 }
+          // ghi chép vào sổ tay reviewmap
           const newReviewMap = {};
           completedBookings.forEach((b, index) => {
             if (reviewsData[index]) {
-              // Gắn số sao (Lấy trường rating từ API trả về)
+              // gắn số sao lấy trường rating từ api trả về
               newReviewMap[b.id] = reviewsData[index].rating;
             }
           });
@@ -175,23 +174,23 @@ const BookingHistory = () => {
     }
   };
 
-  // Hàm xử lý đánh giá
+  // hàm xử lý đánh giá
   const getReviewStatus = (booking) => {
     if (booking.status?.toLowerCase() !== "completed") {
       return <span className="review-none">-</span>;
     }
-    const ratingStar = reviewMap[booking.id]; // Tra sổ tay xem đơn này có sao chưa
+    const ratingStar = reviewMap[booking.id]; // tra sổ tay xem đơn này có sao chưa
     if (ratingStar) {
-      // Đã đánh giá -> In ra ngôi sao bằng ký tự text
+      // đã đánh giá in ra ngôi sao bằng ký tự text
       const stars = [];
       for (let i = 0; i < 5; i++) {
         stars.push(
           <span
             key={i}
             style={{
-              color: i < ratingStar ? "#ffc107" : "#e4e5e9", // Màu vàng (#ffc107) nếu có sao, xám nhạt (#e4e5e9) nếu trống
-              fontSize: "1.2rem", // Chỉnh lại kích thước sao cho cân đối với bảng
-              margin: "0 2px", // Tạo khoảng cách nhỏ giữa các ngôi sao
+              color: i < ratingStar ? "#ffc107" : "#e4e5e9", // màu vàng nếu có sao xám nhạt nếu trống
+              fontSize: "1.2rem", // chỉnh lại kích thước sao cho cân đối với bảng
+              margin: "0 2px", // tạo khoảng cách nhỏ giữa các ngôi sao
             }}
           >
             ★
@@ -200,7 +199,7 @@ const BookingHistory = () => {
       }
       return <div className="review-stars">{stars}</div>;
     }
-    // Chưa đánh giá truy cập vào link có nút ấn giống với chi tiết đơn
+    // chưa đánh giá truy cập vào link có nút ấn giống với chi tiết đơn
     return (
       <span
         className="review-link"
@@ -298,7 +297,7 @@ const BookingHistory = () => {
                         {getPaymentBadge(booking.paymentStatus, booking.status)}
                       </td>
 
-                      {/* Cột đánh giá */}
+                      {/* cột đánh giá */}
                       <td className="text-center align-middle">
                         {getReviewStatus(booking)}
                       </td>
@@ -327,7 +326,7 @@ const BookingHistory = () => {
             <div className="d-flex justify-content-center align-items-center mt-4">
               <button
                 className="custom-btn btn-page me-3"
-                disabled={currentPage === 1} // Nếu đang ở trang 1 thì làm mờ nút đi
+                disabled={currentPage === 1} // nếu đang ở trang 1 thì làm mờ nút đi
                 onClick={() => setCurrentPage((prev) => prev - 1)}
               >
                 <i className="bi bi-chevron-left"></i> Trang trước
@@ -339,7 +338,7 @@ const BookingHistory = () => {
 
               <button
                 className="custom-btn btn-page ms-3"
-                disabled={currentPage >= totalPages} // Nếu đến trang cuối thì làm mờ nút đi
+                disabled={currentPage >= totalPages} // nếu đến trang cuối thì làm mờ nút đi
                 onClick={() => setCurrentPage((prev) => prev + 1)}
               >
                 Trang sau <i className="bi bi-chevron-right"></i>

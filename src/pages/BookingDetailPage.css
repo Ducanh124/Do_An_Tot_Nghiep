@@ -1,4 +1,4 @@
-/* Bố cục chung và tiêu đề */
+/* bố cục chung và tiêu đề */
 .bd-container {
   max-width: 1140px;
   margin: 2rem auto 4rem;
@@ -25,7 +25,7 @@
   }
 }
 
-/* Hệ thống nút ấn */
+/* hệ thống nút ấn */
 .bd-header-actions {
   display: flex;
   justify-content: space-between;
@@ -33,7 +33,7 @@
   margin-bottom: 20px;
 }
 
-/* Dùng chung cho nút "Quay lại" và "Đánh giá" */
+/* dùng chung cho nút quay lại và đánh giá */
 .bd-action-btn {
   background-color: #0b6afa;
   border: 1px solid #6c757d;
@@ -56,7 +56,7 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
 
-/* Nút trong form Modal */
+/* nút trong form modal */
 .bd-btn-submit,
 .bd-btn-cancel {
   padding: 10px 24px;
@@ -87,7 +87,7 @@
   background-color: #f8f9fa;
 }
 
-/* Khung card nội dung */
+/* khung card nội dung */
 .bd-card {
   background: #fff;
   border-radius: 8px;
@@ -114,7 +114,7 @@
   flex: 1;
 }
 
-/* Chi tiết Nhân Viên */
+/* chi tiết nhân viên */
 .bd-staff-content {
   text-align: center;
   display: flex;
@@ -153,7 +153,7 @@
   color: white;
 }
 
-/* Tiến độ và ghi chú */
+/* tiến độ và ghi chú */
 .bd-note-box {
   background: #f8f9fa;
   border: 1px solid #0dcaf0;
@@ -220,7 +220,7 @@
   margin-top: 0.75rem;
 }
 
-/* Các trạng thái trống và hiệu ứng load */
+/* các trạng thái trống và hiệu ứng load */
 .bd-empty-state {
   color: #6c757d;
   padding: 3rem 0;
@@ -265,7 +265,7 @@
   }
 }
 
-/* Modal Đánh giá & Form Sửa Đơn */
+/* modal đánh giá và form sửa đơn */
 .bd-modal-overlay {
   position: fixed;
   inset: 0;
@@ -336,11 +336,11 @@
   cursor: pointer;
 }
 
-.bd-star-rating i {
+.bd-star-rating span {
   transition: transform 0.2s ease;
 }
 
-.bd-star-rating i:hover {
+.bd-star-rating span:hover {
   transform: scale(1.2);
 }
 
@@ -367,9 +367,7 @@
   gap: 12px;
 }
 
-/* =========================================
-   FORM NHẬP LIỆU (ĐÃ XÓA CÁC ĐOẠN LẶP THỪA)
-========================================= */
+/* form nhập liệu */
 .bd-form-group {
   margin-bottom: 16px;
   text-align: left;

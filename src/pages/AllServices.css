@@ -1,6 +1,4 @@
-/* =======================================================
-   RESET & CÀI ĐẶT TRANG CƠ BẢN
-======================================================= */
+/* reset và cài đặt trang cơ bản */
 html {
   scroll-behavior: smooth;
 }
@@ -9,7 +7,6 @@ html {
   min-height: 100vh;
   background-color: #f8f9fa;
   padding: 40px 0 60px 0;
-  font-family: inherit;
 }
 
 .as-container {
@@ -18,9 +15,7 @@ html {
   padding: 0 15px;
 }
 
-/* =======================================================
-   MÀN HÌNH LOADING TỰ CODE
-======================================================= */
+/* màn hình loading tự code */
 .as-loading-screen {
   display: flex;
   flex-direction: column;
@@ -46,9 +41,7 @@ html {
   }
 }
 
-/* =======================================================
-   TIÊU ĐỀ TRANG & NÚT BACK
-======================================================= */
+/* tiêu đề trang và nút back */
 .btn-back {
   display: inline-flex;
   align-items: center;
@@ -57,7 +50,7 @@ html {
   color: #2522da;
   background: #ffffff;
   border-radius: 10px;
-  border: color(srgb rgb(255, 255, 255));
+  border: 1px solid #ffffff;
   padding: 10px 20px;
   cursor: pointer;
   margin-bottom: 30px;
@@ -83,28 +76,23 @@ html {
 
 .as-page-header p {
   color: #555b61;
-  font-size: 1, 2rem;
+  font-size: 1.2rem;
 }
 
-/* =======================================================
-   LAYOUT CHÍNH (CSS GRID CHIA 2 CỘT TỰ ĐỘNG)
-======================================================= */
+/* layout chính */
 .as-main-layout {
   display: grid;
-  grid-template-columns: 1fr; /* Mặc định 1 cột trên điện thoại */
+  grid-template-columns: 1fr;
   gap: 30px;
 }
 
-/* Khi màn hình >= 992px (PC), chia 2 cột: Menu 280px, Nội dung phần còn lại */
 @media (min-width: 992px) {
   .as-main-layout {
     grid-template-columns: 240px 1fr;
   }
 }
 
-/* =======================================================
-   CỘT TRÁI: THẺ MENU & STICKY
-======================================================= */
+/* cột trái: thẻ menu và sticky */
 .sticky-sidebar {
   position: sticky;
   top: 90px;
@@ -154,9 +142,7 @@ html {
   object-fit: contain;
 }
 
-/* =======================================================
-   CỘT PHẢI: BOX DANH MỤC & HEADER DANH MỤC
-======================================================= */
+/* cột phải: box danh mục và header danh mục */
 .category-section-box {
   background: #ffffff;
   border: 1px solid #f9ebeb;
@@ -164,7 +150,7 @@ html {
   padding: 100px;
   margin-bottom: 40px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
-  scroll-margin-top: 100px; /* Cách mép trên khi cuộn trang */
+  scroll-margin-top: 100px;
   transition: box-shadow 0.3s ease;
 }
 
@@ -199,9 +185,7 @@ html {
   font-size: 0.9rem;
 }
 
-/* =======================================================
-   CẢNH BÁO TRỐNG & LƯỚI CARD DỊCH VỤ
-======================================================= */
+/* cảnh báo trống và lưới card dịch vụ */
 .as-empty-alert {
   background-color: #fff3cd;
   color: #856404;
@@ -222,22 +206,19 @@ html {
   font-weight: 500;
 }
 
-/* Grid chứa các thẻ dịch vụ */
 .as-services-grid {
   display: grid;
-  grid-template-columns: 1fr; /* Mobile: 1 thẻ/dòng */
+  grid-template-columns: 1fr;
   gap: 24px;
 }
 
 @media (min-width: 768px) {
   .as-services-grid {
-    grid-template-columns: repeat(2, 1fr); /* Tablet & PC: 2 thẻ/dòng */
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
-/* =======================================================
-   THẺ DỊCH VỤ (CARD) BÊN TRONG
-======================================================= */
+/* thẻ dịch vụ bên trong */
 .service-item-card {
   background: #ffffff;
   border-radius: 16px;
@@ -326,9 +307,7 @@ html {
   color: #ffffff;
 }
 
-/* =======================================================
-   RESPONSIVE CHO ĐIỆN THOẠI (MENU VUỐT NGANG)
-======================================================= */
+/* responsive cho điện thoại */
 @media (max-width: 991px) {
   .sticky-sidebar {
     position: relative;

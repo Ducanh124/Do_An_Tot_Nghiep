@@ -1,12 +1,10 @@
-/* src/pages/BookingPage.css */
-
 .booking-page-container {
   min-height: 100vh;
   background-color: #f8f9fa;
   padding-bottom: 50px;
 }
 
-/* Nút quay lại */
+/* nút quay lại */
 .btn-back-booking {
   display: inline-flex;
   align-items: center;
@@ -23,7 +21,7 @@
   color: #0d6efd;
 }
 
-/* Khung hiển thị thông tin Dịch vụ (Cột trái) */
+/* khung hiển thị thông tin dịch vụ cột trái */
 .service-info-card {
   background: #ffffff;
   border-radius: 16px;
@@ -32,33 +30,22 @@
   height: 100%;
 }
 
-.service-info-title {
-  color: #2b3445;
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-}
-
-.service-info-desc {
-  color: #7d879c;
-  line-height: 1.6;
-}
-
-/* Khung điền Form Đặt lịch (Cột phải) */
+/* khung điền form đặt lịch cột phải */
 .booking-form-card {
   background: #ffffff;
   border-radius: 16px;
   border: 1px solid #edf2f9;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); /* Đổ bóng nhẹ  */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
   padding: 2rem;
 }
 
-/* Hiệu ứng ghim khung form khi cuộn chuột (Sticky) */
+/* hiệu ứng ghim khung form khi cuộn chuột sticky */
 .sticky-booking-form {
   position: sticky;
-  top: 90px; /* Cách Header ở trên 90px */
+  top: 90px;
 }
 
-/* Tùy chỉnh các ô input */
+/* tùy chỉnh các ô input */
 .custom-form-control {
   background-color: #f8f9fa;
   border: 1px solid #e3e9ef;

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import authService from "../../services/authService.js";
 import areaService from "../../services/areaService.js";
 import "./Login.css";
+import Swal from "sweetalert2";
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true); //tạo biến mới đầu vào sẽ luôn là hàm đăng nhập khi click sẽ lưu vào setislogin đêr sang đăng kí
   // --- state cho khu vực
@@ -9,7 +10,7 @@ const AuthPage = () => {
   const [selectedCityId, setSelectedCityId] = useState("");
   const [districts, setDistricts] = useState([]);
   const [selectedDistrictId, setSelectedDistrictId] = useState("");
-  // --- STATE CHO NÚT GHI NHỚ MẬT KHẨU ---
+  // --- state ghi nhớ mật khẩu ---
   const [rememberMe, setRememberMe] = useState(false);
   const savedEmail = localStorage.getItem("rememberedEmail") || "";
   const [formData, setFormData] = useState({
@@ -84,13 +85,24 @@ const AuthPage = () => {
         } else {
           localStorage.removeItem("rememberedEmail");
         }
-        alert("Đăng nhập thành công! Chào bạn " + (userData.name || ""));
+
+        await Swal.fire({
+          title: "Thành công!",
+          text: "Chào mừng " + (userData.name || "") + " trở lại!",
+          icon: "success",
+          showConfirmButton: false,
+          timer: 3000,
+        });
 
         window.location.href = "/";
       } catch (error) {
-        //toast.error("Đăng nhập thất bại");
         console.log(error);
-        alert("Sai email hoặc mật khẩu. Vui lòng thử lại!");
+        await Swal.fire({
+          title: "Đăng nhập thất bại!",
+          text: "Sai email hoặc mật khẩu. Vui lòng thử lại!",
+          icon: "error",
+          confirmButtonColor: "#0d6efd",
+        });
       }
     } else {
       // --- LUỒNG ĐĂNG KÝ ---
@@ -121,9 +133,13 @@ const AuthPage = () => {
         if (rememberMe) {
           localStorage.setItem("rememberedEmail", formData.email);
         }
-
-        alert("Đăng ký thành công! Bạn có thể đăng nhập ngay bây giờ.");
-
+        await Swal.fire({
+          title: "Đăng ký thành công!",
+          text: "Tuyệt vời! Bạn có thể đăng nhập ngay bây giờ.",
+          icon: "success",
+          confirmButtonText: "Đăng nhập ngay",
+          confirmButtonColor: "#0d6efd",
+        });
         // Dọn dẹp form và tự động chuyển sang tab Đăng nhập
         setFormData({ ...formData, password: "", confirmPassword: "" });
         setIsLogin(true);
@@ -132,7 +148,12 @@ const AuthPage = () => {
         const errorMsg =
           error.response?.data?.message ||
           "Đăng ký thất bại. Vui lòng kiểm tra lại thông tin!";
-        alert(errorMsg);
+        await Swal.fire({
+          title: errorMsg,
+          text: "Sai email hoặc mật khẩu. Vui lòng thử lại!",
+          icon: "error",
+          confirmButtonColor: "#0d6efd",
+        });
       }
     }
   };
@@ -257,7 +278,7 @@ const AuthPage = () => {
             </>
           )}
 
-          {/* EMAIL VÀ MẬT KHẨU (Dùng chung) */}
+          {/* Hôp thoại email và mật khẩu*/}
           <div className="mb-3">
             <label className="form-label">Email của bạn *</label>
             <input
@@ -301,7 +322,7 @@ const AuthPage = () => {
             </div>
           )}
 
-          {/* --- NÚT CHECK GHI NHỚ MẬT KHẨU --- */}
+          {/* nút kiểm tra ghi nhớ mật khẩu */}
           <div className="mb-3 form-check d-flex align-items-center">
             <input
               type="checkbox"

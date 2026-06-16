@@ -5,6 +5,7 @@ import staffService from "../services/staffService";
 import progressService from "../services/progressService";
 import reviewService from "../services/reviewService";
 import areaService from "../services/areaService";
+import Swal from "sweetalert2";
 import "./BookingDetailPage.css";
 
 const BookingDetailPage = () => {
@@ -17,12 +18,12 @@ const BookingDetailPage = () => {
   const [staffInfo, setStaffInfo] = useState(null);
   const [progressList, setProgressList] = useState([]);
 
-  // STATE QUẢN LÝ FORM ĐÁNH GIÁ
+  // state quản lý form đánh giá
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [rating, setRating] = useState(5);
   const [reviewComment, setReviewComment] = useState("");
 
-  // STATE QUẢN LÝ FORM SỬA ĐƠN
+  // state quản lý form sửa đơn
   const [showEditModal, setShowEditModal] = useState(false);
   const [areas, setAreas] = useState([]);
   const [districts, setDistricts] = useState([]);
@@ -34,7 +35,7 @@ const BookingDetailPage = () => {
     note: "",
   });
 
-  // Khởi tạo danh sách Tỉnh/Thành
+  // khởi tạo danh sách tỉnh thành
   useEffect(() => {
     const fetchAreas = async () => {
       try {
@@ -78,7 +79,13 @@ const BookingDetailPage = () => {
       }
     } catch (error) {
       console.error("Lỗi lấy chi tiết:", error);
-      alert("Không thể tải thông tin. Đang quay lại trang lịch sử...");
+
+      await Swal.fire({
+        title: "Lỗi!",
+        text: "Không thể tải thông tin. Đang quay lại trang lịch sử...",
+        icon: "error",
+        confirmButtonColor: "#0d6efd",
+      });
       navigate("/history");
     } finally {
       setLoading(false);
@@ -89,7 +96,7 @@ const BookingDetailPage = () => {
     fetchDetails();
   }, [id, navigate]);
 
-  // Bật modal đánh giá nếu URL có action=review
+  // bật modal đánh giá nếu url có action review
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     if (params.get("action") === "review") {
@@ -110,12 +117,24 @@ const BookingDetailPage = () => {
       };
 
       await reviewService.createReview(payload);
-      alert("Đánh giá thành công! Cảm ơn bạn.");
+
+      await Swal.fire({
+        title: "Thành công!",
+        text: "Đánh giá thành công! Cảm ơn bạn.",
+        icon: "success",
+        confirmButtonColor: "#0d6efd",
+      });
       setShowReviewModal(false);
       navigate("/history", { replace: true });
     } catch (error) {
       console.error("Lỗi khi gửi đánh giá:", error);
-      alert("Có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu đầu vào!");
+
+      Swal.fire({
+        title: "Lỗi!",
+        text: "Có lỗi xảy ra, vui lòng kiểm tra lại dữ liệu đầu vào!",
+        icon: "error",
+        confirmButtonColor: "#0d6efd",
+      });
     }
   };
 
@@ -179,9 +198,24 @@ const BookingDetailPage = () => {
   };
 
   const handleSaveEdit = async () => {
-    if (!editData.districtId) return alert("Vui lòng chọn Quận/Huyện!");
-    if (!editData.address || !editData.scheduledTime)
-      return alert("Vui lòng nhập đủ địa chỉ và thời gian!");
+    if (!editData.districtId) {
+      Swal.fire({
+        title: "Thiếu thông tin",
+        text: "Vui lòng chọn Quận/Huyện!",
+        icon: "warning",
+        confirmButtonColor: "#0d6efd",
+      });
+      return;
+    }
+    if (!editData.address || !editData.scheduledTime) {
+      Swal.fire({
+        title: "Thiếu thông tin",
+        text: "Vui lòng nhập đủ địa chỉ và thời gian!",
+        icon: "warning",
+        confirmButtonColor: "#0d6efd",
+      });
+      return;
+    }
 
     try {
       const serviceIds =
@@ -197,30 +231,59 @@ const BookingDetailPage = () => {
       };
 
       await bookingService.updateBooking(id, payload);
-      alert("Cập nhật thông tin đơn hàng thành công!");
+
+      await Swal.fire({
+        title: "Thành công!",
+        text: "Cập nhật thông tin đơn hàng thành công!",
+        icon: "success",
+        confirmButtonColor: "#0d6efd",
+      });
       setShowEditModal(false);
       fetchDetails();
     } catch (error) {
       console.error("Lỗi cập nhật:", error);
-      alert("Lỗi khi cập nhật đơn hàng. Vui lòng thử lại!");
+
+      Swal.fire({
+        title: "Lỗi!",
+        text: "Lỗi khi cập nhật đơn hàng. Vui lòng thử lại!",
+        icon: "error",
+        confirmButtonColor: "#0d6efd",
+      });
     }
   };
 
   const handleCancelBooking = async () => {
-    if (
-      window.confirm(
-        "Bạn có chắc chắn muốn huỷ đơn hàng này không? Hành động này không thể hoàn tác.",
-      )
-    ) {
+    const result = await Swal.fire({
+      title: "Xác nhận huỷ đơn?",
+      text: "Bạn có chắc chắn muốn huỷ đơn hàng này không? Hành động này không thể hoàn tác.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#dc3545",
+      cancelButtonColor: "#6c757d",
+      confirmButtonText: "Vâng, huỷ đơn!",
+      cancelButtonText: "Không, quay lại",
+    });
+
+    if (result.isConfirmed) {
       try {
         await bookingService.cancelBooking(id);
-        alert("Đã huỷ đơn hàng thành công!");
+
+        await Swal.fire({
+          title: "Đã huỷ!",
+          text: "Đã huỷ đơn hàng thành công!",
+          icon: "success",
+          confirmButtonColor: "#0d6efd",
+        });
         navigate("/history", { replace: true });
       } catch (error) {
         console.error("Lỗi huỷ đơn:", error);
-        alert(
-          "Lỗi khi huỷ đơn. Có thể đơn hàng đã được tiếp nhận và không thể huỷ!",
-        );
+
+        Swal.fire({
+          title: "Lỗi!",
+          text: "Lỗi khi huỷ đơn. Có thể đơn hàng đã được tiếp nhận và không thể huỷ!",
+          icon: "error",
+          confirmButtonColor: "#0d6efd",
+        });
       }
     }
   };
@@ -242,7 +305,7 @@ const BookingDetailPage = () => {
       </h3>
 
       <div className="bd-layout-grid">
-        {/* CỘT TRÁI: NHÂN VIÊN */}
+        {/* cột trái nhân viên */}
         <div className="bd-card">
           <div className="bd-card-header">
             <i className="bi bi-person-badge"></i> Nhân viên phụ trách
@@ -278,7 +341,7 @@ const BookingDetailPage = () => {
           </div>
         </div>
 
-        {/* CỘT PHẢI: TIẾN ĐỘ */}
+        {/* cột phải tiến độ */}
         <div className="bd-card">
           <div className="bd-card-header">
             <i className="bi bi-card-checklist"></i> Tiến độ công việc
@@ -359,7 +422,7 @@ const BookingDetailPage = () => {
         </div>
       </div>
 
-      {/* HEADER NÚT QUAY LẠI, ĐÁNH GIÁ VÀ CÁC THAO TÁC SỬA/HUỶ */}
+      {/* header nút quay lại đánh giá và các thao tác sửa huỷ */}
       <div className="bd-header-actions">
         <button className="bd-action-btn" onClick={() => navigate("/history")}>
           <i className="bi bi-arrow-left"></i> Quay lại Lịch sử
@@ -403,7 +466,7 @@ const BookingDetailPage = () => {
         </div>
       </div>
 
-      {/* MODAL SỬA ĐƠN HÀNG */}
+      {/* modal sửa đơn hàng */}
       {showEditModal && (
         <div className="bd-modal-overlay">
           <div className="bd-modal-content">
@@ -508,7 +571,7 @@ const BookingDetailPage = () => {
         </div>
       )}
 
-      {/* MODAL ĐÁNH GIÁ */}
+      {/* modal đánh giá */}
       {showReviewModal && (
         <div className="bd-modal-overlay">
           <div className="bd-modal-content">

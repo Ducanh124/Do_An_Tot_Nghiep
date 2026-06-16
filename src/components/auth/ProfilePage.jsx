@@ -2,18 +2,17 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import authService from "../../services/authService";
 import areaService from "../../services/areaService";
+import Swal from "sweetalert2";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
   const currentUser = authService.getCurrentUser();
   const [loading, setLoading] = useState(true);
-
   // state adữ liệu khu vực
   const [areas, setAreas] = useState([]);
   const [districts, setDistricts] = useState([]);
   const [selectedCityId, setSelectedCityId] = useState("");
   const [selectedDistrictId, setSelectedDistrictId] = useState("");
-
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -23,7 +22,6 @@ const ProfilePage = () => {
     areaId: "",
   });
   const [avatarFile, setAvatarFile] = useState(null);
-
   useEffect(() => {
     if (!currentUser?.id) {
       navigate("/login");
@@ -57,7 +55,7 @@ const ProfilePage = () => {
               );
               if (hasDistrict) {
                 setSelectedCityId(city.id);
-                setDistricts(city.children); // Đổ quận ra luôn
+                setDistricts(city.children); // ra quận khi chọn thành phố
                 break;
               }
             }
@@ -65,7 +63,13 @@ const ProfilePage = () => {
         }
       } catch (error) {
         console.error("Lỗi khi tải dữ liệu trang profile:", error);
-        alert("Không thể tải thông tin. Vui lòng thử lại!");
+
+        await Swal.fire({
+          title: "Lỗi!",
+          text: "Không thể tải thông tin. Vui lòng thử lại!",
+          icon: "error",
+          confirmButtonColor: "#0d6efd",
+        });
       } finally {
         setLoading(false);
       }
@@ -95,7 +99,6 @@ const ProfilePage = () => {
       setDistricts([]);
       return;
     }
-
     try {
       const cityData = await areaService.getById(cityId);
       if (cityData && cityData.children) {
@@ -108,7 +111,6 @@ const ProfilePage = () => {
       setDistricts([]);
     }
   };
-
   // chọn quận
   const handleDistrictChange = (e) => {
     const districtId = Number(e.target.value);
@@ -116,13 +118,11 @@ const ProfilePage = () => {
     // Gắn cái ID quận này vào formData để lát gửi lên API
     setFormData({ ...formData, areaId: districtId });
   };
-
   // nút thay đổi
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const submitData = { ...formData };
-
       // Nếu có chọn ảnh mới thì thêm vào
       if (avatarFile) {
         submitData.avatar = avatarFile;
@@ -131,17 +131,27 @@ const ProfilePage = () => {
       // Cập nhật lại localStorage để Header nhận diện tên mới
       const updatedUser = { ...currentUser, name: formData.name };
       localStorage.setItem("user", JSON.stringify(updatedUser));
-
-      alert("Cập nhật thông tin thành công!");
+      // SỬA ALERT THÀNH SWAL (Thêm await để chạy mượt mà trước khi reload)
+      await Swal.fire({
+        title: "Thành công!",
+        text: "Cập nhật thông tin thành công!",
+        icon: "success",
+        confirmButtonText: "Đóng",
+        confirmButtonColor: "#0d6efd",
+      });
       window.location.reload();
     } catch (error) {
       console.error(error);
-      alert("Cập nhật thất bại. Vui lòng kiểm tra lại!");
+      // SỬA ALERT THÀNH SWAL
+      Swal.fire({
+        title: "Lỗi!",
+        text: "Cập nhật thất bại. Vui lòng kiểm tra lại!",
+        icon: "error",
+        confirmButtonColor: "#0d6efd",
+      });
     }
   };
-
   if (loading) return <div className="text-center mt-5">Đang tải hồ sơ...</div>;
-
   return (
     <div className="container mt-5 mb-5">
       <div className="card shadow mx-auto" style={{ maxWidth: "650px" }}>
@@ -258,7 +268,6 @@ const ProfilePage = () => {
                 onChange={handleChange}
               />
             </div>
-
             {/* Các nút hành động */}
             <div className="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
               <button

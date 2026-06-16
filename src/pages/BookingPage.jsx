@@ -6,25 +6,26 @@ import authService from "../services/authService";
 import areaService from "../services/areaService";
 import discountService from "../services/discountService";
 import paymentService from "../services/paymentService";
-import categoryService from "../services/categoryService"; // Thêm dòng này để gọi Danh mục
+import categoryService from "../services/categoryService"; // thêm dòng này để gọi danh mục
+import Swal from "sweetalert2"; // import sweetalert2
 import "./BookingPage.css";
 
 const BookingPage = () => {
   const { serviceId } = useParams();
   const navigate = useNavigate();
 
-  // --- STATE DỊCH VỤ (ĐÃ NÂNG CẤP THÀNH MẢNG) ---
+  // state dịch vụ
   const [selectedServices, setSelectedServices] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // --- STATE MODAL THÊM DỊCH VỤ ---
+  // state model dịch vụ
   const [showAddModal, setShowAddModal] = useState(false);
   const [categories, setCategories] = useState([]);
   const [selectedCategoryIdModal, setSelectedCategoryIdModal] = useState("");
   const [servicesInModal, setServicesInModal] = useState([]);
-  const [tempSelected, setTempSelected] = useState([]); // Giỏ hàng tạm trong lúc mở Modal
+  const [tempSelected, setTempSelected] = useState([]); // giỏ hàng tạm trong lúc mở modal
 
-  // --- STATE ĐỊA ĐIỂM & FORM CŨ ---
+  // state địa điểm và form cũ
   const [areas, setAreas] = useState([]);
   const [selectedCityId, setSelectedCityId] = useState("");
   const [districts, setDistricts] = useState([]);
@@ -34,7 +35,7 @@ const BookingPage = () => {
   const [time, setTime] = useState("");
   const [note, setNote] = useState("");
 
-  // --- STATE KHUYẾN MÃI & THANH TOÁN ---
+  // state khuyến mãi và thanh toán
   const [availableDiscounts, setAvailableDiscounts] = useState([]);
   const [appliedDiscount, setAppliedDiscount] = useState(null);
   const [discountCode, setDiscountCode] = useState("");
@@ -42,14 +43,13 @@ const BookingPage = () => {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
 
   const currentUser = authService.getCurrentUser();
-  // 1. TẢI DỮ LIỆU BAN ĐẦU & AUTO-FILL ĐỊA CHỈ (BẢN TÁCH RỜI CHỐNG CHẾT CHÙM)
+
+  // tải dữ liệu và thêm luôn dữ liệu mặc định là dữ liệu của khách hàng đăng kí
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-
-        // GỌI 4 API SONG SONG ĐỂ TĂNG TỐC ĐỘ LOAD TRANG
-        // Dùng .catch() để nếu 1 API chết, các API khác vẫn sống bình thường
+        // dùng .catch() để nếu 1 api không hoạt động thì các api khác vẫn có thể hoạt động
         const [serviceDataReq, areaDataReq, discountDataReq, userProfileRes] =
           await Promise.all([
             serviceService.getById(serviceId).catch(() => null),
@@ -58,33 +58,30 @@ const BookingPage = () => {
             authService.getMe().catch(() => null),
           ]);
 
-        // 1. XỬ LÝ DỊCH VỤ
+        // xử lý dịch vụ
         if (serviceDataReq) setSelectedServices([serviceDataReq]);
 
-        // 2. XỬ LÝ THÀNH PHỐ
+        // xử lý thành phố
         const validAreas = areaDataReq?.data || areaDataReq || [];
         setAreas(validAreas);
 
-        // 3. XỬ LÝ KHUYẾN MÃI
+        // xử lý khuyến mãi
         const validDiscounts = Array.isArray(discountDataReq)
           ? discountDataReq
           : discountDataReq?.data || [];
         setAvailableDiscounts(validDiscounts);
 
-        // =========================================================
-        // 4. AUTO-FILL ĐỊA CHỈ (BÓC TÁCH CHUẨN)
-        // =========================================================
+        // tự động điền địa chỉ của khách hàng
         if (userProfileRes) {
-          // Bóc tách đa tầng đảm bảo không bao giờ bị undefined
+          // bóc tách đa tầng đảm bảo không bao giờ bị lỗi
           const userData =
             userProfileRes?.data?.data ||
             userProfileRes?.data ||
             userProfileRes;
-
           const savedAreaId = userData?.areaId ? Number(userData.areaId) : null;
           let savedAddress = userData?.address || "";
 
-          // Điền số nhà ngay và luôn
+          // điền số nhà
           if (savedAddress.includes("undefined")) {
             savedAddress = savedAddress.replace(/undefined,?/g, "").trim();
           }
@@ -92,50 +89,44 @@ const BookingPage = () => {
             setAddress(savedAddress);
           }
 
-          // Lội ngược dòng siêu tốc
+          // khi có được dữ liệu id của địa chỉ của khách hàng thì phải kiểm tra lại để trả về thành phố và quận tương ứng
           if (savedAreaId) {
             try {
               const rawDistrict = await areaService.getById(savedAreaId);
               const districtInfo = rawDistrict?.data || rawDistrict;
-
               const foundCityId =
                 districtInfo?.parentId ||
                 districtInfo?.cityId ||
                 districtInfo?.parent_id;
-
               if (foundCityId) {
                 setSelectedCityId(Number(foundCityId));
-
                 const rawCity = await areaService.getById(foundCityId);
                 const cityInfo = rawCity?.data || rawCity;
-
                 if (cityInfo && cityInfo.children) {
-                  setDistricts(cityInfo.children); // Đổ quận vào form
-
+                  setDistricts(cityInfo.children); // đổ quận vào form
                   setTimeout(() => {
                     setSelectedDistrictId(Number(savedAreaId));
-                  }, 50); // Độ trễ siêu nhỏ 50ms chỉ để React kịp render <option>
+                  }, 50); // độ trễ siêu nhỏ 50ms chỉ để react kịp render option
                 }
               }
             } catch (fillError) {
               console.error(
-                "Lỗi ngầm khi lội ngược dòng Quận/Huyện:",
+                "lỗi ngầm khi lội ngược dòng quận huyện:",
                 fillError,
               );
             }
           }
         }
       } catch (error) {
-        console.error("Lỗi tổng quát:", error);
+        console.error("lỗi tổng quát:", error);
       } finally {
         setLoading(false);
       }
     };
-
     fetchData();
   }, [serviceId]);
 
-  // 2. LOGIC ĐỊA CHỈ (Giữ nguyên)
+  // logic địa chỉ
   const handleCityChange = async (e) => {
     const cityId = Number(e.target.value);
     setSelectedCityId(cityId);
@@ -152,27 +143,33 @@ const BookingPage = () => {
         setDistricts([]);
       }
     } catch (error) {
-      console.error("Lỗi tải Quận/Huyện:", error);
+      console.error("lỗi tải quận huyện:", error);
       setDistricts([]);
     }
   };
 
-  // 3. LOGIC XỬ LÝ DỊCH VỤ & MODAL
+  // logic xử lý dịch vụ và modal
   const handleRemoveService = (idToRemove) => {
     if (selectedServices.length <= 1) {
-      return alert("Đơn hàng phải có ít nhất 1 dịch vụ!");
+      Swal.fire({
+        title: "Thông báo",
+        text: "Đơn hàng phải có ít nhất 1 dịch vụ!",
+        icon: "warning",
+        confirmButtonColor: "#0d6efd",
+      });
+      return;
     }
     setSelectedServices((prev) => prev.filter((s) => s.id !== idToRemove));
   };
 
   const handleOpenAddModal = async () => {
     setShowAddModal(true);
-    setTempSelected([...selectedServices]); // Nạp đồ đã chọn vào giỏ tạm
+    setTempSelected([...selectedServices]); // nạp đồ đã chọn vào giỏ tạm
     try {
       const cats = await categoryService.getCategories();
       setCategories(cats);
     } catch (error) {
-      console.error("Lỗi tải danh mục:", error);
+      console.error("lỗi tải danh mục:", error);
     }
   };
 
@@ -184,11 +181,10 @@ const BookingPage = () => {
       return;
     }
     try {
-      // Giả sử serviceService của bạn có hàm getByCategoryId
       const svcs = await serviceService.getByCategoryId(catId);
       setServicesInModal(svcs);
     } catch (error) {
-      console.error("Lỗi lấy dịch vụ:", error);
+      console.error("lỗi lấy dịch vụ:", error);
     }
   };
 
@@ -203,13 +199,19 @@ const BookingPage = () => {
 
   const handleConfirmAddServices = () => {
     if (tempSelected.length === 0) {
-      return alert("Bạn phải chọn ít nhất 1 dịch vụ!");
+      Swal.fire({
+        title: "Thông báo",
+        text: "Bạn phải chọn ít nhất 1 dịch vụ!",
+        icon: "warning",
+        confirmButtonColor: "#0d6efd",
+      });
+      return;
     }
     setSelectedServices(tempSelected);
     setShowAddModal(false);
   };
 
-  // 4. LOGIC TÍNH TIỀN SÀNG LỌC MÃ GIẢM GIÁ (Tối ưu mới)
+  // logic tính tiền sàng lọc mã giảm giá
   const originalPrice = selectedServices.reduce(
     (sum, item) => sum + Number(item?.price || 0),
     0,
@@ -217,7 +219,7 @@ const BookingPage = () => {
   let discountAmount = 0;
   let finalPrice = originalPrice;
 
-  // Tự động hủy mã nếu xóa dịch vụ làm tổng tiền rớt dưới mức tối thiểu
+  // tự động hủy mã nếu xóa dịch vụ làm tổng tiền rớt dưới mức tối thiểu
   useEffect(() => {
     if (
       appliedDiscount &&
@@ -225,9 +227,12 @@ const BookingPage = () => {
     ) {
       setAppliedDiscount(null);
       setDiscountCode("");
-      alert(
-        "Đã hủy mã giảm giá vì tổng đơn hàng không đủ điều kiện tối thiểu.",
-      );
+      Swal.fire({
+        title: "Thông báo",
+        text: "Đã hủy mã giảm giá vì tổng đơn hàng không đủ điều kiện tối thiểu.",
+        icon: "info",
+        confirmButtonColor: "#0d6efd",
+      });
     }
   }, [originalPrice, appliedDiscount]);
 
@@ -259,29 +264,65 @@ const BookingPage = () => {
     );
     if (!matchedDiscount) {
       setAppliedDiscount(null);
-      return alert("Mã giảm giá không tồn tại!");
+      Swal.fire({
+        title: "Lỗi!",
+        text: "Mã giảm giá không tồn tại!",
+        icon: "error",
+        confirmButtonColor: "#0d6efd",
+      });
+      return;
     }
     const now = new Date();
     if (!matchedDiscount.isActive || new Date(matchedDiscount.endDate) < now) {
       setAppliedDiscount(null);
-      return alert("Mã giảm giá đã hết hạn hoặc tạm dừng!");
+      Swal.fire({
+        title: "Lỗi!",
+        text: "Mã giảm giá đã hết hạn hoặc tạm dừng!",
+        icon: "error",
+        confirmButtonColor: "#0d6efd",
+      });
+      return;
     }
     if (originalPrice < Number(matchedDiscount.minBookingAmount)) {
       setAppliedDiscount(null);
-      return alert(
-        `Mã này chỉ áp dụng cho đơn từ ${Number(matchedDiscount.minBookingAmount).toLocaleString("vi-VN")}₫`,
-      );
+      Swal.fire({
+        title: "Cảnh báo",
+        text: `Mã này chỉ áp dụng cho đơn từ ${Number(matchedDiscount.minBookingAmount).toLocaleString("vi-VN")}₫`,
+        icon: "warning",
+        confirmButtonColor: "#0d6efd",
+      });
+      return;
     }
     setAppliedDiscount(matchedDiscount);
-    alert(`Áp dụng mã ${matchedDiscount.code} thành công!`);
+    Swal.fire({
+      title: "Thành công!",
+      text: `Áp dụng mã ${matchedDiscount.code} thành công!`,
+      icon: "success",
+      confirmButtonColor: "#0d6efd",
+    });
   };
 
-  // 5. CHỐT ĐƠN & GỬI API
+  // chốt đơn và gửi api
   const handleBookingSubmit = (e) => {
     e.preventDefault();
-    if (!selectedDistrictId) return alert("Vui lòng chọn Quận/Huyện!");
-    if (!address || !date || !time)
-      return alert("Vui lòng điền đủ Địa chỉ, Ngày và Giờ!");
+    if (!selectedDistrictId) {
+      Swal.fire({
+        title: "Thiếu thông tin",
+        text: "Vui lòng chọn Quận/Huyện!",
+        icon: "warning",
+        confirmButtonColor: "#0d6efd",
+      });
+      return;
+    }
+    if (!address || !date || !time) {
+      Swal.fire({
+        title: "Thiếu thông tin",
+        text: "Vui lòng điền đủ Địa chỉ, Ngày và Giờ!",
+        icon: "warning",
+        confirmButtonColor: "#0d6efd",
+      });
+      return;
+    }
     setShowPaymentModal(true);
   };
 
@@ -295,7 +336,7 @@ const BookingPage = () => {
       discountCode: appliedDiscount ? appliedDiscount.code : "",
       status: "pending",
       note: note,
-      serviceId: selectedServices.map((s) => Number(s.id)), // Lấy tất cả ID đang chọn
+      serviceId: selectedServices.map((s) => Number(s.id)), // lấy tất cả id đang chọn
     };
 
     try {
@@ -303,16 +344,24 @@ const BookingPage = () => {
       const newBookingId = bookingRes?.id || bookingRes?.data?.id;
 
       if (!newBookingId) {
-        alert(
-          "Đã tạo đơn nhưng không lấy được mã đơn hàng. Vui lòng kiểm tra lịch sử!",
-        );
+        await Swal.fire({
+          title: "Thông báo",
+          text: "Đã tạo đơn nhưng không lấy được mã đơn hàng. Vui lòng kiểm tra lịch sử!",
+          icon: "warning",
+          confirmButtonColor: "#0d6efd",
+        });
         setShowPaymentModal(false);
         navigate("/history");
         return;
       }
 
       if (paymentMethod === "CASH") {
-        alert("Đặt lịch thành công! Bạn đã chọn thanh toán Tiền mặt.");
+        await Swal.fire({
+          title: "Thành công!",
+          text: "Đặt lịch thành công! Bạn đã chọn thanh toán Tiền mặt.",
+          icon: "success",
+          confirmButtonColor: "#0d6efd",
+        });
         navigate("/history");
       } else if (paymentMethod === "VNPAY") {
         const paymentPayload = {
@@ -327,13 +376,23 @@ const BookingPage = () => {
         if (vnpayUrl) {
           window.location.href = vnpayUrl;
         } else {
-          alert("Lỗi khi tạo link VNPay!");
+          await Swal.fire({
+            title: "Lỗi!",
+            text: "Lỗi khi tạo link VNPay!",
+            icon: "error",
+            confirmButtonColor: "#0d6efd",
+          });
           navigate("/history");
         }
       }
     } catch (error) {
-      console.error("Lỗi khi đặt lịch:", error);
-      alert("Có lỗi xảy ra, vui lòng thử lại sau!");
+      console.error("lỗi khi đặt lịch:", error);
+      Swal.fire({
+        title: "Lỗi!",
+        text: "Có lỗi xảy ra, vui lòng thử lại sau!",
+        icon: "error",
+        confirmButtonColor: "#0d6efd",
+      });
     }
   };
 
@@ -354,7 +413,7 @@ const BookingPage = () => {
         </button>
 
         <div className="row g-4">
-          {/* CỘT TRÁI: DANH SÁCH DỊCH VỤ ĐÃ CHỌN */}
+          {/* cột trái danh sách dịch vụ đã chọn */}
           <div className="col-md-5">
             <div className="service-info-card d-flex flex-column h-100 p-4 bg-white rounded shadow-sm">
               <h5 className="text-muted mb-3 border-bottom pb-2">
@@ -401,7 +460,7 @@ const BookingPage = () => {
               </button>
 
               <div className="mt-auto pt-4 border-top">
-                {/* HIỂN THỊ MÃ GIẢM GIÁ */}
+                {/* hiển thị mã giảm giá */}
                 {appliedDiscount && (
                   <div className="discount-summary mb-3 p-2 bg-light rounded border border-success border-opacity-25">
                     <div className="d-flex justify-content-between align-items-center mb-1">
@@ -422,7 +481,7 @@ const BookingPage = () => {
                   </div>
                 )}
 
-                {/* TỔNG TIỀN */}
+                {/* tổng tiền */}
                 <div className="d-flex justify-content-between align-items-center">
                   <span className="fw-bold fs-5 text-secondary">
                     Tổng thanh toán:
@@ -435,7 +494,7 @@ const BookingPage = () => {
             </div>
           </div>
 
-          {/* CỘT PHẢI: FORM ĐẶT LỊCH (GIỮ NGUYÊN HOÀN TOÀN) */}
+          {/* cột phải form đặt lịch */}
           <div className="col-md-7">
             <div className="booking-form-card sticky-booking-form">
               <h4 className="fw-bold mb-4 border-bottom pb-3">
@@ -581,7 +640,7 @@ const BookingPage = () => {
         </div>
       </div>
 
-      {/* POPUP CHỌN PHƯƠNG THỨC THANH TOÁN (GIỮ NGUYÊN) */}
+      {/* popup chọn phương thức thanh toán */}
       {showPaymentModal && (
         <div
           className="modal show d-block"
@@ -673,7 +732,7 @@ const BookingPage = () => {
         </div>
       )}
 
-      {/* POPUP CHỌN THÊM DỊCH VỤ (THÊM MỚI) */}
+      {/* popup chọn thêm dịch vụ */}
       {showAddModal && (
         <div
           className="modal show d-block"
