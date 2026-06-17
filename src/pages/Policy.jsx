@@ -1,4 +1,4 @@
-// src/pages/CommitmentPolicy.jsx
+
 import React from "react";
 import "./Policy.css";
 

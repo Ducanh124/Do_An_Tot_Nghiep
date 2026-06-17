@@ -14,10 +14,10 @@ const categoryIcons = {
 const defaultIcon = "/icons/default.png";
 
 const AllServices = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate(); //xét về cá lệnh chuyển trang theo map của bài để đi đến các trang khác
   const [dataList, setDataList] = useState([]);
   const [loading, setLoading] = useState(true);
-  const location = useLocation(); // lấy thông tin ủl hiện tại
+  const location = useLocation(); // lấy thông tin url hiện tại lấy ở đuôi để có thể chuyển vị trrí đến từng danh mục dịch vụ khi khách hàng ấn vào
 
   useEffect(() => {
     const fetchAllData = async () => {
@@ -33,7 +33,10 @@ const AllServices = () => {
 
         const combinedData = sortedCategories.map((cat, index) => ({
           ...cat,
-          services: servicesResults[index] || [],
+          services:
+            servicesResults[index] ||
+            [] /* gọi sẵn ra 1 mảng có chứa danh sách các yêu cầu gọi API theo thứ tự sẵn có để khi gộp
+           2 mảng vào với nhau thi sẽ theo thứ tự của các danh mục khi iđã sắp xếp luôn*/,
         }));
 
         setDataList(combinedData);
@@ -86,7 +89,7 @@ const AllServices = () => {
 
         {/* Bố cục chính: Trái (Menu) - Phải (Danh sách) */}
         <div className="as-main-layout">
-          {/* CỘT TRÁI: MENU ĐIỀU HƯỚNG */}
+          {/* Cột trái menu điều hướng DANH SÁCH CÁC DANH MỤC */}
           <aside className="as-sidebar-wrapper">
             <div className="sticky-sidebar">
               <h3>Danh mục dịch vụ</h3>

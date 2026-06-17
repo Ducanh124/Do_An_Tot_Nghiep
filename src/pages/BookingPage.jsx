@@ -6,8 +6,8 @@ import authService from "../services/authService";
 import areaService from "../services/areaService";
 import discountService from "../services/discountService";
 import paymentService from "../services/paymentService";
-import categoryService from "../services/categoryService"; // thêm dòng này để gọi danh mục
-import Swal from "sweetalert2"; // import sweetalert2
+import categoryService from "../services/categoryService";
+import Swal from "sweetalert2";
 import "./BookingPage.css";
 
 const BookingPage = () => {
@@ -36,8 +36,8 @@ const BookingPage = () => {
   const [note, setNote] = useState("");
 
   // state khuyến mãi và thanh toán
-  const [availableDiscounts, setAvailableDiscounts] = useState([]);
-  const [appliedDiscount, setAppliedDiscount] = useState(null);
+  const [availableDiscounts, setAvailableDiscounts] = useState([]); //Các mã khuyến mãi khi gọi API
+  const [appliedDiscount, setAppliedDiscount] = useState(null); //Các mã khuyến mãi đang được áp dụng thành công
   const [discountCode, setDiscountCode] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("CASH");
   const [showPaymentModal, setShowPaymentModal] = useState(false);
@@ -86,7 +86,9 @@ const BookingPage = () => {
             savedAddress = savedAddress.replace(/undefined,?/g, "").trim();
           }
           if (savedAddress && savedAddress !== "null") {
-            setAddress(savedAddress);
+            // cắt chuỗi theo dấu phẩy và chỉ lấy phần đầu tiên để tránh lặp tên quận huyện
+            const shortAddress = savedAddress.split(",")[0].trim();
+            setAddress(shortAddress);
           }
 
           // khi có được dữ liệu id của địa chỉ của khách hàng thì phải kiểm tra lại để trả về thành phố và quận tương ứng
@@ -94,10 +96,7 @@ const BookingPage = () => {
             try {
               const rawDistrict = await areaService.getById(savedAreaId);
               const districtInfo = rawDistrict?.data || rawDistrict;
-              const foundCityId =
-                districtInfo?.parentId ||
-                districtInfo?.cityId ||
-                districtInfo?.parent_id;
+              const foundCityId = districtInfo?.parentId;
               if (foundCityId) {
                 setSelectedCityId(Number(foundCityId));
                 const rawCity = await areaService.getById(foundCityId);
@@ -163,6 +162,7 @@ const BookingPage = () => {
   };
 
   const handleOpenAddModal = async () => {
+    //Copy bỏ từ giỏ chính vào giỏ nháp
     setShowAddModal(true);
     setTempSelected([...selectedServices]); // nạp đồ đã chọn vào giỏ tạm
     try {
@@ -172,7 +172,7 @@ const BookingPage = () => {
       console.error("lỗi tải danh mục:", error);
     }
   };
-
+  //Goij API lấy dịch vụ theo danh mục
   const handleCategoryChangeModal = async (e) => {
     const catId = e.target.value;
     setSelectedCategoryIdModal(catId);
@@ -181,13 +181,13 @@ const BookingPage = () => {
       return;
     }
     try {
-      const svcs = await serviceService.getByCategoryId(catId);
-      setServicesInModal(svcs);
+      const service = await serviceService.getByCategoryId(catId);
+      setServicesInModal(service);
     } catch (error) {
       console.error("lỗi lấy dịch vụ:", error);
     }
   };
-
+  //Check xem đây có phải dịch vụ đã dược chọn hay chưa(Như kiểu tích để chọn và tích để bỏ chọn cùng 1 dịch vụ)
   const handleToggleServiceModal = (svc) => {
     const isExist = tempSelected.find((item) => item.id === svc.id);
     if (isExist) {
@@ -196,7 +196,7 @@ const BookingPage = () => {
       setTempSelected([...tempSelected, svc]);
     }
   };
-
+  //Lấy dịch vụ cho vào giỏ chính
   const handleConfirmAddServices = () => {
     if (tempSelected.length === 0) {
       Swal.fire({
@@ -252,7 +252,7 @@ const BookingPage = () => {
     finalPrice = originalPrice - discountAmount;
     if (finalPrice < 0) finalPrice = 0;
   }
-
+  //Kiểm tra và ấp dụng mã giảm giá của lhách hàng
   const handleApplyDiscount = () => {
     const inputCode = discountCode.trim().toUpperCase();
     if (inputCode === "") {
@@ -523,7 +523,6 @@ const BookingPage = () => {
                       className="form-select custom-form-control"
                       value={selectedCityId}
                       onChange={handleCityChange}
-                      required
                     >
                       <option value="">-- Chọn Thành phố --</option>
                       {areas.map((city) => (
@@ -540,7 +539,6 @@ const BookingPage = () => {
                       className="form-select custom-form-control"
                       value={selectedDistrictId}
                       onChange={(e) => setSelectedDistrictId(e.target.value)}
-                      required
                       disabled={!selectedCityId}
                     >
                       <option value="">-- Chọn Quận/Huyện --</option>
@@ -563,7 +561,6 @@ const BookingPage = () => {
                     placeholder="Ví dụ: Số 10, Ngõ 20, Trần Phú"
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
-                    required
                   />
                 </div>
 
@@ -575,7 +572,6 @@ const BookingPage = () => {
                       className="form-control custom-form-control"
                       value={date}
                       onChange={(e) => setDate(e.target.value)}
-                      required
                     />
                   </div>
                   <div className="col-6">
@@ -585,7 +581,6 @@ const BookingPage = () => {
                       className="form-control custom-form-control"
                       value={time}
                       onChange={(e) => setTime(e.target.value)}
-                      required
                     />
                   </div>
                 </div>

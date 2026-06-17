@@ -18,6 +18,9 @@ const BookingDetailPage = () => {
   const [staffInfo, setStaffInfo] = useState(null);
   const [progressList, setProgressList] = useState([]);
 
+  // state quản lý phóng to ảnh
+  const [previewImage, setPreviewImage] = useState(null);
+
   // state quản lý form đánh giá
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [rating, setRating] = useState(5);
@@ -96,7 +99,10 @@ const BookingDetailPage = () => {
     fetchDetails();
   }, [id, navigate]);
 
-  // bật modal đánh giá nếu url có action review
+  /* bật modal đánh giá nếu url có action review(Ở trang bookingHistory
+  khi ta ấn vào nút ĐÁNH GIÁ nó sẽ truyền thêm đuôi?action=review nên nó sẽ lập tức 
+  mở popup ở trrang này luôn khi được click vào)
+  */
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     if (params.get("action") === "review") {
@@ -170,7 +176,7 @@ const BookingDetailPage = () => {
 
       if (!foundCityId && savedAreaId) {
         const districtInfo = await areaService.getById(savedAreaId);
-        foundCityId = districtInfo?.parentId || districtInfo?.cityId || "";
+        foundCityId = districtInfo?.parentId || "";
       }
 
       if (foundCityId) {
@@ -183,11 +189,17 @@ const BookingDetailPage = () => {
       console.error("Lỗi khi tự động tải địa điểm cũ:", error);
     }
 
+    // xử lý cắt chuỗi địa chỉ chỉ lấy phần đầu tiên trước dấu phẩy
+    let shortAddress = details?.address || "";
+    if (shortAddress.includes(",")) {
+      shortAddress = shortAddress.split(",")[0].trim();
+    }
+
     setDistricts(foundDistricts);
     setEditData({
       cityId: foundCityId,
       districtId: savedAreaId,
-      address: details?.address || "",
+      address: shortAddress, // truyền địa chỉ đã được cắt ngắn vào đây
       scheduledTime: details?.scheduledTime
         ? new Date(details.scheduledTime).toISOString().slice(0, 16)
         : "",
@@ -400,6 +412,7 @@ const BookingDetailPage = () => {
                           <i className="bi bi-clock"></i>
                           {new Date(report.recordedAt).toLocaleString("vi-VN")}
                         </span>
+                        {/* khu vực hình ảnh báo cáo có thể click để phóng to */}
                         {report.evidenceImageUrl && (
                           <div
                             className="bd-step-evidence"
@@ -410,7 +423,6 @@ const BookingDetailPage = () => {
                               marginTop: "10px",
                             }}
                           >
-                            {/* Kiểm tra xem nó có phải là mảng và có dữ liệu không trước khi map */}
                             {Array.isArray(report.evidenceImageUrl) &&
                             report.evidenceImageUrl.length > 0
                               ? report.evidenceImageUrl.map((url, imgIndex) => (
@@ -418,24 +430,29 @@ const BookingDetailPage = () => {
                                     key={imgIndex}
                                     src={url}
                                     alt={`Bằng chứng công việc ${imgIndex + 1}`}
+                                    onClick={() => setPreviewImage(url)}
                                     style={{
                                       width: "100px",
                                       height: "100px",
                                       objectFit: "cover",
                                       borderRadius: "6px",
+                                      cursor: "pointer",
                                     }}
                                   />
                                 ))
-                              : /* Phòng trường hợp backend chỉ trả về 1 chuỗi string thay vì mảng */
-                                typeof report.evidenceImageUrl === "string" && (
+                              : typeof report.evidenceImageUrl === "string" && (
                                   <img
                                     src={report.evidenceImageUrl}
                                     alt="Bằng chứng công việc"
+                                    onClick={() =>
+                                      setPreviewImage(report.evidenceImageUrl)
+                                    }
                                     style={{
                                       width: "100px",
                                       height: "100px",
                                       objectFit: "cover",
                                       borderRadius: "6px",
+                                      cursor: "pointer",
                                     }}
                                   />
                                 )}
@@ -660,6 +677,33 @@ const BookingDetailPage = () => {
                 Gửi đánh giá
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* modal phóng to ảnh */}
+      {previewImage && (
+        <div className="bd-modal-overlay" onClick={() => setPreviewImage(null)}>
+          <div
+            className="bd-image-preview-content"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className="bd-btn-close-preview"
+              onClick={() => setPreviewImage(null)}
+            >
+              &times;
+            </button>
+            <img
+              src={previewImage}
+              alt="Phóng to"
+              style={{
+                maxWidth: "100%",
+                maxHeight: "90vh",
+                borderRadius: "8px",
+                boxShadow: "0 10px 30px rgba(0,0,0,0.5)",
+              }}
+            />
           </div>
         </div>
       )}

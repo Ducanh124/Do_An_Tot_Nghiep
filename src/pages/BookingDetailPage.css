@@ -218,6 +218,11 @@
   border-radius: 6px;
   border: 1px solid #dee2e6;
   margin-top: 0.75rem;
+  transition: transform 0.2s ease;
+}
+
+.bd-step-evidence img:hover {
+  transform: scale(1.05);
 }
 
 /* các trạng thái trống và hiệu ứng load */
@@ -406,4 +411,42 @@
 textarea.bd-form-input {
   min-height: 90px;
   resize: vertical;
+}
+
+/* box hiển thị ảnh phóng to */
+.bd-image-preview-content {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 90%;
+  max-height: 90vh;
+  animation: zoomIn 0.3s ease;
+}
+
+.bd-btn-close-preview {
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 3rem;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.bd-btn-close-preview:hover {
+  transform: scale(1.2);
+}
+
+@keyframes zoomIn {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }

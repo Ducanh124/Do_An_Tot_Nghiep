@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import authService from "../services/authService";
 import bookingService from "../services/bookingService";
 import reviewService from "../services/reviewService";
-//import progressService from "../services/progressService";
 import "./BookingHistory.css";
 
 const BookingHistory = () => {
@@ -12,25 +11,21 @@ const BookingHistory = () => {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1); // Mặc định vào là trang 1
   const [totalPages, setTotalPages] = useState(1); // Tổng số trang (Backend sẽ trả về)
-
   // lưu kết quả đánh giá số sao: { bookingId: số_sao }
   const [reviewMap, setReviewMap] = useState({});
-
   // thanh toán
   // nhận thêm tham số bookingStatus vào hàm
   const getPaymentBadge = (paymentStatus, bookingStatus) => {
-    const p = paymentStatus ? paymentStatus.toUpperCase() : "";
+    const payment = paymentStatus ? paymentStatus.toUpperCase() : "";
     const bStatus = bookingStatus ? bookingStatus.toLowerCase() : "";
-    if (bStatus === "completed" && (p === "CAST" || p === "CASH")) {
+    if (bStatus === "completed" && (payment === "CAST" || payment === "CASH")) {
       return (
         <span className="payment-status-paid">
           <i className="bi bi-check-circle me-1"></i>Đã thanh toán (Tiền mặt)
         </span>
       );
     }
-
-    // các trường hợp còn lại giữ nguyên như cũ của bạn
-    switch (p) {
+    switch (payment) {
       case "PAID":
         return (
           <span className="payment-status-paid">
@@ -173,7 +168,7 @@ const BookingHistory = () => {
         };
       default:
         return {
-          text: "Đơn bị lỗi",
+          text: "Không lấy được trạng thái đơn hàng",
           className: "status-text-default",
         };
     }
