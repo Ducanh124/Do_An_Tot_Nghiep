@@ -3,23 +3,19 @@
   padding: 2rem 0;
   min-height: 80vh;
 }
-
 .history-title {
   color: #2c3e50;
   font-weight: 700;
   margin-bottom: 2rem;
 }
-
 .table-history {
   background: white;
   border-radius: 12px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 }
-
 .table-history thead {
   background-color: #f8f9fa;
 }
-
 .table-history th {
   padding: 1.2rem;
   font-weight: 600;
@@ -27,13 +23,11 @@
   font-size: 0.85rem;
   letter-spacing: 0.5px;
 }
-
 .booking-id {
   font-family: "Courier New", Courier, monospace;
   font-weight: 600;
   color: #6c757d;
 }
-
 /* gộp các thuộc tính giống nhau để code siêu gọn */
 .status-text-pending,
 .status-text-accepted,
@@ -48,7 +42,6 @@
   font-weight: 600;
   font-size: 1rem;
 }
-
 /* trạng thái đơn hàng */
 .status-text-pending {
   color: #ff0000;
@@ -68,7 +61,6 @@
 .status-text-default {
   color: #6c757d;
 }
-
 /* trạng thái thanh toán có thêm margin để cách số tiền */
 .payment-status-paid {
   color: #08c06a;
@@ -90,7 +82,6 @@
   display: inline-block;
   margin-top: 4px;
 }
-
 /* hệ thống nút bấm */
 .history-actions {
   display: flex;
@@ -98,7 +89,6 @@
   margin-top: 2rem;
   justify-content: center;
 }
-
 /* khung form chuẩn cho mọi nút */
 .custom-btn {
   border-radius: 50px;
@@ -112,7 +102,6 @@
   border: 2px solid transparent;
   text-decoration: none;
 }
-
 /* hiệu ứng tương tác chung nổi bật lún nút */
 .custom-btn:hover:not(:disabled) {
   transform: translateY(-2px);
@@ -126,7 +115,6 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
-
 /* các biến thể màu sắc và kích thước */
 /* nút trong bảng chi tiết đánh giá */
 .btn-table {

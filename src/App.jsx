@@ -1,4 +1,3 @@
-// frontend/src/App.jsx
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ServiceList from "./components/common/ServiceList";
@@ -22,7 +21,6 @@ function App() {
     <BrowserRouter>
       <ScrollToTop />
       <Header />
-
       <Routes>
         <Route
           path="/"

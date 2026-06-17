@@ -9,7 +9,7 @@ const Header = () => {
     const savedUser = localStorage.getItem("user");
     return savedUser ? JSON.parse(savedUser) : null;
   });
-  // State 2 (MỚI): Công tắc bật/tắt menu xổ xuống
+  // State 2: Công tắc bật/tắt menu xổ xuống ở phần hiển thị tên của khách hàng
   const [showMenu, setShowMenu] = useState(false);
 
   const handleBookingClick = () => {
@@ -64,7 +64,7 @@ const Header = () => {
             >
               Đặt dịch vụ ngay
             </button>
-            {/* --- KHU VỰC SỬA MỚI: MENU DROPDOWN --- */}
+            {/* khu vực hiển thị tên và và 2 nút thay đổi giao diện */}
             {user && (
               <div className="position-relative border-start ps-3">
                 {/* 1. Nút hiển thị tên */}

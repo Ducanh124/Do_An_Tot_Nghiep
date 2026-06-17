@@ -152,12 +152,6 @@ const PromotionsPage = () => {
                     >
                       <i className="bi bi-clipboard-plus"></i> Sao chép mã
                     </button>
-                    <button
-                      className="promo-btn-use"
-                      onClick={() => navigate("/danh-muc")}
-                    >
-                      Dùng ngay
-                    </button>
                   </div>
                 </div>
               </div>
