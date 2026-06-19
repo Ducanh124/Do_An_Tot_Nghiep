@@ -158,22 +158,22 @@
 }
 
 .avatar-placeholder {
-  font-size: 11px;           /* Chữ gợi ý rất nhỏ (11px) */
-  color: red;               /* Màu chữ xám nhạt */
+  font-size: 11px;           
+  color: red;              
   text-align: center;        
   padding: 10px;             
 }
 
 .btn-upload-avatar {
-  padding: 6px 16px ;         /* Nút bấm nhỏ hơn bình thường */
-  border: 1px solid #4caf50; /* Viền màu xanh lá */
-  color: #4caf50;            /* Chữ màu xanh lá */
-  border-radius: 6px;        /* Bo góc 6px */
+  padding: 6px 16px ;       
+  border: 1px solid #4caf50; 
+  color: #4caf50;            
+  border-radius: 6px;        
   cursor: pointer;           
   font-size: 13px;           
   font-weight: 500;          
-  transition: all 0.2s;      /* Hiệu ứng chuyển động mượt */
-  background-color: transparent; /* Nền trong suốt */
+  transition: all 0.2s;      
+  background-color: transparent; 
 }
 
 
