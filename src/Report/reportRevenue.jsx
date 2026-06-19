@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Swal from "sweetalert2"; 
 import "./reportRevenue.css";
 import { getRevenue } from "../service/reportRevenue.js"; 
 
@@ -30,21 +31,33 @@ const ReportRevenue = () => {
   // 2. Hàm gọi API lấy dữ liệu
   const fetchReport = async () => {
     if (!fromDate || !toDate) {
-      alert("Vui lòng chọn đầy đủ thời gian bắt đầu và kết thúc!");
+      Swal.fire({
+        icon: "warning",
+        title: "Cảnh báo",
+        html: '<span style="color: #faad14; font-weight: 500;">Vui lòng chọn đầy đủ thời gian bắt đầu và kết thúc!</span>',
+        confirmButtonColor: "#faad14",
+        confirmButtonText: "Đã hiểu"
+      });
       return;
     }
 
     if (new Date(fromDate) > new Date(toDate)) {
-      alert("Ngày bắt đầu không được lớn hơn ngày kết thúc!");
+      Swal.fire({
+        icon: "warning",
+        title: "Ngày không hợp lệ",
+        html: '<span style="color: #faad14; font-weight: 500;">Ngày bắt đầu không được lớn hơn ngày kết thúc!</span>',
+        confirmButtonColor: "#faad14",
+        confirmButtonText: "Sửa lại"
+      });
       return;
     }
 
     setLoading(true);
     try {
       const payload = {
-        from: fromDate, // YYYY-MM-DD
-        to: toDate,     // YYYY-MM-DD
-        groupBy: groupBy // "day", "month", "year"
+        from: fromDate, 
+        to: toDate,     
+        groupBy: groupBy 
       };
 
       const res = await getRevenue(payload);
@@ -52,7 +65,7 @@ const ReportRevenue = () => {
       
       setReportData(data);
 
-      // Tính tổng hiển thị lên thẻ tóm tắt (Chỉ tính các ca đã hoàn thành theo yêu cầu)
+
       const sumAmount = data.reduce((acc, curr) => acc + Number(curr.totalCompletedAmount || 0), 0);
       const sumBookings = data.reduce((acc, curr) => acc + Number(curr.totalCompletedBookings || 0), 0);
       // cur là Đại diện cho dữ liệu của từng ngày khi vòng lặp chạy qua.
@@ -61,7 +74,13 @@ const ReportRevenue = () => {
 
     } catch (error) {
       console.error("Lỗi khi tải báo cáo:", error);
-      alert("Không thể tải dữ liệu báo cáo!");
+      Swal.fire({
+        icon: "error",
+        title: "Lỗi dữ liệu",
+        html: '<span style="color: #ff4d4f; font-weight: 500;">Không thể tải dữ liệu báo cáo! Vui lòng thử lại.</span>',
+        confirmButtonColor: "#ff4d4f",
+        confirmButtonText: "Đóng"
+      });
     } finally {
       setLoading(false);
     }

@@ -6,7 +6,7 @@ const Skills = ({
   experience,
   review,            
   onInputChange,
-  formErrors = {} // THÊM MỚI: Nhận biến lỗi từ component cha truyền xuống
+  formErrors = {} 
 }) => {
   
   return (
@@ -15,7 +15,7 @@ const Skills = ({
         <h2>Kỹ năng chuyên môn & Kinh nghiệm</h2>
       </div>
         
-        {/* Ô NHẬP KỸ NĂNG */}
+   
         <div className="form-group ">
           <label>Kỹ năng</label>
           <input 
@@ -26,7 +26,7 @@ const Skills = ({
             required
             style={{ borderColor: formErrors.skills ? "#ff4d4f" : "" }} // Đổi màu viền nếu có lỗi
           />
-          {/* IN LỖI RA MÀN HÌNH */}
+   
           {formErrors.skills && (
             <span style={{ color: '#ff4d4f', fontSize: '13px', marginTop: '4px', display: 'block' }}>
               {formErrors.skills}
@@ -34,7 +34,7 @@ const Skills = ({
           )}
         </div>
 
-        {/* SELECT BOX KINH NGHIỆM */}
+  
         <div className="form-group ">
           <label>Kinh nghiệm</label>
           <select 
@@ -58,7 +58,7 @@ const Skills = ({
           )}
         </div>
 
-        {/* Ô NHẬP REVIEW */}
+ 
         <div className="form-group ">
           <label>Giới thiệu bản thân</label>
           <textarea 

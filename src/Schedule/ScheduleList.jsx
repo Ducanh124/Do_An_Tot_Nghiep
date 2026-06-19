@@ -71,12 +71,13 @@ const ScheduleList = () => {
           // Nếu a CHƯA ĐÓNG mà b ĐÃ ĐÓNG -> a được nổi lên trên b (trả về -1)
           if (!isAClosed && isBClosed) return -1;
 
-          // 2. Nếu cả 2 cùng nằm trong nhóm ĐÃ ĐÓNG, xếp theo thời gian (cũ xếp trước, mới xếp sau)
+          // 2.  Nhóm ĐÃ ĐÓNG, xếp theo thời gian mới nhất lên trước (b - a)
+          // Nhờ đó ca vừa từ chối/hoàn thành sẽ nằm ngay dưới ca đang mở
           if (isAClosed && isBClosed) {
-            return new Date(a.scheduledTime) - new Date(b.scheduledTime);
+            return new Date(b.scheduledTime) - new Date(a.scheduledTime);
           }
 
-          // 3. Nếu cả 2 cùng nằm trong nhóm ĐANG MỞ, xếp theo thời gian đến gần nhất
+          // 3. Nhóm ĐANG MỞ, xếp theo thời gian cũ nhất lên trước (Gần tới giờ làm nhất)
           return new Date(a.scheduledTime) - new Date(b.scheduledTime);
         });
 

@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import Swal from "sweetalert2"; 
 import "./Taskprogress.css";
 import ImageUploader from "./ImageUploader.jsx";
 import { scheduleService } from "../../service/scheduleService.js";
-import { useAuth } from "../../AuthContext.jsx"; // Để lấy staffId
+import { useAuth } from "../../AuthContext.jsx";
 import { TbBackground } from "react-icons/tb";
 
 const TaskProgress = () => {
@@ -30,7 +31,13 @@ const TaskProgress = () => {
 
   const handleSubmitReport = async () => {
     if (!bookingId || !user?.id) {
-      alert("Lỗi: Thiếu ID Booking hoặc ID Nhân viên!");
+      //  Báo lỗi bằng Swal
+      Swal.fire({
+        icon: "error",
+        title: "Lỗi",
+        text: "Thiếu ID Booking hoặc ID Nhân viên!",
+        confirmButtonColor: "#ff4d4f"
+      });
       return;
     }
 
@@ -50,11 +57,28 @@ const TaskProgress = () => {
 
     await scheduleService.postProgress(formData);
 
-    alert("Đã gửi báo cáo tiến độ thành công!");
-    navigate("/schedule");
+    //  Thông báo thành công tự đóng và chuyển trang
+    Swal.fire({
+      icon: "success",
+      title: '<span style="color: #28a745;">Thành công!</span>',
+      html: '<span style="color: #1890ff;">Đã gửi báo cáo tiến độ thành công!</span>',
+      timer: 1500,
+      showConfirmButton: false
+    }).then(() => {
+      // Chờ Swal đóng xong mới điều hướng
+      navigate("/schedule");
+    });
+    
   } catch (error) {
     console.error("Lỗi gửi báo cáo:", error);
-    alert("Lỗi gửi báo cáo, vui lòng thử lại!");
+    // Báo lỗi bằng Swal
+    Swal.fire({
+      icon: "error",
+      title: "Gửi báo cáo thất bại",
+      html: '<span style="color: #ff4d4f; font-weight: 500;">Lỗi gửi báo cáo, vui lòng thử lại!</span>',
+      confirmButtonColor: "#ff4d4f",
+      confirmButtonText: "Đóng"
+    });
   } finally {
     setIsSubmitting(false);
   }

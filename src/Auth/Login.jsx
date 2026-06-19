@@ -1,7 +1,7 @@
 // src/pages/Login/Login.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Swal from "sweetalert2"; // THÊM MỚI: Import thư viện SweetAlert2
+import Swal from "sweetalert2"; 
 import "./Login.css";
 import { login } from "../service/authService.js";
 
@@ -42,7 +42,7 @@ const Login = () => {
               // title: '<span style="color: #28a745;">Thành công!</span>',
               // html: '<span style="color: #1890ff;">Đăng nhập thành công!</span>',
           title: "Thành công!",
-           text : "Đăng nhập thành công!",
+          text : "Đăng nhập thành công!",
           timer: 1500, // Tự động đóng sau 1.5 giây
           showConfirmButton: false,
         }).then(() => {
@@ -51,7 +51,7 @@ const Login = () => {
         });
 
       } else {
-        // THÊM MỚI: Cảnh báo thiếu Token
+   
         Swal.fire({
           icon: "warning",
           title: "Cảnh báo",
@@ -64,10 +64,9 @@ const Login = () => {
         err.message ||
         "Đăng nhập thất bại. Vui lòng thử lại!";
       
-      // THÊM MỚI: Thông báo lỗi bằng Swal
+  
       Swal.fire({
         icon: "error",
-        // title: "Đăng nhập thất bại",
         title: "Đăng nhập thất bại",
         html: `<span style="color: #ff4d4f; font-weight: 500;">${errorMessage}</span>`, 
         //Nút xác nhận

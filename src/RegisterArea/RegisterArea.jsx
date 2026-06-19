@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
+import Swal from "sweetalert2";
 import "./RegisterArea.css";
-// Import các hàm API từ authService (hoặc profileService tùy bạn đặt)
 import {
   getCities,
   getDistricts,
   addWorkingArea,
   getAreas
 } from "../service/authService.js";
-import { useAuth } from "../AuthContext.jsx"; // Để lấy thông tin user.id
+import { useAuth } from "../AuthContext.jsx"; 
 
 const RegisterArea = () => {
-  const { user } = useAuth(); // Lấy thông tin nhân viên đang đăng nhập
+  const { user } = useAuth(); 
   const [registeredAreas, setRegisteredAreas] = useState([]);
   // State lưu trữ danh sách  dữ liệu từ API
   const [cities, setCities] = useState([]);
@@ -36,14 +36,13 @@ const RegisterArea = () => {
         console.error("Lỗi lấy danh sách khu vực:", error);
       }
     }
-  };89 
-  // 1. Gọi API lấy danh sách Thành phố khi vừa vào trang
+  };
+  
   useEffect(() => {
     const fetchCities = async () => {
       try {
         setIsLoading(true);
         const responseData = await getCities();
-        // Trích xuất dữ liệu mảng thành phố từ cấu trúc Backend trả về
         const cityData = responseData.data?.data || [];
         setCities(cityData);
       } catch (error) {
@@ -82,21 +81,29 @@ const RegisterArea = () => {
     e.preventDefault();
 
     if (!user?.id) {
-      alert("Không tìm thấy thông tin nhân viên. Vui lòng đăng nhập lại!");
+      Swal.fire({
+        icon: "error",
+        title: "Lỗi",
+        text: "Không tìm thấy thông tin nhân viên. Vui lòng đăng nhập lại!",
+        confirmButtonColor: "#ff4d4f"
+      });
       return;
     }
 
     if (!selectedCity) {
-      alert("Vui lòng chọn ít nhất một Thành phố!");
+      Swal.fire({
+        icon: "warning",
+        title: "Cảnh báo",
+        text: "Vui lòng chọn ít nhất một Thành phố!",
+        confirmButtonColor: "#faad14"
+      });
       return;
     }
 
-    // LOGIC LẤY AREA_ID:
-    // Nếu có chọn Quận (selectedDistrict) thì lấy ID Quận.
-    // Nếu không chọn Quận (bỏ trống) thì lấy ID Thành phố (selectedCity).
+
     const finalAreaId = selectedDistrict ? selectedDistrict : selectedCity;
 
-    // Đóng gói Payload theo đúng yêu cầu
+
     const payload = {
       staffId: user.id,
       areaId: finalAreaId.toString(), // Ép kiểu thành string theo mẫu của Backend
@@ -108,15 +115,31 @@ const RegisterArea = () => {
     try {
       setIsSubmitting(true);
       await addWorkingArea(payload);
-      alert("Đăng ký khu vực làm việc thành công!");
+      
+      
+      Swal.fire({
+        icon: "success",
+        title: '<span style="color: #28a745;">Thành công!</span>',
+        html: '<span style="color: #1890ff;">Đăng ký khu vực làm việc thành công!</span>',
+        timer: 1500, // Tự động đóng sau 1.5 giây
+        showConfirmButton: false,
+      });
+      
       fetchRegisteredAreas(); // Tải lại danh sách
-
 
     } catch (error) {
       console.error("Lỗi gửi dữ liệu:", error);
       const errorMsg =
         error.response?.data?.message || "Đăng ký thất bại. Vui lòng thử lại!";
-      alert(`Lỗi: ${errorMsg}`);
+      
+
+      Swal.fire({
+        icon: "error",
+        title: "Đăng ký thất bại",
+        html: `<span style="color: #ff4d4f; font-weight: 500;">${errorMsg}</span>`, 
+        confirmButtonColor: "#ff4d4f",
+        confirmButtonText: "Đóng"
+      });
     } finally {
       setIsSubmitting(false);
     }

@@ -1,6 +1,7 @@
 // src/pages/Schedule/components/ShiftCard.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2'; 
 import './ShiftCard.css';
 import { scheduleService } from '../../service/scheduleService.js';
 
@@ -29,7 +30,13 @@ const ShiftCard = ({ shift, onRefresh }) => {
   const submitReject = async (e) => {
     e.preventDefault();
     if (!rejectReason.trim()) {
-      alert("Vui lòng nhập lý do!");
+      // Cảnh báo chưa nhập lý do bằng Swal
+      Swal.fire({
+        icon: "warning",
+        title: "Cảnh báo",
+        text: "Vui lòng nhập lý do từ chối!",
+        confirmButtonColor: "#faad14"
+      });
       return;
     }
 
@@ -46,12 +53,28 @@ const ShiftCard = ({ shift, onRefresh }) => {
     try {
       setIsRejecting(true);
       await scheduleService.updateAssignment(shift.id, payload);
-      alert("Đã gửi lý do từ chối thành công!");
+      
+      //  Báo thành công bằng Swal
+      Swal.fire({
+        icon: "success",
+        title: '<span style="color: #28a745;">Thành công!</span>',
+        html: '<span style="color: #1890ff;">Đã gửi lý do từ chối thành công!</span>',
+        timer: 1500,
+        showConfirmButton: false
+      });
+
       setShowRejectModal(false);
       onRefresh(); // Tải lại danh sách
     } catch (error) {
       console.log(error);
-      alert("Từ chối thất bại, vui lòng thử lại!");
+      //  Báo lỗi bằng Swal
+      Swal.fire({
+        icon: "error",
+        title: "Từ chối thất bại",
+        html: '<span style="color: #ff4d4f; font-weight: 500;">Gửi lý do thất bại, vui lòng thử lại!</span>',
+        confirmButtonColor: "#ff4d4f",
+        confirmButtonText: "Đóng"
+      });
     } finally {
       setIsRejecting(false);
     }
@@ -64,10 +87,27 @@ const ShiftCard = ({ shift, onRefresh }) => {
         status: "accepted",
         note: shift.note || "" 
       });
+      
+      //  Báo chấp nhận thành công cho mượt
+      Swal.fire({
+        icon: "success",
+        title: "Thành công!",
+        text: "Đã cập nhật trạng thái ca làm việc!",
+        timer: 1500,
+        showConfirmButton: false
+      });
+
       onRefresh();
     } catch (error) {
       console.log(error);
-      alert("Cập nhật trạng thái thất bại");
+      // Báo lỗi bằng Swal
+      Swal.fire({
+        icon: "error",
+        title: "Lỗi cập nhật",
+        html: '<span style="color: #ff4d4f; font-weight: 500;">Cập nhật trạng thái thất bại, vui lòng thử lại!</span>',
+        confirmButtonColor: "#ff4d4f",
+        confirmButtonText: "Đóng"
+      });
     }
   };
 
@@ -113,7 +153,7 @@ const ShiftCard = ({ shift, onRefresh }) => {
     }
   };
 
-  // THÊM MỚI: Hàm dịch phương thức thanh toán
+  
   const formatPayment = (paymentStatus) => {
     if (paymentStatus === "PAID") return "Chuyển khoản";
     if (paymentStatus === "CAST") return "Tiền mặt";

@@ -1,7 +1,6 @@
-// src/pages/Register/Register.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Swal from "sweetalert2"; // THÊM MỚI: Import thư viện SweetAlert2
+import Swal from "sweetalert2"; 
 import "./Register.css";
 import { regis, getCities, getDistricts } from "../service/authService.js";
 
@@ -107,7 +106,7 @@ const Register = () => {
     setFormErrors({});
 
     // 2. ĐÓNG GÓI DỮ LIỆU
-    //tạo 1 biến formdatasend  kiể formdata
+    //tạo 1 biến formdatasend  kiểu formdata
     const formDataToSend = new FormData();
     formDataToSend.append("name", formData.name);
     formDataToSend.append("email", formData.email);

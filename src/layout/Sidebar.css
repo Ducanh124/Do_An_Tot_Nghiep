@@ -70,8 +70,8 @@
 
 /* Trạng thái Menu đang được chọn (Active) */
 .nav-link.active {
-  background-color: #e8f5e9; /* Nền xanh nhạt */
-  color: #4caf50; /* Chữ màu xanh chủ đạo */
+  background-color: #e8f5e9; 
+  color: #4caf50; 
   font-weight: 600;
 }
 

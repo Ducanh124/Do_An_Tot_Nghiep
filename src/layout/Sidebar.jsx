@@ -15,7 +15,7 @@ const Sidebar = () => {
   
   ];
 
-  // THÊM MỚI: Nghiệp vụ xử lý Đăng xuất
+
 const handleLogout = () => {
     localStorage.clear();
     // Ép trình duyệt reload và chuyển hướng, tự động hủy mọi State cũ
@@ -26,7 +26,7 @@ const handleLogout = () => {
     <aside className="sidebar">
       {/* Phần Logo Hệ thống */}
       <div className="sidebar-logo">
-        <h2>BookingFamily</h2> 
+        <h2>Dịch vụ đặt lịch</h2> 
       </div>
 
       {/* Phần Menu Điều hướng */}
@@ -49,7 +49,6 @@ const handleLogout = () => {
 
       {/* Phần Nút Đăng xuất ở cuối */}
       <div className="sidebar-footer">
-        {/* Đã bổ sung sự kiện onClick={handleLogout} vào nút ban đầu */}
         <button className="logout-btn" onClick={handleLogout}>
           Đăng xuất
         </button>

@@ -1,7 +1,5 @@
-/* =========================================
-   PHẦN 1: CSS GỐC CỦA THẺ CA LÀM VIỆC 
-========================================= */
 
+   /* PHẦN 1: CSS GỐC CỦA THẺ CA LÀM VIỆC  */
 .shift-card {
   background-color: #ffffff;
   border-radius: 12px;
@@ -109,9 +107,8 @@
   }
 }
 
-/* =========================================
-   PHẦN 2: CSS CHO CÁC TÍNH NĂNG MỚI NÂNG CẤP
-========================================= */
+
+   /* PHẦN 2: CSS CHO CÁC TÍNH NĂNG MỚI NÂNG CẤP */
 
 /* --- BADGE GÓC TRÊN BÊN PHẢI --- */
 .top-badge {

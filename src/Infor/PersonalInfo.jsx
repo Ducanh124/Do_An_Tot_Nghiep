@@ -1,5 +1,6 @@
-// src/pages/Profile/PersonalInfo.jsx
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
+import Swal from "sweetalert2"; 
 import Skills from "./Skills";
 import "./PersonalInfo.css";
 import { profileService } from "../service/profileService.js";
@@ -8,7 +9,6 @@ const PersonalInfo = () => {
   const [userId, setUserId] = useState(null);
   const [hasProfile, setHasProfile] = useState(false);
 
-  // THÊM MỚI: State lưu trữ dữ liệu GỐC để đem ra so sánh
   const [originalData, setOriginalData] = useState({});
   const [formData, setFormData] = useState({
     fullName: "",
@@ -84,16 +84,21 @@ const PersonalInfo = () => {
     e.preventDefault();
 
     if (!userId) {
-      alert("Không tìm thấy ID người dùng. Vui lòng tải lại trang!");
+      Swal.fire({
+        icon: "error",
+        title: "Lỗi",
+        text: "Không tìm thấy ID người dùng. Vui lòng tải lại trang!",
+      // html: `<span style="color: #ff4d4f; font-weight: 500;">${errorMsg}</span>`, 
+        confirmButtonColor: "#ff4d4f"
+      });
       return;
     }
 
     setFormErrors({});
     setIsSaving(true);
-//hàm submit sẽ kiểm tra bên dưới có dữ liệu hay k, nếu có thì kiểm tra có update hay k, nếu k update thì chờ ng dùng nhập rồi đóng gói dl gửi be
+    //hàm submit sẽ kiểm tra bên dưới có dữ liệu hay k, nếu có thì kiểm tra có update hay k, nếu k update thì chờ ng dùng nhập rồi đóng gói dl gửi be
     try {
       if (hasProfile) {
-        // LUỒNG CẬP NHẬT (PUT): CHỈ GỬI NHỮNG TRƯỜNG BỊ THAY ĐỔI
         const payload = {};
         // So sánh từng trường, nếu khác với ban đầu thì mới nhét vào payload
         if (formData.cardNumber !== originalData.cardNumber)  payload.idCardNumber = formData.cardNumber;    
@@ -103,20 +108,33 @@ const PersonalInfo = () => {
 
         // Nếu người dùng bấm Lưu nhưng chưa sửa gì cả thì chặn lại luôn
         if (Object.keys(payload).length === 0) {
-          alert("Bạn chưa thay đổi thông tin nào!");
+          Swal.fire({
+            icon: "info",
+            title: "Thông báo",
+            text: "Bạn chưa thay đổi thông tin nào!",
+            confirmButtonText: "Đã hiểu"
+          });
           setIsSaving(false);
           return;
         }
 
         await profileService.updateInfo(userId, payload);
-        alert("Đã cập nhật hồ sơ thành công!");
+        
+        // Cập nhật thành công
+        Swal.fire({
+          icon: "success",
+          title: '<span style="color: #28a745;">Thành công!</span>',
+          html: '<span style="color: #1890ff;">Đã cập nhật hồ sơ thành công!</span>',
+          timer: 1500,
+          showConfirmButton: false,
+        });
         
         // Cập nhật lại bản gốc sau khi lưu thành công (để có thể sửa tiếp mà không cần F5)
         setOriginalData({ ...originalData, ...payload });
 
       } else {
 
-        // LUỒNG THÊM MỚI (POST): GỬI TOÀN BỘ 4 TRƯỜNG
+       
         const payload = {
           cardNumber: formData.cardNumber, 
           skills: formData.skills,
@@ -125,7 +143,16 @@ const PersonalInfo = () => {
         };
 
         await profileService.addProfile(userId, payload);
-        alert("Đã lưu hồ sơ thành công!");
+        
+
+        Swal.fire({
+          icon: "success",
+          title: '<span style="color: #28a745;">Thành công!</span>',
+          html: '<span style="color: #1890ff;">Đã lưu hồ sơ thành công!</span>',
+          timer: 1500,
+          showConfirmButton: false,
+        });
+
         setHasProfile(true); 
         // Cập nhật lại bản gốc
         setOriginalData({ ...formData });
@@ -161,7 +188,15 @@ const PersonalInfo = () => {
         setFormErrors(errorsObj); 
       } else {
         const errorMsg = backendError?.message || "Lỗi không xác định từ server";
-        alert(`Backend báo lỗi: ${errorMsg}`); 
+        
+        // Thông báo lỗi chung bằng Swal
+        Swal.fire({
+          icon: "error",
+          title: "Cập nhật thất bại",
+          html: `<span style="color: #ff4d4f; font-weight: 500;">${errorMsg}</span>`, 
+          confirmButtonColor: "#ff4d4f",
+          confirmButtonText: "Đóng"
+        });
       }
     } finally {
       setIsSaving(false);
@@ -214,7 +249,6 @@ const PersonalInfo = () => {
             </div>
           </div>
 
-        {/* Truyền thêm formErrors xuống Component Skills đề phòng Backend ném lỗi ở các trường này */}
         <Skills
           skills={formData.skills}
           experience={formData.experience}

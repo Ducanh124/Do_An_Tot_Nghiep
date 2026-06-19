@@ -1,5 +1,6 @@
 // src/pages/Leave/LeaveList.jsx
 import React, { useState, useEffect } from "react";
+import Swal from "sweetalert2"; 
 import "./LeaveList.css";
 // Import API
 import { request, getLeaveRequests } from "../service/requestLeave.js"; 
@@ -34,7 +35,6 @@ const LeaveList = () => {
     if (!user?.id) return;
     try {
       setLoading(true);
-      // Truyền currentPage và itemsPerPage (8) vào hàm API
       const res = await getLeaveRequests(user.id, currentPage, itemsPerPage); 
       
       // Bóc tách mảng dữ liệu (Logic bóc tách đa tầng)
@@ -87,9 +87,7 @@ const LeaveList = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // ===============================================
     // 1. KIỂM TRA LỖI TẠI FRONTEND (FRONTEND VALIDATION)
-    // ===============================================
     let hasLocalError = false;
     const localErrors = {};
 
@@ -106,7 +104,6 @@ const LeaveList = () => {
       hasLocalError = true;
     }
 
-    // Nếu có lỗi để trống -> Hiển thị lỗi và DỪNG
     if (hasLocalError) {
       setFormErrors(localErrors);
       return; 
@@ -118,9 +115,7 @@ const LeaveList = () => {
       return;
     }
 
-    // ===============================================
-    // 2. GỬI API LÊN BACKEND
-    // ===============================================
+
     const payload = {
       staffId: user.id,
       startTime: new Date(formData.startTime).toISOString(),
@@ -132,7 +127,14 @@ const LeaveList = () => {
     try {
       setIsSubmitting(true);
       await request(payload);
-      alert("Gửi đơn xin nghỉ phép thành công!");
+      
+      Swal.fire({
+        icon: "success",
+        title: '<span style="color: #28a745;">Thành công!</span>',
+        html: '<span style="color: #1890ff;">Gửi đơn xin nghỉ phép thành công!</span>',
+        timer: 1500, // Tự động đóng sau 1.5 giây
+        showConfirmButton: false,
+      });
       
       closeForm(); // Gọi hàm dọn dẹp
       
@@ -157,7 +159,15 @@ const LeaveList = () => {
         });
         setFormErrors(errorsObj);
       } else {
-        alert(backendError?.message || "Gửi đơn thất bại. Vui lòng thử lại!");
+     
+        const errorMsg = backendError?.message || "Gửi đơn thất bại. Vui lòng thử lại!";
+        Swal.fire({
+          icon: "error",
+          title: "Gửi đơn thất bại",
+          html: `<span style="color: #ff4d4f; font-weight: 500;">${errorMsg}</span>`, 
+          confirmButtonColor: "#ff4d4f",
+          confirmButtonText: "Đóng"
+        });
       }
     } finally {
       setIsSubmitting(false);
@@ -217,7 +227,7 @@ const LeaveList = () => {
                 </tr>
               </thead>
               <tbody>
-                {/* Dùng trực tiếp mảng leaves vì Backend đã trả đúng 8 cái rồi */}
+                
                 {leaves.map((leave) => (
                   <tr key={leave.id}>
                     <td>

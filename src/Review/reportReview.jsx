@@ -1,5 +1,6 @@
 // src/pages/ReportReview/ReportReview.jsx
 import React, { useState, useEffect } from "react";
+import Swal from "sweetalert2"; 
 import "./reportReview.css";
 import { scheduleService } from "../service/scheduleService.js";
 import { useAuth } from "../AuthContext.jsx";
@@ -60,6 +61,14 @@ const ReportReview = () => {
         setAllReviews(validReviews);
       } catch (error) {
         console.error("Lỗi khi tải danh sách đánh giá:", error);
+        
+        Swal.fire({
+          icon: "error",
+          title: "Lỗi tải dữ liệu",
+          html: '<span style="color: #ff4d4f; font-weight: 500;">Không thể tải danh sách đánh giá! Vui lòng thử lại.</span>',
+          confirmButtonColor: "#ff4d4f",
+          confirmButtonText: "Đóng"
+        });
       } finally {
         setLoading(false);
       }
@@ -68,7 +77,6 @@ const ReportReview = () => {
     fetchReviews();
   }, [user]);
 
-  //  BƯỚC 2: XỬ LÝ BỘ LỌC THEO SỐ SAO TRÊN GIAO DIỆN
   const displayedReviews = starFilter === "all" 
     ? allReviews 
     : allReviews.filter(r => r.rating === Number(starFilter));
@@ -134,7 +142,7 @@ const ReportReview = () => {
             <div key={item.id} className="review-card">
               {/* Cột Trái: Thông tin khách hàng & Thời gian */}
               <div className="review-info">
-                {/* HIỂN THỊ TÊN DỊCH VỤ TẠI ĐÂY */}
+                {/* HIỂN THỊ TÊN DỊCH VỤ */}
                 <div style={{ fontWeight: 'bold', color: '#1890ff', fontSize: '15px', marginBottom: '6px' }}>
                   {item.serviceNames}
                 </div>
@@ -142,7 +150,7 @@ const ReportReview = () => {
                 <div className="customer-name">{item.customerName}</div>
                 <div className="customer-phone">{item.customerPhone}</div>
                 
-                {/* HIỂN THỊ ĐỊA CHỈ KHÁCH HÀNG TẠI ĐÂY */}
+                {/* HIỂN THỊ ĐỊA CHỈ KHÁCH HÀNG  */}
                 <div style={{ fontSize: '16px', color: '#666', marginTop: '4px' }}>
                    {item.address}
                 </div>

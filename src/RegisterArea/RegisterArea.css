@@ -2,15 +2,15 @@
 /* đổi màu đc tiêu đề in hoa,khu vực làm vc chính, form bên phải */
 .register-area-container {
   display: flex;
-  flex-direction: row;      /* Chuyển sang xếp ngang */
+  flex-direction: row;      
   justify-content: center;  /* Căn giữa toàn bộ khối theo chiều ngang */
   align-items: flex-start;  /* Căn thẳng hàng ở phía trên */
-  gap: 30px;                /* Khoảng cách giữa form và danh sách */
+  gap: 30px;              
   padding: 40px 20px;
   font-family: Arial, sans-serif;
   color: #333;
   min-height: 100vh;
-  flex-wrap: wrap;          /* Cho phép nhảy dòng khi màn hình hẹp */
+  flex-wrap: wrap;        
 }
 
 /* form thứ nhất */
@@ -24,7 +24,7 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
-/* Các thuộc tính bên trong không cần thay đổi, giữ nguyên */
+
 .register-area-card h2 {
   margin-top: 0;
   margin-bottom: 8px;
@@ -53,7 +53,7 @@
 /* ô select */
 .area-selectt {
   padding: 12px;
-  border: 100px solid red ;
+  border: 1px solid black;
   border-radius: 6px;
   color: red;
 }
