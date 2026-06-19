@@ -17,7 +17,6 @@ const BookingDetailPage = () => {
   const [details, setDetails] = useState(null);
   const [staffInfo, setStaffInfo] = useState(null);
   const [progressList, setProgressList] = useState([]);
-
   // state quản lý phóng to ảnh
   const [previewImage, setPreviewImage] = useState(null);
 
@@ -57,7 +56,7 @@ const BookingDetailPage = () => {
       const detailData = await bookingService.getBookingById(id);
       setDetails(detailData);
 
-      const staffId = detailData?.staffAssignments?.[0]?.staffId;
+      const staffId = detailData?.staffAssignments?.slice(-1)[0]?.staffId;
 
       if (staffId) {
         setStaffInfo(detailData.staff);
@@ -112,7 +111,7 @@ const BookingDetailPage = () => {
 
   const handleSubmitReview = async () => {
     try {
-      const staffId = details?.staffAssignments?.[0]?.staffId;
+      const staffId = details?.staffAssignments?.slice(-1)[0]?.staffId;
       const payload = {
         bookingId: String(id),
         customerId: String(details?.customerId || ""),

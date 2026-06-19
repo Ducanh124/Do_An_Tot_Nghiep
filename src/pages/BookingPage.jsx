@@ -33,6 +33,7 @@ const BookingPage = () => {
   const [address, setAddress] = useState("");
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
+  const todayString = new Date().toISOString().split("T")[0]; //Lấy ngày hôm nay
   const [note, setNote] = useState("");
 
   // state khuyến mãi và thanh toán
@@ -322,6 +323,19 @@ const BookingPage = () => {
         confirmButtonColor: "#0d6efd",
       });
       return;
+    } //check time và không cho đuawtj lịch trong quá khứ
+
+    const selectedDateTime = new Date(`${date}T${time}`);
+    const now = new Date();
+
+    if (selectedDateTime < now) {
+      Swal.fire({
+        title: "Thời gian không hợp lệ",
+        text: "Thời gian làm việc không được nằm trong quá khứ. Vui lòng chọn lại!",
+        icon: "error",
+        confirmButtonColor: "#0d6efd",
+      });
+      return;
     }
     setShowPaymentModal(true);
   };
@@ -571,6 +585,7 @@ const BookingPage = () => {
                       type="date"
                       className="form-control custom-form-control"
                       value={date}
+                      min={todayString}
                       onChange={(e) => setDate(e.target.value)}
                     />
                   </div>

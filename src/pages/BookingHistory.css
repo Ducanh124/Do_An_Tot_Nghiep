@@ -44,10 +44,10 @@
 }
 /* trạng thái đơn hàng */
 .status-text-pending {
-  color: #ff0000;
+  color: #ffae00;
 }
 .status-text-accepted {
-  color: #0d6efd;
+  color: #2eb6c3;
 }
 .status-text-working {
   color: #0d18f0;
@@ -56,7 +56,7 @@
   color: #08c06a;
 }
 .status-text-cancelled {
-  color: #000000;
+  color: #ff0000;
 }
 .status-text-default {
   color: #6c757d;

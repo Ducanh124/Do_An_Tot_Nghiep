@@ -29,7 +29,7 @@ const BookingHistory = () => {
       case "PAID":
         return (
           <span className="payment-status-paid">
-            <i className="bi bi-check-circle me-1"></i>Đã thanh toán
+            <i className="bi bi-check-circle me-1"></i>Đã thanh toán(VNPAY)
           </span>
         );
       case "CAST":
@@ -117,38 +117,38 @@ const BookingHistory = () => {
     switch (s) {
       case "assigned":
         return {
-          text: "Đang chờ xác nhận",
+          text: "Đơn hàng đang chờ xác nhận",
           className: "status-text-pending",
         };
       case "pending":
         return {
-          text: "Đang chờ xác nhận",
+          text: "Đơn hàng đang chờ xác nhận",
           className: "status-text-pending",
         };
       case "accepted":
         return {
-          text: "Đã được chấp nhận",
+          text: "Đơn hàng đã được chấp nhận",
           className: "status-text-accepted",
         };
       case "is_working":
         return {
-          text: "Đang tiến hành làm",
+          text: "Nhân viên đang tiến hành làm",
           className: "status-text-working",
         };
       case "is_coming":
         return {
-          text: "Đang đến nơi làm việc",
+          text: "Nhân viên đang đến nơi làm việc",
           className: "status-text-working",
         };
 
       case "completed":
         return {
-          text: "Đã hoàn thành",
+          text: "Nhân viên đã hoàn thành",
           className: "status-text-completed",
         };
       case "cancelled":
         return {
-          text: "Đã hủy",
+          text: "Đơn hàng đã bị huỷ ",
           className: "status-text-cancelled",
         };
       case "no_staff_available":
