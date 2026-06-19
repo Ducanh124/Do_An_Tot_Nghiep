@@ -18,6 +18,7 @@
 }
 
 /* --- BỘ LỌC --- */
+/* khu vực lọc */
 .report-filters {
   display: flex; /* Bật chế độ Flexbox để sắp xếp các phần tử con (ô input, nút bấm) nằm ngang */
   flex-wrap: wrap; /* Cho phép các phần tử tự động rớt xuống dòng nếu chiều ngang màn hình không đủ chỗ */
@@ -68,7 +69,6 @@
   cursor: pointer; /* Đổi biểu tượng chuột thành hình bàn tay khi trỏ vào nút */
   height: 40px; /* Ép chiều cao cố định là 40px (Bằng chiều cao của input để đồng đều) */
   transition: 0.2s; /* Tạo hiệu ứng chuyển đổi từ từ trong 0.2 giây khi có sự thay đổi (như hover) */
-
 }
 
 .btn-filter:hover {
@@ -87,6 +87,7 @@
   margin-bottom: 24px; /* Cách phần bảng chi tiết bên dưới 24px */
 }
 
+/* nền của thẻ tóm tắt và bảng */
 .card {
   background-color: #fff; /* Nền của mỗi thẻ là màu trắng */
   padding: 20px 24px; /* Lề trong: trên dưới 20px, trái phải 24px */
@@ -131,6 +132,7 @@
   border-bottom: 1px solid #f0f0f0; /* Tạo một đường kẻ ngang mỏng dưới tiêu đề để phân tách với bảng */
   color: #333; /* Màu chữ xám đậm */
   font-size: 16px; /* Cỡ chữ 16px */
+  /* text-align: center; */
 }
 
 .table-responsive {
@@ -149,7 +151,7 @@
   color: #555; /* Chữ tiêu đề cột màu xám */
   font-weight: 600; /* In đậm chữ tiêu đề cột */
   padding: 16px 24px; /* Lề trong của mỗi ô tiêu đề */
-  border-bottom: 1px solid #f0f0f0; /* Kẻ đường viền xám dưới mỗi ô tiêu đề */
+  border-bottom: 2px solid #f0f0f0; /* Kẻ đường viền xám dưới mỗi ô tiêu đề */
 }
 
 .report-table td {

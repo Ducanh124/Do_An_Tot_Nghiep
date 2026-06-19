@@ -5,7 +5,7 @@
 .shift-card {
   background-color: #ffffff;
   border-radius: 12px;
-  border: 1px solid #f0f0f0;
+  border: 3px solid #f0f0f0;
   padding: 20px;
   margin-bottom: 16px;
   font-family: 'Inter', sans-serif;
@@ -14,6 +14,7 @@
 
 /* Làm mờ thẻ ca làm việc nếu đã bị từ chối */
 .card-dimmed {
+  /* làm mờ */
   opacity: 0.6;
   background-color: #f9f9f9;
 }
@@ -23,19 +24,20 @@
   align-items: center;
   margin-bottom: 16px;
   padding-bottom: 12px;
-  border-bottom: 1px dashed #e8e8e8;
+  border-bottom: 2px solid #e8e8e8;
 }
 
 .shift-time {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  align-items: flex-start;
+  gap: 15px ;
   font-weight: 600;
   color: #1a1a1a;
-  font-size: 16px;
+  font-size: 18px !important;
 }
 
 /* --- Body --- */
+/* bên dưới */
 .shift-card-body {
   display: flex;
   flex-direction: column;
@@ -50,20 +52,22 @@
   color: #333;
 }
 
+/* chữ từng dòng trên thẻ phần thân */
 .info-row {
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  font-size: 14px;
+  font-size: 20px;
   color: #444;
   line-height: 1.5;
 }
 
+/* ghi chú */
 .task-preview {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 13px;
+  font-size: 20px;
   color: #666;
   background-color: #fafafa;
   padding: 12px 12px;
@@ -72,9 +76,10 @@
 }
 
 /* --- Footer (Khu vực Nút) --- */
+/* để điều chỉnh vị trí nút  lịch sử tiến độ */
 .shift-card-footer {
   display: flex;
-  justify-content: right;
+  justify-content: flex-end;
 }
 
 .btn-action {
@@ -82,7 +87,7 @@
   border: none;
   border-radius: 8px;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 20px;
   cursor: pointer;
   width: 100%;
 }
@@ -104,7 +109,6 @@
   }
 }
 
-
 /* =========================================
    PHẦN 2: CSS CHO CÁC TÍNH NĂNG MỚI NÂNG CẤP
 ========================================= */
@@ -116,7 +120,7 @@
   right: 15px;
   padding: 4px 12px;
   border-radius: 20px;
-  font-size: 12px;
+  font-size: 15px;
   font-weight: 600;
   cursor: default;
 }
@@ -147,6 +151,7 @@
   display: flex;
   gap: 10px;
   width: 100%;
+  justify-content: flex-end;
 }
 
 /* Nút từ chối phụ (Nút đỏ viền trắng) */
@@ -155,9 +160,7 @@
   color: #ff4d4f;
   border: 1px solid #ff4d4f;
 }
-.btn-reject-secondary:hover {
-  background-color: #fff1f0;
-}
+
 
 /* Khu vực hiển thị lý do dưới cùng thẻ card */
 .reject-reason-display {
@@ -166,7 +169,7 @@
   background-color: #fff1f0;
   border-left: 3px solid #ff4d4f;
   color: #a8071a;
-  font-size: 13px;
+  font-size: 18px;
   border-radius: 4px;
 }
 
@@ -194,6 +197,7 @@
 }
 
 /* --- CSS CHO MODAL POPUP --- */
+/* các vị trí cho popup từ chối, tiến độ */
 .modal-overlay {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -203,14 +207,16 @@
   align-items: center;
   z-index: 9999;
 }
+/* popup lịch sử báo cáo, từ chối  */
 .modal-content {
   background-color: white;
   width: 90%;
-  max-width: 450px;
+  max-width: 550px ;
   padding: 24px;
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0,0,0,0.15);
 }
+/* khung viết lý do từ chối */
 .reject-textarea {
   width: 100%;
   padding: 10px;
@@ -220,9 +226,10 @@
   margin-top: 10px;
   box-sizing: border-box;
 }
+/* vị trí của nút bấm trong popup từ chối */
 .modal-actions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-end ;
   gap: 12px;
   margin-top: 20px;
 }
@@ -233,9 +240,10 @@
   border-radius: 6px;
   cursor: pointer;
 }
+/* nút xác nhận từ chối */
 .btn-danger {
   padding: 10px 16px;
-  background-color: #ff4d4f;
+  background-color: blue ;
   color: white;
   border: none;
   border-radius: 6px;
@@ -244,16 +252,18 @@
 
 /* --- CSS LỊCH SỬ TIẾN ĐỘ (TIMELINE) --- */
 .history-modal {
-  max-width: 500px;
+  max-width: 800px ;
   max-height: 80vh;
+  /* height: 800px; */
   display: flex;
   flex-direction: column;
 }
+/* đường viền ở popup từ chối */
 .history-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #eee;
+  border-bottom: 2px solid grey;
   padding-bottom: 10px;
   margin-bottom: 15px;
 }
@@ -272,12 +282,13 @@
   margin: 0;
   position: relative;
 }
+/* đường kẻtieesn độ */
 .timeline::before {
   content: '';
   position: absolute;
   top: 0; bottom: 0; left: 6px;
   width: 2px;
-  background-color: #e8e8e8;
+  background-color: red;
 }
 .timeline-item {
   position: relative;
@@ -290,21 +301,12 @@
   width: 10px; height: 10px;
   border-radius: 50%;
   background-color: #1890ff;
-  border: 2px solid white;
-  box-shadow: 0 0 0 2px #1890ff;
+
 }
-.timeline-content h4 { margin: 0; font-size: 15px; color: #333; }
-.timeline-time { display: block; font-size: 12px; color: #888; margin-bottom: 5px; }
-.timeline-note { font-size: 13px; color: #555; background: #f5f5f5; padding: 6px 10px; border-radius: 4px; margin: 5px 0;}
-.evidence-link {
-  display: inline-block;
-  margin-top: 6px;
-  font-size: 13px;
-  color: #1890ff;
-  text-decoration: none;
-  font-weight: 600;
-}
-.evidence-link:hover { text-decoration: underline; }
+.timeline-content h4 { margin: 0; font-size: 16px; color: #333; }
+.timeline-time { display: block; font-size: 16px; color: #888; margin-bottom: 5px; }
+.timeline-note { font-size: 15px; color: #555; background: #f5f5f5; padding: 6px 10px; border-radius: 4px; margin: 5px 0;}
+
 /* --- CSS CHO BỘ SƯU TẬP ẢNH BÁO CÁO --- */
 .evidence-image-gallery {
   display: flex;

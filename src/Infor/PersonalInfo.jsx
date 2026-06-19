@@ -30,7 +30,7 @@ const PersonalInfo = () => {
         const userRes = await profileService.getProfile();
         const userData = userRes.data || userRes;
         const currentUserId = userData._id || userData.id;
-        
+        // lưu id để biết cập nhật hô sơ cho id người dùng nào
         setUserId(currentUserId);
 
         //kiểm tra xem đã điền bên dưới hay chưa

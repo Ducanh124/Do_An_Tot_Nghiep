@@ -3,7 +3,7 @@ import { api } from "../libs/axios.js";
 
 export const scheduleService = {
   getStaffJobs: async (staffId) => {
-    const response = await api.get(`/staff/${staffId}/jobs`);
+    const response = await api.get(`/staff/${staffId}/jobs?pageSize=1000&limit=1000`);
     return response.data;
   },
 

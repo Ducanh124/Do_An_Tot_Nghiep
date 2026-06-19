@@ -11,7 +11,7 @@ const ShiftCard = ({ shift, onRefresh }) => {
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [rejectReason, setRejectReason] = useState("");
   const [rejectType, setRejectType] = useState("rejected"); // 'rejected' (mới nhận) hoặc 'cancelled' (đang làm)
-  const [isRejecting, setIsRejecting] = useState(false);
+  const [isRejecting, setIsRejecting] = useState(false);//xác thực đang gửi dữ liệu
 
   // State cho Modal Tiến độ
   const [showProgressModal, setShowProgressModal] = useState(false);
@@ -57,7 +57,6 @@ const ShiftCard = ({ shift, onRefresh }) => {
     }
   };
 
-  // Xử lý nút Chấp nhận (Trạng thái bình thường)
   // Xử lý nút Chấp nhận
   const handleStartShift = async () => {
     try {
@@ -122,7 +121,7 @@ const ShiftCard = ({ shift, onRefresh }) => {
   };
 
   // Render các Nút Bấm tùy theo Status
-  const renderActionButtons = () => {
+  const renderActionButtons = () => {// có css là shift-card-footer để điều chỉnh lịch sử tiến độ
     switch (shift.status) {
       case 'assigned':
         return (
@@ -156,7 +155,7 @@ const ShiftCard = ({ shift, onRefresh }) => {
         return (
           <div className="action-group">
             <button className="btn-action btn-report" onClick={handleReportProgress}>Hoàn thành công việc</button>
-            <button className="btn-action btn-reject-secondary" onClick={() => handleOpenReject("cancelled")}>Từ chối (Sự cố)</button>
+            <button className="btn-action btn-reject-secondary"  onClick={() => handleOpenReject("cancelled")}>Từ chối (Sự cố)</button>
           </div>
         );
       case 'completed':
@@ -247,7 +246,7 @@ const ShiftCard = ({ shift, onRefresh }) => {
               ></textarea>
               <div className="modal-actions">
                 <button type="button" className="btn-cancel" onClick={() => setShowRejectModal(false)}>Hủy</button>
-                <button type="submit" className="btn-submit btn-danger" disabled={isRejecting}>
+                <button type="submit" className=" btn-danger" disabled={isRejecting}>
                   {isRejecting ? "Đang gửi..." : "Xác nhận từ chối"}
                 </button>
               </div>
@@ -289,7 +288,7 @@ const ShiftCard = ({ shift, onRefresh }) => {
                                 key={idx} 
                                 src={url} 
                                 alt={`Báo cáo ${idx + 1}`} 
-                                className="evidence-thumbnail" 
+                                className=" evidence-thumbnail" 
                                 onClick={() => window.open(url, '_blank')}
                                 title="Nhấn vào để xem ảnh gốc"
                               />

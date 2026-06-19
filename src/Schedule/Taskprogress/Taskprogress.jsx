@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import "./TaskProgress.css";
+import "./Taskprogress.css";
 import ImageUploader from "./ImageUploader.jsx";
 import { scheduleService } from "../../service/scheduleService.js";
 import { useAuth } from "../../AuthContext.jsx"; // Để lấy staffId
@@ -14,18 +14,18 @@ const TaskProgress = () => {
   //  Nhận bookingId được truyền ngầm từ trang ShiftCard sang
   const bookingId = location.state?.bookingId;
 
-  const [uploadedImages, setUploadedImages] = useState([]);
+  const [uploadedImages, setUploadedImages] = useState([]);// mảng lưu trữ các ảnh
   const [note, setNote] = useState(""); // State mới lưu Ghi chú
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleAddImage = (imageUrl) =>
+  const handleAddImage = (imageUrl) =>//ảnh mà người dùng muốn thêm
     setUploadedImages([...uploadedImages, imageUrl]);
   const handleRemoveImage = (indexToRemove) => {
     setUploadedImages(
       uploadedImages.filter((_, index) => index !== indexToRemove),
     );
   };
-
+// duyệt qua mảng chứa ảnh rồi chỉ giữ lại những ảnh có vị trí khác với vị trí cần xoá
   const handleBack = () => navigate(-1);
 
   const handleSubmitReport = async () => {
@@ -43,7 +43,7 @@ const TaskProgress = () => {
     formData.append("note", note);
     formData.append("recordAt", new Date().toISOString());
 
-    // SỬA CHỖ NÀY: Lặp qua mảng uploadedImages để append tất cả
+  //  Lặp qua mảng uploadedImages để append tất cả
     uploadedImages.forEach((imgObj) => {
       formData.append("images", imgObj.file); // Cùng key "images", gọi nhiều lần
     });
@@ -61,12 +61,12 @@ const TaskProgress = () => {
 };
 
   return (
-    <div>
-      <div className="progress-header">
+    <div >
+      <div >
         <button
           className="btn-back"
           onClick={handleBack}
-          style={{ backgroundColor: "#aaa" }}
+          style={{ border: "1px solid #ff2734" , borderRadius: "10%", padding:"10px 10px",margin: "10px"}}
         >
           Quay lại
         </button>
@@ -81,7 +81,7 @@ const TaskProgress = () => {
           <textarea
             value={note}
             onChange={(e) => setNote(e.target.value)}
-            rows="3"
+            rows="5"
             style={{
               width: "100%",
               padding: "10px",
@@ -97,10 +97,11 @@ const TaskProgress = () => {
           onRemoveImage={handleRemoveImage}
         />
       </div>
-
-      <button onClick={handleSubmitReport} disabled={isSubmitting}>
+      <div className="progress-footer">
+      <button className="btn-submit-report"  onClick={handleSubmitReport} disabled={isSubmitting}> {/* vô hiệu hoá nếu isSubmitting:true  */}
         {isSubmitting ? "Đang gửi..." : "Gửi báo cáo tiến độ"}
       </button>
+      </div>
     </div>
   );
 };

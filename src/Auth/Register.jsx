@@ -1,6 +1,7 @@
 // src/pages/Register/Register.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2"; // THÊM MỚI: Import thư viện SweetAlert2
 import "./Register.css";
 import { regis, getCities, getDistricts } from "../service/authService.js";
 
@@ -96,7 +97,7 @@ const Register = () => {
       localErrors.areaId = "Vui lòng chọn Quận/Huyện";
       hasLocalError = true;
     }
-
+    // nếu có lỗi thì gán lỗi của trường đó vào mảng
     if (hasLocalError) {
       setFormErrors(localErrors);
       return; // Chặn không cho gửi API
@@ -124,8 +125,18 @@ const Register = () => {
     // 3. GỌI API VÀ XỬ LÝ LỖI (BACKEND)
     try {
       await regis(formDataToSend);
-      alert("Đăng ký tài khoản thành công!");
-      navigate("/login");
+      
+      Swal.fire({
+        icon: "success",
+        title: '<span style="color: #28a745;">Thành công!</span>',
+        html: '<span style="color: #1890ff;">Đăng ký tài khoản thành công!</span>',
+        timer: 1500, // Tự động đóng sau 1.5 giây
+        showConfirmButton: false,
+      }).then(() => {
+        // Đợi popup chạy xong 1.5s rồi mới chuyển trang Login
+        navigate("/login");
+      });
+
     } catch (error) {
       const backendError = error.response?.data;
 
@@ -176,7 +187,14 @@ const Register = () => {
         setFormErrors(errorsObj);
       } else {
         const errorMsg = backendError?.message || "Đăng ký thất bại. Vui lòng thử lại!";
-        alert(errorMsg);
+        
+        Swal.fire({
+          icon: "error",
+          title: "Đăng ký thất bại",
+          html: `<span style="color: #ff4d4f; font-weight: 500;">${errorMsg}</span>`, 
+          confirmButtonColor: "#ff4d4f",
+          confirmButtonText: "Đóng"
+        });
       }
     } finally {
       setIsLoading(false);
@@ -188,7 +206,7 @@ const Register = () => {
       <div className="register-card">
         <div className="register-header">
           <h2>Tạo tài khoản mới</h2>
-          <p>Điền thông tin bên dưới để trải nghiệm dịch vụ.</p>
+          <p>Điền thông vị bên dưới để trải nghiệm dịch vụ.</p>
         </div>
 
         <form onSubmit={handleRegister} autoComplete="off" encType="multipart/formdata" noValidate>

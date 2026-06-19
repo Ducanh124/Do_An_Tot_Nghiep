@@ -7,8 +7,6 @@ const Sidebar = () => {
   const menuItems = [
 
     { path: "/schedule", name: "Lịch làm việc" },
-    
-
     { path: "/performance", name: "Hiệu suất & Thu nhập" },
     { path: "/reviews", name: "Đánh giá khách hàng" },
     { path: "/leaves", name: "Quản lý nghỉ phép" },
@@ -17,15 +15,12 @@ const Sidebar = () => {
   
   ];
 
-  // ==========================================
   // THÊM MỚI: Nghiệp vụ xử lý Đăng xuất
-  // ==========================================
 const handleLogout = () => {
     localStorage.clear();
     // Ép trình duyệt reload và chuyển hướng, tự động hủy mọi State cũ
     window.location.href = "/login"; 
 }
-  // ==========================================
 
   return (
     <aside className="sidebar">

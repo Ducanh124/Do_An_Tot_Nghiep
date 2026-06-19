@@ -9,6 +9,7 @@
   position: fixed; /* Cố định bên trái */
   top: 0;
   left: 0;
+
   /* left = 0 thanh sidebar ở bên trái */
   font-family: "Inter", sans-serif; /* Đổi font theo Figma của bạn */
 }
@@ -30,10 +31,12 @@
 }
 
 /* Khu vực Menu Nav */
+/* vị trí chữ trong sidebar */
 .sidebar-nav {
-  flex: 1; /* Đẩy phần footer xuống dưới cùng */
+  flex: 1; 
+  /* Đẩy phần footer xuống dưới cùng */
   padding: 24px 16px;
-  overflow-y: auto; /* Cho phép cuộn nếu menu quá dài */
+    overflow-y: auto;/* Cho phép cuộn nếu menu quá dài */
 }
 
 .nav-list {
@@ -76,6 +79,7 @@
 
 /* Khu vực Footer (Đăng xuất) */
 .sidebar-footer {
+
   padding: 10px 16px;
   border-top: 1px solid #f0f0f0;
 }

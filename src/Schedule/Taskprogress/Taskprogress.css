@@ -7,7 +7,7 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: red;
+  background-color: red !important;
 }
 
 /* --- Header & Nút Back --- */
@@ -36,7 +36,7 @@
 
 /* --- Nội dung chính (Thẻ màu trắng chứa 3 component con) --- */
 .progress-content {
-  background-color: #ffffff;
+  background-color: white;
   border-radius: 12px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
   padding: 32px 24px; /* Tăng padding trên xuống cho thoáng */
@@ -46,24 +46,18 @@
   gap: 8px; /* Khoảng cách dự phòng giữa các component con */
 }
 
-/* Đường kẻ mờ phân chia Thông tin ca làm và Checklist */
-.divider {
-  height: 1px;
-  background-color: #f0f0f0;
-  margin: 16px 0;
-}
 
 /* --- Footer & Nút Gửi --- */
 .progress-footer {
   margin-top: 24px;
   padding-bottom: 24px;
   display: flex;
-  justify-content: flex-start; /* Để nút bên tay trái theo ý bạn */
+  justify-content: flex-start; /* Để nút bên tay trái  */
 }
 
 .btn-submit-report {
   display: flex;
-  justify-content: center;
+  justify-content: CENTER;
   align-items: center;
   gap: 8px;
   background-color: #4CAF50;
@@ -81,16 +75,7 @@
   background-color: #43a047;
 }
 
-.btn-submit-report:active {
-  transform: scale(0.98); /* Hiệu ứng lún nút khi chạm vào */
-}
 
-.loading {
-  text-align: center;
-  padding: 50px;
-  color: #888;
-  font-weight: 500;
-}
 
 /* ====================================================
    TỐI ƯU HÓA CHO ĐIỆN THOẠI (Mobile Responsive)

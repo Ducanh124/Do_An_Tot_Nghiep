@@ -36,7 +36,7 @@ const RegisterArea = () => {
         console.error("Lỗi lấy danh sách khu vực:", error);
       }
     }
-  };
+  };89 
   // 1. Gọi API lấy danh sách Thành phố khi vừa vào trang
   useEffect(() => {
     const fetchCities = async () => {
@@ -111,10 +111,7 @@ const RegisterArea = () => {
       alert("Đăng ký khu vực làm việc thành công!");
       fetchRegisteredAreas(); // Tải lại danh sách
 
-      // Có thể reset form sau khi đăng ký thành công nếu muốn
-      // setSelectedCity("");
-      // setSelectedDistrict("");
-      // setIsPrimary(false);
+
     } catch (error) {
       console.error("Lỗi gửi dữ liệu:", error);
       const errorMsg =
@@ -130,16 +127,19 @@ const RegisterArea = () => {
       {/* Form Đăng ký (Bên trái) */}
       <div className="register-area-card">
         <h2>Đăng ký nơi làm việc</h2>
-        <p>Chọn khu vực bạn muốn nhận công việc</p>
+        <p style={{ color: "#666",
+                    fontsize: "14px",
+                    marginbottom: "24px"}}>
+                      Chọn khu vực bạn muốn nhận công việc</p>
 
         {isLoading ? (
           <div>Đang tải dữ liệu khu vực...</div>
         ) : (
-          <form onSubmit={handleSubmit} className="register-area-form">
+          <form onSubmit={handleSubmit} className="register-area-form"  noValidate>
             {/* Các trường input giữ nguyên ... */}
             <div className="form-group">
-              <label>Thành phố <span className="required">*</span></label>
-              <select value={selectedCity} onChange={handleCityChange} required className="area-select">
+              <label>Thành phố <span  style={{color:"blue"}}>*</span></label>
+              <select value={selectedCity} onChange={handleCityChange}  className="area-selectt">
                 <option value="" disabled>-- Chọn Thành phố --</option>
                 {cities.map((city) => (
                   <option key={city.id} value={city.id}>{city.name}</option>
@@ -149,7 +149,7 @@ const RegisterArea = () => {
 
             <div className="form-group">
               <label>Quận/Huyện</label>
-              <select value={selectedDistrict} onChange={(e) => setSelectedDistrict(e.target.value)} disabled={!selectedCity} className="area-select">
+              <select value={selectedDistrict} onChange={(e) => setSelectedDistrict(e.target.value)} disabled={!selectedCity} className="area-selectt">
                 <option value="">-- Toàn thành phố (Không chọn quận) --</option>
                 {districts.map((district) => (
                   <option key={district.id} value={district.id}>{district.name}</option>
@@ -157,10 +157,10 @@ const RegisterArea = () => {
               </select>
             </div>
 
-            <div className="checkbox-group">
-              <label className="checkbox-label">
+            <div >
+              <label >
                 <input type="checkbox" checked={isPrimary} onChange={(e) => setIsPrimary(e.target.checked)} />
-                <span className="checkbox-text">Khu vực làm việc chính</span>
+                <span >Khu vực làm việc chính</span>
               </label>
             </div>
 

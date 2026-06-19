@@ -11,12 +11,7 @@
   margin: 0 0 0px 0; /* Đặt margin theo thứ tự (Trên: 0, Phải: 0, Dưới: 8px, Trái: 0) */
 }
 
-.section-header p {
-  /* Nhắm vào thẻ đoạn văn <p> nằm bên trong .section-header */
-  color: #666; /* Đặt màu chữ là màu xám trung bình */
-  font-size: 14px; /* Đặt kích thước chữ nhỏ hơn tiêu đề, ở mức 14px */
-  margin: 0; /* Xóa toàn bộ khoảng cách lề mặc định của thẻ <p> để thiết kế gọn hơn */
-}
+
 
 /* --- 2. LAYOUT GRID (Hệ thống lưới) --- */
 

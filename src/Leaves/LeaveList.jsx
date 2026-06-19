@@ -1,3 +1,4 @@
+// src/pages/Leave/LeaveList.jsx
 import React, { useState, useEffect } from "react";
 import "./LeaveList.css";
 // Import API
@@ -24,6 +25,9 @@ const LeaveList = () => {
     endTime: "",
     reason: "",
   });
+
+  //  State quản lý lỗi hiển thị trên giao diện
+  const [formErrors, setFormErrors] = useState({});
 
   //  HÀM TẢI DANH SÁCH: Gọi API kèm theo Page và Limit
   const fetchLeaves = async () => {
@@ -65,17 +69,58 @@ const LeaveList = () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+
+    //  Tự động xóa lỗi khi người dùng bắt đầu nhập lại
+    if (formErrors[name]) {
+      setFormErrors({ ...formErrors, [name]: "" });
+    }
+  };
+
+  // Hàm đóng Form và dọn dẹp dữ liệu
+  const closeForm = () => {
+    setShowForm(false);
+    setFormData({ startTime: "", endTime: "", reason: "" });
+    setFormErrors({}); // Xóa sạch lỗi khi đóng form
   };
 
   // HÀM GỬI ĐƠN XIN NGHỈ PHÉP
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // ===============================================
+    // 1. KIỂM TRA LỖI TẠI FRONTEND (FRONTEND VALIDATION)
+    // ===============================================
+    let hasLocalError = false;
+    const localErrors = {};
+
+    if (!formData.startTime) {
+      localErrors.startTime = "Vui lòng chọn thời gian bắt đầu";
+      hasLocalError = true;
+    }
+    if (!formData.endTime) {
+      localErrors.endTime = "Vui lòng chọn thời gian kết thúc";
+      hasLocalError = true;
+    }
+    if (!formData.reason.trim()) {
+      localErrors.reason = "Vui lòng nhập lý do nghỉ phép";
+      hasLocalError = true;
+    }
+
+    // Nếu có lỗi để trống -> Hiển thị lỗi và DỪNG
+    if (hasLocalError) {
+      setFormErrors(localErrors);
+      return; 
+    }
+
+    // Kiểm tra logic thời gian
     if (new Date(formData.endTime) <= new Date(formData.startTime)) {
-      alert("Thời gian kết thúc phải lớn hơn thời gian bắt đầu!");
+      setFormErrors({ endTime: "Thời gian kết thúc phải sau thời gian bắt đầu!" });
       return;
     }
 
+    // ===============================================
+    // 2. GỬI API LÊN BACKEND
+    // ===============================================
     const payload = {
       staffId: user.id,
       startTime: new Date(formData.startTime).toISOString(),
@@ -89,15 +134,31 @@ const LeaveList = () => {
       await request(payload);
       alert("Gửi đơn xin nghỉ phép thành công!");
       
-      setShowForm(false);
-      setFormData({ startTime: "", endTime: "", reason: "" });
+      closeForm(); // Gọi hàm dọn dẹp
       
       // Nếu đang ở trang khác, nộp đơn xong có thể ép nó quay về trang 1
       setCurrentPage(1); 
       fetchLeaves(); 
     } catch (error) {
       console.error("Lỗi gửi đơn:", error);
-      alert("Gửi đơn thất bại. Vui lòng thử lại!");
+      
+      // Bắt lỗi từ Backend (phòng hờ)
+      const backendError = error.response?.data;
+      if (backendError && backendError.errors && Array.isArray(backendError.errors)) {
+        const errorsObj = {};
+        backendError.errors.forEach((err) => {
+          if (!errorsObj[err.field]) {
+            let msg = err.message;
+            if (msg.includes("không được để trống") || msg.includes("bắt buộc")) {
+              msg = "Vui lòng không để trống trường này";
+            }
+            errorsObj[err.field] = msg;
+          }
+        });
+        setFormErrors(errorsObj);
+      } else {
+        alert(backendError?.message || "Gửi đơn thất bại. Vui lòng thử lại!");
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -166,7 +227,7 @@ const LeaveList = () => {
                         <span className="date-text">{formatDate(leave.endTime)}</span>
                       </div>
                     </td>
-                    <td className="reason-text">{leave.reason}</td>
+                    <td className="reason-text" >{leave.reason}</td>
                     <td style={{ textAlign: "center" }}>{renderStatus(leave.status)}</td>
                   </tr>
                 ))}
@@ -200,7 +261,8 @@ const LeaveList = () => {
         <div className="modal-overlay">
           <div className="modal-content">
             <h3>Tạo đơn xin nghỉ phép</h3>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} noValidate>
+              
               <div className="form-group">
                 <label>Thời gian bắt đầu nghỉ <span className="required">*</span></label>
                 <input
@@ -209,7 +271,14 @@ const LeaveList = () => {
                   value={formData.startTime}
                   onChange={handleInputChange}
                   required
+                  style={{ borderColor: formErrors.startTime ? "#ff4d4f" : "" }}
                 />
+                {/* HIỂN THỊ LỖI */}
+                {formErrors.startTime && (
+                  <span style={{ color: '#ff4d4f', fontSize: '13px', marginTop: '4px', display: 'block' }}>
+                    {formErrors.startTime}
+                  </span>
+                )}
               </div>
 
               <div className="form-group">
@@ -220,7 +289,14 @@ const LeaveList = () => {
                   value={formData.endTime}
                   onChange={handleInputChange}
                   required
+                  style={{ borderColor: formErrors.endTime ? "#ff4d4f" : "" }}
                 />
+                {/* HIỂN THỊ LỖI */}
+                {formErrors.endTime && (
+                  <span style={{ color: '#ff4d4f', fontSize: '13px', marginTop: '4px', display: 'block' }}>
+                    {formErrors.endTime}
+                  </span>
+                )}
               </div>
 
               <div className="form-group">
@@ -230,17 +306,24 @@ const LeaveList = () => {
                   rows="4"
                   value={formData.reason}
                   onChange={handleInputChange}
-                  placeholder="Nhập lý do xin nghỉ chi tiết..."
+                  placeholder ="Nhập lý do xin nghỉ chi tiết..."
                   required
+                  style={{ borderColor: formErrors.reason ? "#ff4d4f" : "" }}
                 ></textarea>
+                {/* HIỂN THỊ LỖI */}
+                {formErrors.reason && (
+                  <span style={{ color: '#ff4d4f', fontSize: '13px', marginTop: '4px', display: 'block' }}>
+                    {formErrors.reason}
+                  </span>
+                )}
               </div>
 
               <div className="modal-actions">
-                <button type="button" className="btn-cancel" onClick={() => setShowForm(false)}>
+                <button type="button" className="btn-cancel" onClick={closeForm}>
                   Hủy bỏ
                 </button>
-                <button type="submit" className="btn-submit" disabled={isSubmitting}>
-                  {isSubmitting ? "Đang gửi..." : "Gửi đơn"}
+                <button type="submit" className="btn-submit" disabled={isSubmitting} >
+                  {isSubmitting ?  "Đang gửi..." : "Gửi đơn"}
                 </button>
               </div>
             </form>

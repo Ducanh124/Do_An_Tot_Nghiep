@@ -1,6 +1,6 @@
 // src/pages/ReportReview/ReportReview.jsx
 import React, { useState, useEffect } from "react";
-import "./ReportReview.css";
+import "./reportReview.css";
 import { scheduleService } from "../service/scheduleService.js";
 import { useAuth } from "../AuthContext.jsx";
 
@@ -29,7 +29,7 @@ const ReportReview = () => {
           jobs = res;
         }
 
-        //  BƯỚC 1: LỌC VÀ TRÍCH XUẤT THÊM DỊCH VỤ + ĐỊA CHỈ
+      // gộp tên các dịch vụ xong gộp dữ liệu để hiển thị
         const validReviews = jobs
           .filter(
             (job) => job.booking && job.booking.customerReview
@@ -45,11 +45,8 @@ const ReportReview = () => {
               bookingId: job.bookingId,
               customerName: job.booking.customer?.name || "Khách hàng ẩn danh",
               customerPhone: job.booking.customer?.phone || "Không có SĐT",
-              
-              // THÊM MỚI: Trích xuất tên dịch vụ và địa chỉ
               serviceNames: combinedServiceNames,
               address: job.booking.address || "Chưa có thông tin địa chỉ",
-              
               scheduledTime: job.booking.scheduledTime,
               rating: job.booking.customerReview.rating || 0,
               reviewText: job.booking.customerReview.review || "",
@@ -75,6 +72,7 @@ const ReportReview = () => {
   const displayedReviews = starFilter === "all" 
     ? allReviews 
     : allReviews.filter(r => r.rating === Number(starFilter));
+    // NẾU LÀ ALL THÌ GIỮ NGUYÊN ĐÁNH GIÁ, CÒN NẾU LÀ SỐ THÌ LỌC StarFilter = số đấy
 
   // Hàm định dạng thời gian ca làm việc
   const formatTime = (isoString) => {
@@ -112,11 +110,11 @@ const ReportReview = () => {
             onChange={(e) => setStarFilter(e.target.value)}
           >
             <option value="all">Tất cả đánh giá</option>
-            <option value="5">5 Sao (Tuyệt vời)</option>
-            <option value="4">4 Sao (Rất tốt)</option>
-            <option value="3">3 Sao (Bình thường)</option>
-            <option value="2">2 Sao (Kém)</option>
-            <option value="1">1 Sao (Rất tệ)</option>
+            <option value="5">5 Sao </option>
+            <option value="4">4 Sao </option>
+            <option value="3">3 Sao </option>
+            <option value="2">2 Sao </option>
+            <option value="1">1 Sao </option>
           </select>
         </div>
       </div>
@@ -124,6 +122,7 @@ const ReportReview = () => {
       {loading ? (
         <div className="loading-text">Đang tải dữ liệu đánh giá...</div>
       ) : displayedReviews.length === 0 ? (
+        // nếu k có thì sẽ có 2 trường hợp, là tất cả sao k có và từng sao k có
         <div className="empty-state">
           {starFilter === "all" 
             ? "Bạn chưa có bài đánh giá nào từ khách hàng." 
@@ -144,8 +143,8 @@ const ReportReview = () => {
                 <div className="customer-phone">{item.customerPhone}</div>
                 
                 {/* HIỂN THỊ ĐỊA CHỈ KHÁCH HÀNG TẠI ĐÂY */}
-                <div style={{ fontSize: '13px', color: '#666', marginTop: '4px' }}>
-                  📍 {item.address}
+                <div style={{ fontSize: '16px', color: '#666', marginTop: '4px' }}>
+                   {item.address}
                 </div>
                 
                 <div className="shift-time" style={{ marginTop: '6px' }}>

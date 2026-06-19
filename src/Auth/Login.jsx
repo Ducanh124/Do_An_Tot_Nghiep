@@ -1,5 +1,7 @@
+// src/pages/Login/Login.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2"; // THÊM MỚI: Import thư viện SweetAlert2
 import "./Login.css";
 import { login } from "../service/authService.js";
 
@@ -33,26 +35,49 @@ const Login = () => {
       const token = data?.data?.accessToken;
       if (token) {
         localStorage.setItem("access_token", token);
-        window.location.href = '/schedule';
         console.log("Đã lưu token vào trình duyệt thành công!");
 
-        alert("Đăng nhập thành công!");
-        navigate("/schedule");
+        Swal.fire({
+          icon: "success",
+              // title: '<span style="color: #28a745;">Thành công!</span>',
+              // html: '<span style="color: #1890ff;">Đăng nhập thành công!</span>',
+          title: "Thành công!",
+           text : "Đăng nhập thành công!",
+          timer: 1500, // Tự động đóng sau 1.5 giây
+          showConfirmButton: false,
+        }).then(() => {
+          // Đợi Swal chạy xong hiệu ứng rồi mới chuyển trang
+          window.location.href = '/schedule';
+        });
+
       } else {
-        alert(
-          "Đăng nhập thành công nhưng không tìm thấy Token. Vui lòng bật F12 (Console) để kiểm tra cấu trúc dữ liệu!",
-        );
+        // THÊM MỚI: Cảnh báo thiếu Token
+        Swal.fire({
+          icon: "warning",
+          title: "Cảnh báo",
+          text: "Đăng nhập thành công nhưng không tìm thấy Token. Vui lòng bật F12 (Console) để kiểm tra cấu trúc dữ liệu!",
+        });
       }
     } catch (err) {
       const errorMessage =
         err.response?.data?.message ||
         err.message ||
         "Đăng nhập thất bại. Vui lòng thử lại!";
-      alert(errorMessage);
+      
+      // THÊM MỚI: Thông báo lỗi bằng Swal
+      Swal.fire({
+        icon: "error",
+        // title: "Đăng nhập thất bại",
+        title: "Đăng nhập thất bại",
+        html: `<span style="color: #ff4d4f; font-weight: 500;">${errorMessage}</span>`, 
+        //Nút xác nhận
+        confirmButtonColor: "blue",
+       confirmButtonText: "Thử lại ngay"
+      });
     } finally {
       setIsLoading(false);
     }
-  };
+  };   
 
   return (
     <div className="login-page-container">
@@ -102,6 +127,7 @@ const Login = () => {
                 color: "blue",
                 cursor: "pointer",
                 textDecoration: "underline",
+                marginLeft: "5px"
               }}
               onClick={() => navigate("/register")}
             >

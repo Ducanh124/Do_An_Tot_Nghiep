@@ -35,13 +35,14 @@
 }
 
 /* --- BẢNG DỮ LIỆU --- */
+/* khuôn bảng  */
 .table-wrapper {
   background-color: white;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   overflow: hidden;
 }
-
+/* độ rộng bảng */
 .leave-table {
   width: 100%;
   border-collapse: collapse;
@@ -56,28 +57,28 @@
   text-align: left;
   border-bottom: 1px solid #eee;
   text-transform: uppercase;
+  /* border: 3px solid red; */
 }
-
+/* các hàng bên dưới cột tiêu đề */
 .leave-table td {
   padding: 16px;
   border-bottom: 1px solid #f0f0f0;
   color: #333;
   vertical-align: middle;
+    /* background-color: red; */
+
 }
 
-/* Highlight dòng chẵn/lẻ giống ảnh */
-.leave-table tbody tr:nth-child(even) {
-  background-color: #fbfbfb;
-}
 
 .leave-table tbody tr:hover {
   background-color: #f5f5f5;
 }
 
+/* kc giữa 2 ngày */
 .time-col {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 .date-text {
@@ -124,31 +125,9 @@
   border: 1px solid #ffa39e;
 }
 
-/* --- PHÂN TRANG --- */
-.pagination {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  padding: 16px;
-  gap: 16px;
-  border-top: 1px solid #eee;
-}
-
-.pagination button {
-  padding: 6px 12px;
-  border: 1px solid #d9d9d9;
-  background-color: white;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.pagination button:disabled {
-  background-color: #f5f5f5;
-  color: #b8b8b8;
-  cursor: not-allowed;
-}
 
 /* --- MODAL POPUP FORM --- */
+/* nền xung quanh popup */
 .modal-overlay {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -178,7 +157,7 @@
   margin-bottom: 16px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 6px;  /* kc giữa label và input */
 }
 
 .form-group label {
@@ -200,6 +179,7 @@
   color: red;
 }
 
+/* cụm 2 nút ở dưới form popup */
 .modal-actions {
   display: flex;
   justify-content: flex-end;
@@ -227,5 +207,29 @@
 
 .btn-submit:disabled {
   background-color: #91caff;
+  cursor: not-allowed;
+}
+
+/* --- PHÂN TRANG --- */
+.pagination {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 16px;
+  gap: 16px;
+  border-top: 1px solid #eee;
+}
+
+.pagination button {
+  padding: 6px 12px;
+  border: 1px solid #d9d9d9;
+  background-color: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.pagination button:disabled {
+  background-color: #f5f5f5;
+  color: #b8b8b8;
   cursor: not-allowed;
 }

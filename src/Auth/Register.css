@@ -134,17 +134,17 @@
   flex-direction: column;    /* Sắp xếp hình ảnh và nút "Chọn ảnh" theo chiều dọc */
   /* căn giữa ava và nút bấm */
   align-items: center;       
-  /* align-items: flex-start;     */
+  /* align-items: flex-end;     */
   margin-bottom: 24px;       /* Khoảng trống dưới khu vực này là 24px */
   gap: 12px;                 /* Khoảng cách giữa hình tròn avatar và nút bấm là 12px */
 }
 
 .avatar-preview {
-  width:  80px;               /* Khung ảnh rộng 90px */
+  width:  90px;               /* Khung ảnh rộng 90px */
   height: 90px;              /* Khung ảnh cao 90px */
   border-radius: 50%;        /* Bo tròn 50% để tạo thành hình tròn */
   border: 2px SOLID #d9d9d9;/* Viền nét đứt màu xám, dày 2px */
-  overflow: hidden;          /* Ẩn phần hình vuông thừa ra ngoài vòng tròn */
+  overflow: hidden;        /*  Ẩn phần hình vuông thừa ra ngoài vòng tròn*/
   display: flex;
   align-items: center;   /* Căn giữa chữ "Ảnh đại diện" nếu chưa có ảnh */
   /* điều chỉnh chữ trên dưới thì dùng flex */
@@ -177,6 +177,7 @@
   transition: all 0.2s;      /* Hiệu ứng chuyển động mượt */
   background-color: transparent; /* Nền trong suốt */
 }
+
 
 .btn-upload-avatar:hover {
   background-color: #4caf50; /* Khi trỏ chuột vào, đổi nền thành xanh lá */

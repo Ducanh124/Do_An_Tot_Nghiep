@@ -34,12 +34,14 @@ const handleFileChange = (e) => {
       {images.length < 10 && (
         <div className="native-input-wrapper ">
           <input
+            id='anh'
             type="file"  multiple
             accept="image/*"
             onChange={handleFileChange}
-            className="native-file-input "
+            style={{ display: "none" }}
             // k thay tên đc vì nó là mặc định
           />
+          <label htmlFor="anh" className="btn-upload-avatar" style={{fontWeight:"100px"}}>Ảnh</label>
         </div>
       )}
 
