@@ -16,7 +16,7 @@ const FeaturesSection = () => {
               className="feature-icon"
             />
             <h3 className="feature-title">Chuyên nghiệp - Tận tâm</h3>
-            <p className="feature-desc">
+            <p className="feature-desc-2">
               Đội ngũ Tư vấn viên & Chăm sóc Khách hàng kinh nghiệm, chuyên
               nghiệp, tận tâm. Chúng tôi cam kết bảo hành dịch vụ khi Khách hàng
               chưa hài lòng.
@@ -31,7 +31,7 @@ const FeaturesSection = () => {
               className="feature-icon"
             />
             <h3 className="feature-title">Ứng dụng tiện lợi</h3>
-            <p className="feature-desc">
+            <p className="feature-desc-2">
               Tìm Người giúp việc nhà nhanh chóng qua vài thao tác. Ứng dụng
               cung cấp đầy đủ thông tin về dịch vụ, tiện lợi trong việc chủ động
               lựa chọn và đánh giá.
@@ -46,7 +46,7 @@ const FeaturesSection = () => {
               className="feature-icon"
             />
             <h3 className="feature-title">Người giúp việc tiêu chuẩn</h3>
-            <p className="feature-desc">
+            <p className="feature-desc-2">
               Người giúp việc nhà tiêu chuẩn, đáng tin cậy, có đầy đủ hồ sơ.
               Công ty chịu trách nhiệm tuyển chọn, đào tạo và quản lý trực tiếp.
             </p>

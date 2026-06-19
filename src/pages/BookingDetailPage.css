@@ -144,15 +144,6 @@
   margin: 0 0 1rem;
 }
 
-.bd-badge-success {
-  padding: 0.4rem 1rem;
-  border-radius: 50px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  background: #198754;
-  color: white;
-}
-
 /* tiến độ và ghi chú */
 .bd-note-box {
   background: #f8f9fa;

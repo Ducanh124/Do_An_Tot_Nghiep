@@ -339,8 +339,8 @@ const BookingDetailPage = () => {
                   <i className="bi bi-telephone-fill"></i>{" "}
                   {staffInfo?.staff?.phone || "Đang cập nhật..."}
                 </p>
-                <span className="bd-badge bd-badge-success">
-                  Nhân viên đã xác minh
+                <span className="bd-staff-name">
+                  Kinh nghiệm :{staffInfo.experience}
                 </span>
               </>
             ) : (

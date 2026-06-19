@@ -8,7 +8,7 @@ import HeroSlider from "./components/common/HeroSlider";
 import FeaturesSection from "./components/common/FeaturesSection";
 import Footer from "./components/layout/Footer.jsx";
 import Login from "./components/auth/Login.jsx";
-import ListCategory from "./pages/AllServices.jsx";
+import AllService from "./pages/AllServices.jsx";
 import ScrollToTop from "./components/common/ScrollToTop.jsx";
 import BookingHistory from "./pages/BookingHistory.jsx";
 import ProtectedRoute from "./components/auth/ProtectedRoute.jsx";
@@ -33,14 +33,7 @@ function App() {
           }
         />
         <Route path="/login" element={<Login />} />
-        <Route
-          path="/danh-muc"
-          element={
-            <ProtectedRoute>
-              <ListCategory />
-            </ProtectedRoute>
-          }
-        />
+        <Route path="/danh-muc" element={<AllService />} />
 
         {/* Trang đặt lịch: Nhận tham số động là id của dịch vụ (:id) */}
         <Route
@@ -51,14 +44,7 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route
-          path="/checkout"
-          element={
-            <ProtectedRoute>
-              <BookingPage />
-            </ProtectedRoute>
-          }
-        />
+
         <Route
           path="/profile"
           element={
