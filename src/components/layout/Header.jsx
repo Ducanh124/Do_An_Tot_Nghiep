@@ -30,7 +30,7 @@ const Header = () => {
     <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top py-2">
       <div className="container">
         <Link className="navbar-brand d-flex flex-column" to="/">
-          <span className="fw-bold text-primary">Booking Family</span>
+          <span className="fw-bold text-primary">Dịch vụ đặt lịch</span>
           <small className="brand-slogan">Thay đổi cuộc sống phụ nữ Việt</small>
         </Link>
 
