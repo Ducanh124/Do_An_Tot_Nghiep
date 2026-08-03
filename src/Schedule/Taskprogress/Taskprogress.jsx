@@ -94,7 +94,7 @@ const TaskProgress = () => {
         >
           Quay lại
         </button>
-      </div>
+      </div> 
 
       <div className="progress-content">
         <h2 style={{ marginBottom: "15px" }}>Báo cáo tiến độ công việc</h2>

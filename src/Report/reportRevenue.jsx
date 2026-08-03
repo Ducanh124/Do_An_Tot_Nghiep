@@ -137,7 +137,7 @@ const ReportRevenue = () => {
           </select>
         </div>
 
-        <button className="btn-filter" onClick={fetchReport} disabled={loading} style={{marginLeft:"100px"}}>
+        <button className="btn-filter" onClick={fetchReport} disabled={loading} style={{marginLeft:"150px"}}>
           {loading ? "Đang lọc..." : "Lọc dữ liệu"}
         </button>
       </div>

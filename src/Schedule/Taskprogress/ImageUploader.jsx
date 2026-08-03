@@ -39,7 +39,7 @@ const handleFileChange = (e) => {
             accept="image/*"
             onChange={handleFileChange}
             style={{ display: "none" }}
-            // k thay tên đc vì nó là mặc định
+  
           />
           <label htmlFor="anh" className="btn-upload-avatar" style={{fontWeight:"100px"}}>Ảnh</label>
         </div>

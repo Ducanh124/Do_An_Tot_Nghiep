@@ -57,7 +57,7 @@ const ScheduleList = () => {
           })
         );
 
-        // THÊM MỚI: LOGIC SẮP XẾP ĐƠN HÀNG
+        // LOGIC SẮP XẾP ĐƠN HÀNG
         detailedShifts.sort((a, b) => {
           // Định nghĩa các trạng thái đã đóng (sẽ bị đẩy xuống dưới)
           const closedStatuses = ['completed', 'cancelled', 'rejected'];

@@ -18,6 +18,7 @@
 }
 
 /* --- Header --- */
+/*đường kẻ */
 .shift-card-header {
   align-items: center;
   margin-bottom: 16px;
@@ -117,7 +118,7 @@
   right: 15px;
   padding: 4px 12px;
   border-radius: 20px;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 600;
   cursor: default;
 }
@@ -222,6 +223,7 @@
   font-family: inherit;
   margin-top: 10px;
   box-sizing: border-box;
+  /* background-color: red; */
 }
 /* vị trí của nút bấm trong popup từ chối */
 .modal-actions {
@@ -260,7 +262,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 2px solid grey;
+  border-bottom: 2px solid grey ;
   padding-bottom: 10px;
   margin-bottom: 15px;
 }

@@ -101,7 +101,7 @@
   display: inline-block;
   padding: 6px 14px;
   border-radius: 20px;
-  font-size: 12px;
+  font-size: 15px;
   font-weight: 600;
   text-align: center;
   min-width: 120px;
@@ -157,7 +157,7 @@
   margin-bottom: 16px;
   display: flex;
   flex-direction: column;
-  gap: 6px;  /* kc giữa label và input */
+  gap: 17px;  /* kc giữa label và input */
 }
 
 .form-group label {

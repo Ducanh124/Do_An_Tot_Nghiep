@@ -1,14 +1,5 @@
 /* TaskProgress.css */
-.task-progress-page {
-  padding: 24px;
-  max-width: 600px; /* Ép form hẹp lại để dễ nhìn trên màn hình to */
-  margin: 0 auto;
-  font-family: 'Inter', sans-serif;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background-color: red !important;
-}
+
 
 /* --- Header & Nút Back --- */
 .progress-header {

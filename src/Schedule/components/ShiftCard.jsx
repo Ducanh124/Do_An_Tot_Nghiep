@@ -34,7 +34,9 @@ const ShiftCard = ({ shift, onRefresh }) => {
       Swal.fire({
         icon: "warning",
         title: "Cảnh báo",
+      //  title: '<span style = "color: #faad14;">Baso caso</span>',
         text: "Vui lòng nhập lý do từ chối!",
+        // confirmButtonText:
         confirmButtonColor: "#faad14"
       });
       return;

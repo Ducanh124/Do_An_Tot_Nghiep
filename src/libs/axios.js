@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 export const api = axios.create({
-  baseURL: "https://bookingfamily.onrender.com/api/v1", // Thay bằng URL Backend thực tế của bạn
+  baseURL: "http://localhost:8000/api/v1", // Thay bằng URL Backend thực tế của bạn
 });
 
 // THÊM ĐOẠN NÀY: Tự động nhét Token vào mỗi Request gửi đi

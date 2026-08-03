@@ -103,12 +103,7 @@
   font-weight: 600;
 }
 
-.summary-value {
-  margin: 0;
-  font-size: 28px;
-  font-weight: 700;
-  background-color: white;
-}
+
 
 .summary-card-blue {
   border-left: 5px solid #1890ff;
