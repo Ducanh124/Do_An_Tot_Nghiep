@@ -18,7 +18,7 @@ const Footer = () => {
               className="text-decoration-none fw-bold fs-2 text-primary d-block mb-2"
               to="/"
             >
-              <span className="fw-bold text-primary">Booking Family</span>
+              <span className="fw-bold text-primary">Dịch vụ đặt lịch</span>
             </Link>
             <p className="text-muted fst-italic mb-4">
               Thay đổi cuộc sống phụ nữ Việt

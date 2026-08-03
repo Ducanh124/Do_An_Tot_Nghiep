@@ -548,7 +548,7 @@ const BookingPage = () => {
                   </div>
 
                   <div className="col-6">
-                    <label className="custom-form-label">Quận/Huyện *</label>
+                    <label className="custom-form-label">Phường /Xã *</label>
                     <select
                       className="form-select custom-form-control"
                       value={selectedDistrictId}
